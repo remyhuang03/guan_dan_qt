@@ -1,0 +1,25 @@
+<UI version="4.0" >
+ <class>guan_danClass</class>
+ <widget class="QWidget" name="guan_danClass" >
+  <property name="objectName" >
+   <string notr="true">guan_danClass</string>
+  </property>
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>600</width>
+    <height>400</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>guan_dan</string>
+  </property>$centralwidget$
+ </widget>
+ <layoutDefault spacing="6" margin="11" />
+ <pixmapfunction></pixmapfunction>
+ <resources>
+   <include location="guan_dan.qrc"/>
+ </resources>
+ <connections/>
+</UI>
