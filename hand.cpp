@@ -1,4 +1,5 @@
 #include "hand.h"
+#include "status.h"
 #include<algorithm>
 #include<vector>
 #include<string>

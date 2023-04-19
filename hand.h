@@ -1,9 +1,11 @@
 ﻿#ifndef HAND_H_
 #define HAND_H_
+
 #include<vector>
 #include<map>
 #include"card.h"
 #include"status.h"
+
 
 // 单个用户类
 class Hand
@@ -26,16 +28,16 @@ public:
 	//@brief 执行贡牌和还贡
 	//@para player_list: 玩家列表 chosen_cards 待上贡/还贡献的牌
 	//@ret vector<vector<Card>>: 所有有效的具体牌型
-	friend void contribute(std::vector <Hand> &player_list,const std::vector <Card> &chosen_cards);
-	friend void return_card(std::vector <Hand> &player_list,const std::vector <Card> &chosen_cards);
-	
+	friend void contribute(std::vector <Hand>& player_list, const std::vector <Card>& chosen_cards);
+	friend void return_card(std::vector <Hand>& player_list, const std::vector <Card>& chosen_cards);
+
 	//@brief 判断是否满足上贡条件
 	//@para card: 用户所选择的牌
-	bool could_contribute(const Card &chosen_card);
-	
+	bool could_contribute(const Card& chosen_card);
+
 	//@brief  返回玩家手牌
 	auto get_cards() const;
-	
+
 	//@brief 为该用户增加一张牌
 	void push_card(const Card& card) { cards_.push_back(card); }
 
@@ -59,7 +61,7 @@ private:
 	std::vector<Card> cards_;
 	//A级下没有打过的次数
 	int fail_at_a_cnt_;
-	
+
 };
 
 #endif //HAND_H_

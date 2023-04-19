@@ -49,15 +49,21 @@
     <ClCompile Include="..\record.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\card.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\hand.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\record.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\status.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\card.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\hand.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

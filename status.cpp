@@ -1,25 +1,32 @@
 #include"status.h"
 
 bool is_game_over = false;
+int round_cnt = 0;
+int group_rank[2] = {2,2};
+int group_fial_pass_a[2] = {0,0};
+int round_rank_card = 2;
+int turn = 0;
+int circle_type = 0;
+int circle_point = 0;
+int circle_leader = 0;
+int contribute_order[4];
+int contribute_count;
+int round_rank[4];
+int rank_list[4];
+std::map<int, int> cards_round_rank;
 
 void update_round_rank()
 {
-	//找到上游的id
-	int first_id;
+
 	//获取排名情况 	
-	for(int i = 0; i < 4; i++)
+	for (int i = 0; i < 4; i++)
 	{
 		rank_list[round_rank[i]] = i;
 	}
-	for (int i = 0; i < 4; i++)
-	{
-		if (round_rank[i] == 0)
-		{
-			first_id = i;
-			break;
-		}
-	}
-	//上游所在组
+
+	//上游的id
+	int first_id = rank_list[0];
+
 	int winner_group = first_id / 2;
 
 	//上游对家的排名
@@ -52,14 +59,14 @@ void update_round_rank()
 	}
 
 	//对手方打A失败
-	if (group_rank[~winner_group] == 1)
+	if (group_rank[!winner_group] == 1)
 	{
-		group_fial_pass_a[~winner_group]++;
+		group_fial_pass_a[!winner_group]++;
 		//三次未过，回退至2
-		if (group_fial_pass_a[~winner_group] == 3)
+		if (group_fial_pass_a[!winner_group] == 3)
 		{
-			group_rank[~winner_group] = 2;
-			group_fial_pass_a[~winner_group] = 0;
+			group_rank[!winner_group] = 2;
+			group_fial_pass_a[!winner_group] = 0;
 		}
 	}
 	int new_rank_t = group_rank[winner_group] + rank_incre;
@@ -93,24 +100,4 @@ void update_cards_round_rank()
 	cards_round_rank[14] = rank_t++;
 	//大王
 	cards_round_rank[15] = rank_t++;
-}
-
-void init_game_status()
-{
-	//初始化全局状态
-	is_game_over = false;
-	round_cnt = 0;
-	group_rank[0] = 2;
-	group_rank[1] = 2;
-	group_fial_pass_a[0] = 0;
-	group_fial_pass_a[1] = 0;
-	//初始化当前一轮的状态
-	round_rank_card = 2;
-	update_cards_round_rank();
-	//初始化当前一圈的状态
-	turn = 0;
-	circle_type = 0;
-	circle_point = 0;
-	circle_leader = 0;
-	return;
 }
