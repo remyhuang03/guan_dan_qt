@@ -2,6 +2,8 @@
 
 #include <QtWidgets/QWidget>
 #include "ui_guan_dan.h"
+#define SCREEN_W 960
+#define SCREEN_H 540
 
 class guan_dan : public QWidget
 {

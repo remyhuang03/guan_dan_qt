@@ -85,7 +85,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <QtRcc Include="guan_dan.qrc" />
+    <ClCompile Include="button.cpp" />
     <QtUic Include="guan_dan.ui" />
     <QtMoc Include="guan_dan.h" />
     <ClCompile Include="..\card.cpp" />
@@ -100,6 +100,14 @@
     <ClInclude Include="..\hand.h" />
     <ClInclude Include="..\record.h" />
     <ClInclude Include="..\status.h" />
+    <ClInclude Include="button.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
+    <None Include="dev_ui_sketch.pptx" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtRcc Include="Resource.qrc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
