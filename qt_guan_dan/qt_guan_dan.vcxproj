@@ -85,6 +85,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="sprite.cpp" />
     <ClCompile Include="button.cpp" />
     <QtUic Include="guan_dan.ui" />
     <QtMoc Include="guan_dan.h" />
@@ -100,6 +101,7 @@
     <ClInclude Include="..\hand.h" />
     <ClInclude Include="..\record.h" />
     <ClInclude Include="..\status.h" />
+    <ClInclude Include="sprite.h" />
     <ClInclude Include="button.h" />
   </ItemGroup>
   <ItemGroup>
