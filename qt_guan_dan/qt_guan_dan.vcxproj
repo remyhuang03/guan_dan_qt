@@ -86,6 +86,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="card.cpp" />
+    <ClCompile Include="card_btn.cpp" />
     <ClCompile Include="hand.cpp" />
     <ClCompile Include="record.cpp" />
     <ClCompile Include="sprite.cpp" />
@@ -104,6 +105,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="card.h" />
+    <ClInclude Include="card_btn.h" />
     <ClInclude Include="hand.h" />
     <ClInclude Include="record.h" />
     <QtMoc Include="sprite.h" />

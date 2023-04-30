@@ -33,8 +33,13 @@ void guan_dan::start_game()
 		auto begin = shuffled_cards.begin() + i * 27;
 		auto end = shuffled_cards.begin() + (i + 1) * 27;
 		players[i]->set_cards(std::vector(begin, end));
-		player_widgets[i]->show();
+		connect(player_widgets[i], &Player_widget::player_close, this, &guan_dan::show);
 	}
+	for (int i = 0; i < 4; i++)
+		for (int j = 0; j < 4; j++)
+			if (i != j)
+				connect(player_widgets[i], &Player_widget::player_close, player_widgets[j], &Player_widget::close);
+
 }
 
 guan_dan::~guan_dan()

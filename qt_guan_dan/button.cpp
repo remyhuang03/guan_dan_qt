@@ -1,13 +1,18 @@
 ﻿#include "button.h"
 Button::Button(int x, int y, QString img, QWidget* parent, SizeMode mode, double size)
-	:Sprite(x, y, img, parent, mode, size)
+	:Sprite(x, y, img, parent, mode, size), mode_(0)
 {
 	connect(this, &Button::clicked, this, &Button::click_animation);
-
+	pm_normal_ = pm_disabled_ = pm_mode2_ = img;
 }
 
 void Button::click_animation()
 {
+	//前提：当前按钮可用
+	if (mode_ == -1)
+	{
+		return;
+	}
 	//播放点击动画
 	QPropertyAnimation* animation = new QPropertyAnimation(this, "geometry");
 	int posx = pos().x();
@@ -22,4 +27,42 @@ void Button::click_animation()
 	animation->start();
 	//处理点击完以后的事件
 	emit click_emit();
+}
+void Button::disable() {
+	mode_ = Disabled;
+	setIcon(pm_disabled_);
+}
+void Button::enable()
+{
+	mode_ = Normal;
+	setIcon(pm_normal_);
+}
+void Button::reverse_mode()
+{
+	mode_ = !mode_;
+	if (mode_ == 0)
+	{
+		setIcon(pm_normal_);
+	}
+	else
+	{
+		setIcon(pm_mode2_);
+	}
+}
+
+void Button::set_pm(QString img, Mode mode) {
+	switch (mode)
+	{
+	case Button::Disabled:
+		pm_disabled_ = QPixmap(img);
+		break;
+	case Button::Normal:
+		pm_normal_ = QPixmap(img);
+		break;
+	case Button::Mode2:
+		pm_mode2_ = QPixmap(img);
+		break;
+	default:
+		break;
+	}
 }

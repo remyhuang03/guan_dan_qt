@@ -58,6 +58,9 @@
     <ClCompile Include="guan_dan.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="card_btn.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="card.h">
@@ -70,6 +73,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="status.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="card_btn.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

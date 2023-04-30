@@ -26,7 +26,7 @@ private:
 	// [i]: 玩家 i 的窗口
 	Player_widget* player_widgets[4];
 	// [i]: 玩家 i 对象指针
-	
+
 };
 
 #endif //GUANDAN_H_

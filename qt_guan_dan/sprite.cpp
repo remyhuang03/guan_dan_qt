@@ -4,6 +4,7 @@
 Sprite::Sprite(int x, int y, QString img, QWidget* parent, SizeMode mode, double size)
 	:QPushButton(parent)
 {
+	show();
 	//扁平化按钮
 	setStyleSheet("QPushButton{border:none;}");
 	setFlat(true);
