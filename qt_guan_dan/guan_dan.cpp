@@ -13,7 +13,7 @@ guan_dan::guan_dan(QWidget* parent)
 	//背景色灰色
 	setPalette(QColor(35, 35, 35));
 	Sprite* btn_background = new Sprite(0, 0, "img/bg/home.png", this, Sprite::Width, SCREEN_W);
-	Sprite* btn_start_game = new Button(360, 380, "img/btn/start_game.png", this, Button::Height, 80);
+	Button* btn_start_game = new Button(360, 380, "img/btn/start_game.png", this, Button::Height, 80);
 	connect(btn_start_game, &Button::click_emit, this, &guan_dan::start_game);
 }
 

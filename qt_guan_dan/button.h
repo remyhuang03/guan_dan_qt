@@ -3,7 +3,7 @@
 #include "sprite.h"
 
 //自定义Button类
-//含 hover 和 clicked 动画
+//含 clicked 动画
 class Button :public Sprite
 {
 public:

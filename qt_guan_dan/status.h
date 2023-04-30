@@ -3,7 +3,6 @@
 #include <map>
 #include <vector>
 #include "card.h"
-#include"hand.h"
 
 /*****  状态管理函数 *****/
 
@@ -34,7 +33,6 @@ extern int round_cnt;
 extern int group_rank[2];
 // [i]: Group i 没有打过A的次数
 extern int group_fial_pass_a[2];
-
 
 /***** 当前一轮的状态 *****/
 
