@@ -29,9 +29,6 @@
     <QtMoc Include="guan_dan.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <ClCompile Include="guan_dan.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -58,14 +55,11 @@
     <ClCompile Include="player_widget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="guan_dan.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="sprite.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="button.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="card.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -78,9 +72,6 @@
     <ClInclude Include="status.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="player_widget.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="dev_ui_sketch.pptx">
@@ -91,5 +82,16 @@
     <QtRcc Include="Resource.qrc">
       <Filter>Resource Files</Filter>
     </QtRcc>
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="sprite.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="button.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="player_widget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
 </Project>

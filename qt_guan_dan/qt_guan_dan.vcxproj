@@ -94,17 +94,22 @@
     <ClCompile Include="player_widget.cpp" />
     <QtUic Include="guan_dan.ui" />
     <QtMoc Include="guan_dan.h" />
-    <ClCompile Include="guan_dan.cpp" />
+    <ClCompile Include="guan_dan.cpp">
+      <DynamicSource Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">input</DynamicSource>
+      <QtMocFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).moc</QtMocFileName>
+      <DynamicSource Condition="'$(Configuration)|$(Platform)'=='Release|x64'">input</DynamicSource>
+      <QtMocFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).moc</QtMocFileName>
+    </ClCompile>
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="card.h" />
     <ClInclude Include="hand.h" />
     <ClInclude Include="record.h" />
-    <ClInclude Include="sprite.h" />
-    <ClInclude Include="button.h" />
+    <QtMoc Include="sprite.h" />
+    <QtMoc Include="button.h" />
     <ClInclude Include="status.h" />
-    <ClInclude Include="player_widget.h" />
+    <QtMoc Include="player_widget.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="dev_ui_sketch.pptx" />

@@ -21,22 +21,19 @@ void guan_dan::start_game()
 {
 	//隐藏自身窗口
 	hide();
-
+	//获取打乱好的所有卡牌
+	auto shuffled_cards = shuffled_all_cards();
 	for (int i = 0; i < 4; i++)
 	{
 		//创建玩家窗口
 		player_widgets[i] = new Player_widget(i);
 		//创建玩家
 		players[i] = new Hand(i);
-		//获取打乱好的所有卡牌并分发
-		auto shuffled_cards = shuffled_all_cards();
-		for (int i = 0; i < 4; i++)
-		{
-			//设置每位玩家的牌（每人27张）
-			auto begin = shuffled_cards.begin() + i * 27;
-			auto end = shuffled_cards.end() + (i + 1) * 27;
-			players[i]->set_cards(std::vector(begin, end));
-		}
+		//分发卡牌
+		auto begin = shuffled_cards.begin() + i * 27;
+		auto end = shuffled_cards.begin() + (i + 1) * 27;
+		players[i]->set_cards(std::vector(begin, end));
+		player_widgets[i]->show();
 	}
 }
 

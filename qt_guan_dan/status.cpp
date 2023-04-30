@@ -111,7 +111,7 @@ std::vector<Card> shuffled_all_cards()
 {
 	std::vector<Card> ret;
 	//普通牌
-	for (int i = 2; i <= 13; i++)
+	for (int i = 1; i <= 13; i++)
 		for (int j = 0; j <= 3; j++)
 		{
 			ret.push_back(Card(i, j));

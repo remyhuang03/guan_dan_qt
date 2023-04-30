@@ -3,6 +3,10 @@
 #include <map>
 #include <vector>
 #include "card.h"
+#define SCREEN_W 960
+#define SCREEN_H 540
+
+class Hand;
 
 /*****  状态管理函数 *****/
 
@@ -33,6 +37,8 @@ extern int round_cnt;
 extern int group_rank[2];
 // [i]: Group i 没有打过A的次数
 extern int group_fial_pass_a[2];
+// [i]: 玩家 i 对象指针
+extern Hand* players[4];
 
 /***** 当前一轮的状态 *****/
 

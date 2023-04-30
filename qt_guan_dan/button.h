@@ -6,6 +6,7 @@
 //含 clicked 动画
 class Button :public Sprite
 {
+	Q_OBJECT
 public:
 	//@para
 	//img:图片路径

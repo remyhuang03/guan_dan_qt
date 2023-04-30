@@ -1,7 +1,6 @@
 ﻿#ifndef SPRITE_H_
 #define SPRITE_H_
 #include <qpushbutton.h>
-#include <qimage.h>
 #include <windows.h>
 #include<QPropertyAnimation.h>
 
@@ -9,6 +8,7 @@
 //继承QPushButton是因为QLabel图像缩放会有高DPI失真问题
 class Sprite :public QPushButton
 {
+	Q_OBJECT
 public:
 	enum SizeMode { Size, Width, Height };
 	//@para
