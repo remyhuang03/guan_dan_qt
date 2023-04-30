@@ -13,12 +13,12 @@ public:
 	//size:图片大小，100为原始大小
 	Button(int x, int y, QString img, QWidget* parent, SizeMode mode, double size);
 
-signals:
-	void click_emit();
-
 protected slots:
 	//@brief 点击动画
 	void click_animation();
+
+signals:
+	void click_emit();
 
 };
 

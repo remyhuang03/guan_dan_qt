@@ -1,9 +1,12 @@
 #include"status.h"
+#include"hand.h"
+#include<algorithm>
+#include<random>
 
 bool is_game_over = false;
 int round_cnt = 0;
-int group_rank[2] = {2,2};
-int group_fial_pass_a[2] = {0,0};
+int group_rank[2] = { 2,2 };
+int group_fial_pass_a[2] = { 0,0 };
 int round_rank_card = 2;
 int turn = 0;
 int circle_type = 0;
@@ -14,6 +17,8 @@ int contribute_count;
 int round_rank[4];
 int rank_list[4];
 std::map<int, int> cards_round_rank;
+
+Hand* players[4];
 
 void update_round_rank()
 {
@@ -100,4 +105,26 @@ void update_cards_round_rank()
 	cards_round_rank[14] = rank_t++;
 	//大王
 	cards_round_rank[15] = rank_t++;
+}
+
+std::vector<Card> shuffled_all_cards()
+{
+	std::vector<Card> ret;
+	//普通牌
+	for (int i = 2; i <= 13; i++)
+		for (int j = 0; j <= 3; j++)
+		{
+			ret.push_back(Card(i, j));
+			ret.push_back(Card(i, j));
+		}
+	//大小王
+	ret.push_back(Card(14, -1));
+	ret.push_back(Card(14, -1));
+	ret.push_back(Card(15, -1));
+	ret.push_back(Card(15, -1));
+	std::random_device rd;
+	std::mt19937 g(rd());
+	std::shuffle(ret.begin(), ret.end(), g);
+
+	return ret;
 }

@@ -1,4 +1,4 @@
-#include "button.h"
+ï»¿#include "button.h"
 Button::Button(int x, int y, QString img, QWidget* parent, SizeMode mode, double size)
 	:Sprite(x, y, img, parent, mode, size)
 {
@@ -6,11 +6,9 @@ Button::Button(int x, int y, QString img, QWidget* parent, SizeMode mode, double
 
 }
 
-void Button::click_emit() {}
-
 void Button::click_animation()
 {
-	//²¥·Åµã»÷¶¯»­
+	//æ’­æ”¾ç‚¹å‡»åŠ¨ç”»
 	QPropertyAnimation* animation = new QPropertyAnimation(this, "geometry");
 	int posx = pos().x();
 	int posy = pos().y();
@@ -22,6 +20,6 @@ void Button::click_animation()
 	animation->setStartValue(QRect(posx + 2, posy + 2, w_, h_));
 	animation->setEndValue(QRect(posx, posy, w_, h_));
 	animation->start();
-	//´¦Àíµã»÷ÍêÒÔºóµÄÊÂ¼ş
+	//å¤„ç†ç‚¹å‡»å®Œä»¥åçš„äº‹ä»¶
 	emit click_emit();
 }

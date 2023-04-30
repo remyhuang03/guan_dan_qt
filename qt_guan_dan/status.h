@@ -1,6 +1,9 @@
 #ifndef STATUS_H_
 #define STATUS_H_
 #include <map>
+#include <vector>
+#include "card.h"
+#include"hand.h"
 
 /*****  状态管理函数 *****/
 
@@ -11,6 +14,9 @@ void update_round_rank();
 //@brief 更新 cards_round_rank
 void update_cards_round_rank();
 
+//@brief 开局发牌
+//@return vector<Card> 打乱顺序的两幅扑克牌
+std::vector<Card> shuffled_all_cards();
 
 
 /***** 全局状态 *****/
@@ -28,6 +34,7 @@ extern int round_cnt;
 extern int group_rank[2];
 // [i]: Group i 没有打过A的次数
 extern int group_fial_pass_a[2];
+
 
 /***** 当前一轮的状态 *****/
 
