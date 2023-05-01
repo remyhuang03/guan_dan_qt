@@ -78,9 +78,6 @@
     <ClInclude Include="status.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="card_btn.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="dev_ui_sketch.pptx">
@@ -103,6 +100,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="record_widget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="card_btn.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

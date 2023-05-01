@@ -29,7 +29,7 @@ void guan_dan::start_game()
 		//创建玩家
 		players[i] = new Hand(i);
 		//创建玩家窗口
-		player_widgets[i] = new Player_widget(players[i]);
+		player_widgets[i] = new PlayerWidget(players[i]);
 		//窗口UI绑定到Hand对象
 		players[i]->set_widget(player_widgets[i]);
 		//Hand绑定到窗口UI
@@ -39,14 +39,14 @@ void guan_dan::start_game()
 		auto begin = shuffled_cards.begin() + i * 27;
 		auto end = shuffled_cards.begin() + (i + 1) * 27;
 		players[i]->set_cards(std::vector(begin, end));
-		connect(player_widgets[i], &Player_widget::player_close, this, &guan_dan::show);
+		connect(player_widgets[i], &PlayerWidget::player_close, this, &guan_dan::show);
 	}
 
 	//子窗口其一关闭，所有窗口关闭的信号槽连接
 	for (int i = 0; i < 4; i++)
 		for (int j = 0; j < 4; j++)
 			if (i != j)
-				connect(player_widgets[i], &Player_widget::player_close, player_widgets[j], &Player_widget::close);
+				connect(player_widgets[i], &PlayerWidget::player_close, player_widgets[j], &PlayerWidget::close);
 
 }
 

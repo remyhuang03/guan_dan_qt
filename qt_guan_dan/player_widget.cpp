@@ -8,7 +8,7 @@
 #include "hand.h"
 #include <algorithm>
 
-Player_widget::Player_widget(Hand* hand) :QWidget(), hand_(hand)
+PlayerWidget::PlayerWidget(Hand* hand) :QWidget(), hand_(hand)
 {
 	int id = hand_->id_;
 	show();
@@ -20,6 +20,7 @@ Player_widget::Player_widget(Hand* hand) :QWidget(), hand_(hand)
 	//设置窗口大小
 	setGeometry((id / 2) * 200, 30 + (id % 2) * 200, SCREEN_W, SCREEN_H);
 	setFixedSize(SCREEN_W, SCREEN_H);
+
 	/*****基本UI布局设置****/
 	//显示级牌底边
 	QString rsc_t = QString("img/label/rank_bg_group") + QString::number(id % 2) + QString(".png");
@@ -65,12 +66,12 @@ Player_widget::Player_widget(Hand* hand) :QWidget(), hand_(hand)
 	connect(btn_t, &Button::click_emit, btn_t, &Button::show_record);
 }
 
-void Player_widget::closeEvent(QCloseEvent* event)
+void PlayerWidget::closeEvent(QCloseEvent* event)
 {
 	emit player_close();
 }
 
-void Player_widget::sort_card_heap()
+void PlayerWidget::sort_card_heap()
 {
 	//无卡牌的情况
 	if (card_heaps_.empty()) { return; }
@@ -105,7 +106,7 @@ void Player_widget::sort_card_heap()
 	//更新牌堆显示
 	update_card_heap_show();
 }
-void Player_widget::update_card_heap_show()
+void PlayerWidget::update_card_heap_show()
 {
 	emit delete_all_card_bottons();
 
@@ -123,14 +124,18 @@ void Player_widget::update_card_heap_show()
 		int y = 360 - (i.second.size() - 1) * offset_y;
 		for (auto& j : i.second)
 		{
-			new CardBotton(x, y, j, this);
+			//创建卡牌按钮
+			auto card_btn = new CardButton(x, y, j, this);
+			//连接卡牌与玩家窗口事件
+			connect(card_btn, &CardButton::card_selected, this, &PlayerWidget::on_card_selected);
+			connect(card_btn, &CardButton::card_unselected, this, &PlayerWidget::on_card_unselected);
 			y += offset_y;
 		}
 		x += offset_x;
 	}
 }
 
-void Player_widget::update_all()
+void PlayerWidget::update_all()
 {
 	//清空原有heap
 	card_heaps_.clear();
@@ -141,5 +146,30 @@ void Player_widget::update_all()
 		card_heaps_.back().second.push_back(i);
 	}
 	sort_card_heap();
+}
+
+
+void PlayerWidget::on_card_selected(CardButton* card_btn)
+{
+	//加入已选牌的牌堆
+	selected_cards_.push_back(card_btn);
+	//将已选card_btns转换为cards
+	std::vector<Card>cards;
+	for (auto i : selected_cards_)
+	{
+		cards.push_back(i->get_card());
+	}
+	//检查所选卡牌情况
+	auto selected_info = hand_->check(cards);
+	////非合法牌型
+	//if (selected_info.first == -1)
+	//{
+
+	//}
+}
+void PlayerWidget::on_card_unselected(CardButton* card_btn)
+{
+	//从已选牌堆中删除
+	remove(selected_cards_.begin(),selected_cards_.end(),card_btn);
 }
 

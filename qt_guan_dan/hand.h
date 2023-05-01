@@ -5,14 +5,14 @@
 #include<map>
 #include"card.h"
 #include"status.h"
-#include"player_widget.h"
+//#include"player_widget.h"
 
-
+class PlayerWidget;
 // 单个用户类
 class Hand
 {
 public:
-	friend class Player_widget;
+	friend class PlayerWidget;
 
 	Hand(int id);
 
@@ -57,7 +57,7 @@ public:
 	//@ret int: 相对大小
 	int get_real_rank(int point)const { return cards_round_rank.at(point); }
 
-	void set_widget(Player_widget* widget) { widget_ = widget; }
+	void set_widget(PlayerWidget* widget) { widget_ = widget; }
 
 private:
 	//玩家编号：0-3(02为一方，13为另一方)
@@ -67,7 +67,7 @@ private:
 	//A级下没有打过的次数
 	int fail_at_a_cnt_;
 	//该用户的窗口实现
-	Player_widget* widget_;
+	PlayerWidget* widget_;
 };
 
 #endif //HAND_H_

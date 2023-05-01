@@ -1,12 +1,15 @@
 ﻿#ifndef  CARD_BTN_H
 #define CARD_BTN_H
-#include "button.h"
 #include "card.h"
+#include "button.h"
+#include "player_widget.h"
+
 // UI界面中棋牌按钮
-class CardBotton :public Button
+class CardButton :public Button
 {
+	Q_OBJECT
 public:
-	CardBotton(int x, int y, const Card& card, QWidget* parent);
+	CardButton(int x, int y, const Card& card, PlayerWidget* parent);
 
 	int get_point() const { return card_.get_point(); }
 	int get_suit() const { return card_.get_suit(); }
@@ -20,5 +23,9 @@ public slots:
 
 private:
 	Card card_;
+
+signals:
+	void card_selected(CardButton* card_btn);
+	void card_unselected(CardButton* card_btn);
 };
 #endif // ! CARD_BTN_H

@@ -1,14 +1,18 @@
 #include "hand.h"
 #include "status.h"
-#include<algorithm>
-#include<vector>
-#include<string>
+#include "player_widget.h"
+#include <algorithm>
+#include <vector>
+#include <string>
 
 Hand::Hand(int id) :id_(id), fail_at_a_cnt_(0)
 {}
 
 std::pair<int, int> Hand::check(const std::vector<Card>& cards)const
 {
+	//空卡牌特判
+	if (cards.empty())return { -1,-1 };
+
 	//统计各类型牌点的数量
 	std::map<int, int> point_cnt;
 	for (auto& card : cards)

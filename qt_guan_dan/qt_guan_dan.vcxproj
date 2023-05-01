@@ -106,7 +106,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="card.h" />
-    <ClInclude Include="card_btn.h" />
+    <QtMoc Include="card_btn.h" />
     <ClInclude Include="hand.h" />
     <ClInclude Include="record.h" />
     <QtMoc Include="sprite.h" />

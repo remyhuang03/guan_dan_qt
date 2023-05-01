@@ -46,8 +46,8 @@ protected:
 	//处于第二模式时的图标
 	QPixmap pm_mode2_;
 
-	//按钮模式（-1:disabled 0:normal 1:mode2）
-	int mode_;
+	//按钮模式（-1:disabled   0:normal   1:mode2）
+	Mode mode_;
 
 	//禁用按钮动画
 	bool animation_disabled_;

@@ -1,10 +1,10 @@
 ﻿#include "button.h"
 #include "record_widget.h"
 Button::Button(int x, int y, QString img, QWidget* parent, SizeMode mode, double size)
-	:Sprite(x, y, img, parent, mode, size), mode_(0), animation_disabled_(false)
+	:Sprite(x, y, img, parent, mode, size), mode_(Normal), animation_disabled_(false)
 {
 	connect(this, &Button::clicked, this, &Button::click_animation);
-	pm_normal_ = pm_disabled_ = pm_mode2_ = img;
+	pm_normal_ = pm_disabled_ = pm_mode2_ = QPixmap(img);
 }
 
 void Button::click_animation()
@@ -40,13 +40,14 @@ void Button::enable()
 }
 void Button::reverse_mode()
 {
-	mode_ = !mode_;
-	if (mode_ == 0)
+	if (mode_ == Mode2)
 	{
+		mode_ = Normal;
 		setIcon(pm_normal_);
 	}
 	else
 	{
+		mode_ = Mode2;
 		setIcon(pm_mode2_);
 	}
 }
