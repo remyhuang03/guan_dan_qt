@@ -89,6 +89,7 @@
     <ClCompile Include="card_btn.cpp" />
     <ClCompile Include="hand.cpp" />
     <ClCompile Include="record.cpp" />
+    <ClCompile Include="record_widget.cpp" />
     <ClCompile Include="sprite.cpp" />
     <ClCompile Include="button.cpp" />
     <ClCompile Include="status.cpp" />
@@ -110,6 +111,7 @@
     <ClInclude Include="record.h" />
     <QtMoc Include="sprite.h" />
     <QtMoc Include="button.h" />
+    <QtMoc Include="record_widget.h" />
     <ClInclude Include="status.h" />
     <QtMoc Include="player_widget.h" />
   </ItemGroup>

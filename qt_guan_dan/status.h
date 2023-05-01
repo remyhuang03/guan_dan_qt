@@ -3,6 +3,7 @@
 #include <map>
 #include <vector>
 #include "card.h"
+#include "record.h"
 #define SCREEN_W 960
 #define SCREEN_H 540
 
@@ -26,7 +27,8 @@ std::vector<Card> shuffled_all_cards();
 
 // 游戏结束标志
 extern bool is_game_over;
-
+//总牌局
+extern Record game_record;
 // [i]: 上一轮游戏中玩家 i 的排名 (0-3,0为上游)
 extern int round_rank[4];
 // [i]：上一轮排名第 i 的玩家 (0-3)

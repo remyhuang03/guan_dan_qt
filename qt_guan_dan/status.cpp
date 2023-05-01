@@ -1,7 +1,9 @@
-#include"status.h"
-#include"hand.h"
-#include<algorithm>
-#include<random>
+#include "status.h"
+#include "hand.h"
+#include "record.h"
+#include "card.h"
+#include <algorithm>
+#include <random>
 
 bool is_game_over = false;
 int round_cnt = 0;
@@ -19,6 +21,8 @@ int rank_list[4];
 std::map<int, int> cards_round_rank;
 
 Hand* players[4];
+
+Record game_record;
 
 void update_round_rank()
 {

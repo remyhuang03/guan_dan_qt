@@ -5,21 +5,23 @@
 #include "qpushbutton.h"
 #include "qlabel.h"
 #include "button.h"
+#include "hand.h"
 
-Player_widget::Player_widget(int id, QWidget* parent) :QWidget(parent), id_(id)
+Player_widget::Player_widget(Hand* hand) :QWidget(),hand_(hand)
 {
+	int id = hand_->id_;
 	show();
 	/*****窗口基本设置****/
 	//设置标题
-	setWindowTitle(QString("玩家") + QString::number(id_ + 1));
+	setWindowTitle(QString("玩家") + QString::number(id + 1));
 	//背景色深灰色
 	setPalette(QColor(35, 35, 35));
 	//设置窗口大小
-	setGeometry((id_ / 2) * 200, 30 + (id_ % 2) * 200, SCREEN_W, SCREEN_H);
+	setGeometry((id / 2) * 200, 30 + (id % 2) * 200, SCREEN_W, SCREEN_H);
 	setFixedSize(SCREEN_W, SCREEN_H);
 	/*****基本UI布局设置****/
 	//显示级牌底边
-	QString rsc_t = QString("img/label/rank_bg_group") + QString::number(id_ % 2) + QString(".png");
+	QString rsc_t = QString("img/label/rank_bg_group") + QString::number(id % 2) + QString(".png");
 	new Sprite(15, 15, rsc_t, this, Sprite::Height, 65);
 
 	auto set_label = [](QLabel* lb, int y) {
@@ -33,7 +35,7 @@ Player_widget::Player_widget(int id, QWidget* parent) :QWidget(parent), id_(id)
 	set_label(lb_rank_self, 15);
 	set_label(lb_rank_rival, 47);
 	//显示玩家布局
-	int id_t = id_;
+	int id_t = id;
 	for (int i = 0; i < 4; i++)
 	{
 		int id_;
@@ -42,7 +44,10 @@ Player_widget::Player_widget(int id, QWidget* parent) :QWidget(parent), id_(id)
 		if (++id_t == 4) { id_t = 0; }
 	}
 	//显示按钮控件
-	new Button(850,10,"img/btn/record.png",this,Button::Height,40);
+	//显示记录按钮
+	auto btn_t = new Button(850,10,"img/btn/record.png",this,Button::Height,40);
+	game_record.push_record();
+	connect(btn_t, &Button::click_emit, btn_t, &Button::show_record);
 
 }
 

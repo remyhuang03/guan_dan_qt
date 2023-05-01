@@ -19,9 +19,10 @@ public:
 	enum Mode { Disabled = -1, Normal, Mode2 };
 	void set_pm(QString img, Mode mode);
 
-protected slots:
+public slots:
 	//@brief 点击动画
 	void click_animation();
+	void show_record();
 
 private:
 	//处于可点击状态时的默认图标

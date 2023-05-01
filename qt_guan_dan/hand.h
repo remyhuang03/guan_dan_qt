@@ -5,14 +5,17 @@
 #include<map>
 #include"card.h"
 #include"status.h"
+#include"player_widget.h"
 
 
 // 单个用户类
 class Hand
 {
 public:
-	Hand(int id);
+	friend class Player_widget;
 
+	Hand(int id);
+	
 	void set_cards(const std::vector<Card>& cards) { cards_ = cards; }
 
 	//@brief 检查牌组合合法性，返回牌型和相对大小
@@ -54,6 +57,8 @@ public:
 	//@ret int: 相对大小
 	int get_real_rank(int point)const { return cards_round_rank.at(point); }
 
+	void set_widget(Player_widget* widget) { widget_ = widget; }
+
 private:
 	//玩家编号：0-3(02为一方，13为另一方)
 	int id_;
@@ -61,7 +66,8 @@ private:
 	std::vector<Card> cards_;
 	//A级下没有打过的次数
 	int fail_at_a_cnt_;
-
+	//该用户的窗口实现
+	Player_widget* widget_;
 };
 
 #endif //HAND_H_

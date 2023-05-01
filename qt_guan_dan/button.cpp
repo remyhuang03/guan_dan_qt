@@ -1,4 +1,5 @@
 ﻿#include "button.h"
+#include "record_widget.h"
 Button::Button(int x, int y, QString img, QWidget* parent, SizeMode mode, double size)
 	:Sprite(x, y, img, parent, mode, size), mode_(0)
 {
@@ -65,4 +66,9 @@ void Button::set_pm(QString img, Mode mode) {
 	default:
 		break;
 	}
+}
+
+void Button::show_record()
+{
+	new Record_widget();
 }

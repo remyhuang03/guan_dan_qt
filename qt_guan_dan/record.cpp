@@ -2,7 +2,7 @@
 #include "status.h"
 
 // 进行记录
-void record::push_record()
+void Record::push_record()
 {
     std::array<int,4> order;
     // 打包成array
@@ -10,5 +10,5 @@ void record::push_record()
     {
         order[i] = rank_list[i];
     }
-    Record_.push_back(order);
+    record_.push_back(order);
 }
