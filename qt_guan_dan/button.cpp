@@ -1,7 +1,7 @@
 ﻿#include "button.h"
 #include "record_widget.h"
 Button::Button(int x, int y, QString img, QWidget* parent, SizeMode mode, double size)
-	:Sprite(x, y, img, parent, mode, size), mode_(0)
+	:Sprite(x, y, img, parent, mode, size), mode_(0), animation_disabled_(false)
 {
 	connect(this, &Button::clicked, this, &Button::click_animation);
 	pm_normal_ = pm_disabled_ = pm_mode2_ = img;
@@ -10,7 +10,7 @@ Button::Button(int x, int y, QString img, QWidget* parent, SizeMode mode, double
 void Button::click_animation()
 {
 	//前提：当前按钮可用
-	if (mode_ == -1)
+	if (mode_ == -1 || animation_disabled_)
 	{
 		return;
 	}

@@ -29,7 +29,7 @@ std::pair<int, int> Hand::check(const std::vector<Card>& cards)const
 	for (auto& point : point_cnt)
 	{
 		points.push_back(point.first);
-		card_trait += char(point.second+'0');
+		card_trait += char(point.second + '0');
 	}
 	sort(points.begin(), points.end());
 	//存在大小王，直接否定连续性
@@ -263,7 +263,7 @@ std::vector<std::vector<Card>> Hand::play_cards(const std::vector<Card>& cards)
 	return ret;
 }
 
-auto Hand::get_cards() const
+std::vector<Card> Hand::get_cards() const
 {
 	return cards_;
 }
@@ -306,7 +306,7 @@ bool Hand::could_contribute(const Card& chosen_card)
 		pop_card(chosen_card);
 		return true;
 	}
-	return false; 
+	return false;
 }
 
 // 贡牌
@@ -399,3 +399,12 @@ void return_card(std::vector <Hand>& player_list, std::vector <Card>& chosen_car
 		player_list[rank_list[i]].pop_card(chosen_cards[i]);
 	}
 }
+
+void Hand::set_cards(const std::vector<Card>& cards)
+{
+	//设置当前手牌
+	cards_ = cards;
+	//更新界面上的手牌
+	widget_->update_all();
+}
+

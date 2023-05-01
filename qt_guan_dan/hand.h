@@ -15,8 +15,8 @@ public:
 	friend class Player_widget;
 
 	Hand(int id);
-	
-	void set_cards(const std::vector<Card>& cards) { cards_ = cards; }
+
+	void set_cards(const std::vector<Card>& cards);
 
 	//@brief 检查牌组合合法性，返回牌型和相对大小
 	//@para cards: 待检查的牌组合
@@ -39,7 +39,7 @@ public:
 	bool could_contribute(const Card& chosen_card);
 
 	//@brief  返回玩家手牌
-	auto get_cards() const;
+	std::vector<Card> get_cards() const;
 
 	//@brief 为该用户增加一张牌
 	void push_card(const Card& card) { cards_.push_back(card); }

@@ -6,8 +6,9 @@
 #include "qlabel.h"
 #include "button.h"
 #include "hand.h"
+#include <algorithm>
 
-Player_widget::Player_widget(Hand* hand) :QWidget(),hand_(hand)
+Player_widget::Player_widget(Hand* hand) :QWidget(), hand_(hand)
 {
 	int id = hand_->id_;
 	show();
@@ -30,10 +31,10 @@ Player_widget::Player_widget(Hand* hand) :QWidget(),hand_(hand)
 		lb->setGeometry(70, y, 30, 25);
 		lb->show();
 	};
-	lb_rank_self = new QLabel("2", this);
-	lb_rank_rival = new QLabel("2", this);
-	set_label(lb_rank_self, 15);
-	set_label(lb_rank_rival, 47);
+	lb_rank_self_ = new QLabel("2", this);
+	lb_rank_rival_ = new QLabel("2", this);
+	set_label(lb_rank_self_, 15);
+	set_label(lb_rank_rival_, 47);
 	//显示玩家布局
 	int id_t = id;
 	for (int i = 0; i < 4; i++)
@@ -44,14 +45,89 @@ Player_widget::Player_widget(Hand* hand) :QWidget(),hand_(hand)
 		if (++id_t == 4) { id_t = 0; }
 	}
 	//显示按钮控件
+	// 
+	//自动整理牌堆，并显示
+	sort_card_heap();
 	//显示记录按钮
-	auto btn_t = new Button(850,10,"img/btn/record.png",this,Button::Height,40);
-	game_record.push_record();
+	auto btn_t = new Button(850, 10, "img/btn/record.png", this, Button::Height, 40);
 	connect(btn_t, &Button::click_emit, btn_t, &Button::show_record);
-
 }
 
 void Player_widget::closeEvent(QCloseEvent* event)
 {
 	emit player_close();
 }
+
+void Player_widget::sort_card_heap()
+{
+	//无卡牌的情况
+	if (card_heaps_.empty()) { return; }
+
+	//获取全部卡牌并重排
+	std::vector<Card>cards;
+	for (auto i : card_heaps_)
+	{
+		cards.insert(cards.end(), i.second.begin(), i.second.end());
+	}
+	sort(cards.begin(), cards.end(), [](Card& c1, Card& c2) {return c2 > c1; });
+
+	//由大到小分点数将卡牌加入到牌堆中
+	card_heaps_.clear();
+	card_heaps_.push_back(std::make_pair<bool, std::vector<Card>>(false, {}));
+	int last_point = (cards.front()).get_point();
+	for (auto i : cards)
+	{
+		//获取卡牌点数
+		int point = i.get_point();
+		//同种点数牌，加在统一堆
+		if (point == last_point) {
+			card_heaps_.back().second.push_back(i);
+		}
+		//不同点数牌，新建一堆
+		else {
+			card_heaps_.push_back(std::make_pair<bool, std::vector<Card>>(false, {}));
+			card_heaps_.back().second.push_back(i);
+			last_point = point;
+		}
+	}
+	//更新牌堆显示
+	update_card_heap_show();
+}
+void Player_widget::update_card_heap_show()
+{
+	emit delete_all_card_bottons();
+
+	//相邻两张牌的偏移量
+	//中心位置x:480,极限位置x:115
+	int x_count = card_heaps_.size();
+	int offset_x = min(100, ((480 - 115) * 2 - 100) / (x_count - 1));
+	int offset_y = 35;
+
+	//起始x位置，由左到右渲染
+	int x = 480 - (offset_x * (x_count - 1) + 100) / 2.0;
+	for (auto i : card_heaps_)
+	{
+		//初始y坐标，由上到下渲染
+		int y = 360 - (i.second.size() - 1) * offset_y;
+		for (auto& j : i.second)
+		{
+			new CardBotton(x, y, j, this);
+			y += offset_y;
+		}
+		x += offset_x;
+	}
+}
+
+void Player_widget::update_all()
+{
+	//清空原有heap
+	card_heaps_.clear();
+	card_heaps_.push_back(std::make_pair<int, std::vector<Card>>(false, {}));
+	//根据Hand中的数据重建UI
+	for (auto i : hand_->get_cards())
+	{
+		card_heaps_.back().second.push_back(i);
+	}
+	sort_card_heap();
+}
+
