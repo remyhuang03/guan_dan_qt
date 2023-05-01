@@ -45,7 +45,19 @@ Player_widget::Player_widget(Hand* hand) :QWidget(), hand_(hand)
 		if (++id_t == 4) { id_t = 0; }
 	}
 	//显示按钮控件
-	// 
+	// 同花顺标签
+	new Sprite(150, 512, "img/label/straight_flush.png", this, Sprite::Height, 20);
+	// 同花顺按钮
+	for (int i = 0; i < 4; i++)
+	{
+		auto path = "img/btn/straight_flush" + QString::number(i) + "0.png";
+		straight_flush_btns_[i] = new Button(220 + i * 40, 505, path, this, Button::Height, 40);
+		path = "img/btn/straight_flush" + QString::number(i) + "1.png";
+		straight_flush_btns_[i]->set_pm(path, Button::Disabled);
+	}
+	//理牌按钮
+	auto arrange_btn = new Button(700, 506, "img/btn/arrange0.png", this, Button::Height, 40);
+	arrange_btn->set_pm("img/btn/arrange1.png", Button::Mode2);
 	//自动整理牌堆，并显示
 	sort_card_heap();
 	//显示记录按钮

@@ -1,8 +1,8 @@
-#ifndef  CARD_BTN_H
+ï»¿#ifndef  CARD_BTN_H
 #define CARD_BTN_H
 #include "button.h"
 #include "card.h"
-// UI½çÃæÖĞÆåÅÆ°´Å¥
+// UIç•Œé¢ä¸­æ£‹ç‰ŒæŒ‰é’®
 class CardBotton :public Button
 {
 public:
@@ -12,16 +12,13 @@ public:
 	int get_suit() const { return card_.get_suit(); }
 	Card get_card() const { return card_; }
 
-	//@brief ÉèÖÃÊÇ·ñ±»Ñ¡ÖĞ
-	void set_chosen(bool chosen) { chosen_ = chosen; }
-
 public slots:
-	//É¾³ı×Ô¼º
+	//åˆ é™¤è‡ªå·±
 	void delete_self();
+	//ç‚¹å‡»å¤„ç†
+	void on_clicked();
 
 private:
-	//ÊÇ·ñ±»Ñ¡ÖĞ
-	bool chosen_;
 	Card card_;
 };
 #endif // ! CARD_BTN_H

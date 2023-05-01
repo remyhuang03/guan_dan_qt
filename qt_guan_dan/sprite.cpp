@@ -35,5 +35,10 @@ Sprite::Sprite(int x, int y, QString img, QWidget* parent, SizeMode mode, double
 	setGeometry(x, y, w_, h_);
 };
 
+//Sprite::set_pm(QString img)
+//{
+//	setIcon(QPixmap(img));
+//}
+
 
 

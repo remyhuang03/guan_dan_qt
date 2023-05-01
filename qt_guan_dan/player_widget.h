@@ -6,6 +6,7 @@
 #include "qlabel.h"
 #include"hand.h"
 #include"card_btn.h"
+#include"button.h"
 
 class Player_widget :public QWidget
 {
@@ -16,7 +17,7 @@ public:
 	void sort_card_heap();
 	//@brief 根据heap重新显示牌堆
 	void update_card_heap_show();
-	
+
 	void set_hand(Hand* hand) { hand_ = hand; }
 
 	//@brief 根据 Hand 刷新所有页面卡牌
@@ -36,6 +37,8 @@ private:
 	Hand* hand_;
 	//该玩家排堆： vector<pair<是否为整理好的牌，该堆所有的牌>>
 	std::vector<std::pair<bool, std::vector<Card>>> card_heaps_;
+	//四个同花顺按钮
+	Button* straight_flush_btns_[4];
 signals:
 	void player_close();
 	void delete_all_card_bottons();

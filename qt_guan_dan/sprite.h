@@ -21,9 +21,12 @@ public:
 	int get_h() { return h_; }
 
 protected:
-	//实际长和宽
+	//实际宽
 	int w_;
+	//实际高
 	int h_;
+	//设置图片
+	//void set_pm(QString img);
 
 };
 #endif // BUTTON_H_

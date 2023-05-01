@@ -38,7 +38,7 @@ public slots:
 	//@brief 显示牌局记录
 	void show_record();
 
-private:
+protected:
 	//处于可点击状态时的默认图标
 	QPixmap pm_normal_;
 	//处于不可点击状态时的图标
