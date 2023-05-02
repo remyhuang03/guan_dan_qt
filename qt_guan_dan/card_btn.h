@@ -25,6 +25,8 @@ public slots:
 	void on_clicked();
 	//处理强制取消选择
 	void on_compulsory_unselected();
+	//被强制选择
+	void on_compulsory_selected(CardButton*);
 
 signals:
 	void card_selected(CardButton* card_btn);

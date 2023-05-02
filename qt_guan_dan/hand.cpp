@@ -416,7 +416,7 @@ std::vector<std::vector<std::vector<Card>>> Hand::all_straight_flush_combination
 {
 	std::vector<std::vector<std::vector<Card>>>ret(4);
 	//遍历所有花色
-	for (int i = 0; i < 4; i++)
+	for(int i = 0; i < 4; i++)
 	{
 		//判断cards_中是否有该花色的同花顺
 		std::vector<Card> straight_flush;
@@ -431,9 +431,11 @@ std::vector<std::vector<std::vector<Card>>> Hand::all_straight_flush_combination
 			}
 			straight_flush.push_back(card);
 			//以当前牌结尾，可以构成同花顺
-			if (straight_flush.size() >= 5)
+			//to-do: 感觉这边的底层逻辑有问题
+			if (straight_flush.size() >= 6)
 			{
 				ret[i].push_back(std::vector<Card>(straight_flush.end() - 5, straight_flush.end()));
+				qDebug() << ret[i].back()[0].get_point();
 			}
 		}
 	}

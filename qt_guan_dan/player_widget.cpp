@@ -7,7 +7,8 @@
 #include "button.h"
 #include "hand.h"
 #include <algorithm>
-#include "sf_btn.h"
+#include"sf_btn.h"
+#include "status.h"
 PlayerWidget::PlayerWidget(Hand* hand) :QWidget(), hand_(hand)
 {
 	int id = hand_->id_;
@@ -51,10 +52,19 @@ PlayerWidget::PlayerWidget(Hand* hand) :QWidget(), hand_(hand)
 	// 同花顺按钮
 	for (int i = 0; i < 4; i++)
 	{
-		/*auto path = "img/btn/straight_flush" + QString::number(i) + "0.png";*/
-		straight_flush_btns_[i] = new SfButton(220 + i * 40, 505, i,this );
-		/*path = "img/btn/straight_flush" + QString::number(i) + "1.png";
-		straight_flush_btns_[i]->set_pm(path, Button::Disabled);*/
+		straight_flush_btns_[i] = new SfButton(220 + i * 40, 505, i, this);
+	}
+
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 4; j++)
+		{
+			if (i != j)
+			{
+				//绑定同花顺按钮点击与重置其它按钮
+				connect(straight_flush_btns_[i], &SfButton::click_emit, straight_flush_btns_[j], &SfButton::reset_selected_order);
+			}
+		}
 	}
 	//理牌按钮
 	auto arrange_btn = new Button(700, 506, "img/btn/arrange0.png", this, Button::Height, 40);
@@ -115,17 +125,21 @@ void PlayerWidget::update_card_heap_show()
 	int x_count = card_heaps_.size();
 	int offset_x = min(100, ((480 - 115) * 2 - 100) / (x_count - 1));
 	int offset_y = 35;
+	card_btn_heaps_.clear();
 
 	//起始x位置，由左到右渲染
 	int x = 480 - (offset_x * (x_count - 1) + 100) / 2.0;
 	for (auto i : card_heaps_)
 	{
+		card_btn_heaps_.push_back({});
 		//初始y坐标，由上到下渲染
 		int y = 360 - (i.second.size() - 1) * offset_y;
 		for (auto& j : i.second)
 		{
 			//创建卡牌按钮
 			auto card_btn = new CardButton(x, y, j, this);
+			//将卡牌加到数组中
+			card_btn_heaps_.back().push_back(card_btn);
 			//连接卡牌与玩家窗口事件
 			connect(card_btn, &CardButton::card_selected, this, &PlayerWidget::on_card_selected);
 			connect(card_btn, &CardButton::card_unselected, this, &PlayerWidget::on_card_unselected);
@@ -145,7 +159,10 @@ void PlayerWidget::update_card_heap_show()
 	}
 }
 
-
+void PlayerWidget::emit_unselect_all_cards()
+{
+	emit compulsory_unselect_all_cards();
+}
 
 void PlayerWidget::update_all()
 {
@@ -171,6 +188,12 @@ void PlayerWidget::on_card_selected(CardButton* card_btn)
 	{
 		cards.push_back(i->get_card());
 	}
+	/*to-do*/
+	/*switch ()
+	{
+	default:
+		break;
+	}*/
 	//检查所选卡牌情况
 	auto selected_info = hand_->check(cards);
 	////非合法牌型
@@ -185,3 +208,23 @@ void PlayerWidget::on_card_unselected(CardButton* card_btn)
 	remove(selected_cards_.begin(), selected_cards_.end(), card_btn);
 }
 
+void PlayerWidget::emit_select(std::vector<Card> cards)
+{
+	//枚举每一张需要被选中的牌
+	for (auto i : cards)
+	{
+		for (auto j : card_btn_heaps_)
+		{
+			//每一个UI按钮
+			for (auto k : j)
+			{
+				if (k->get_card() == i)
+				{
+					emit compulsory_select(k);
+					goto Next_card;
+				}
+			}
+		}
+	Next_card:;
+	}
+}

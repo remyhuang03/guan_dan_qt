@@ -7,7 +7,9 @@
 #include "hand.h"
 #include "card_btn.h"
 #include "button.h"
+
 class CardButton;
+class SfButton;
 class PlayerWidget :public QWidget
 {
 	Q_OBJECT
@@ -22,6 +24,12 @@ public:
 
 	//@brief 根据 Hand 刷新所有页面卡牌
 	void update_all();
+
+	//@brief 获取指定花色的全部同花顺组合
+	std::vector<std::vector<Card>> get_sf_combination(int suite) { return straight_flush_comb_[suite]; }
+
+	void emit_unselect_all_cards();
+	void emit_select(std::vector<Card> cards);
 
 public slots:
 	void on_card_selected(CardButton* card_btn);
@@ -43,15 +51,20 @@ private:
 	//该玩家排堆： vector<pair<是否为整理好的牌，该堆所有的牌>>
 	std::vector<std::pair<bool, std::vector<Card>>> card_heaps_;
 	//四个同花顺按钮
-	Button* straight_flush_btns_[4];
+	SfButton* straight_flush_btns_[4];
 	//已选中的所有卡牌按钮
 	std::vector<CardButton*> selected_cards_;
+	//所有卡牌按钮
+	std::vector<std::vector<CardButton*>> card_btn_heaps_;
 	//当前所有可能的同花顺组合
 	std::vector<std::vector<std::vector<Card>>> straight_flush_comb_;
+
 signals:
-	void player_close();
-	void delete_all_card_bottons();
 	//强制取消选择所有卡牌
 	void compulsory_unselect_all_cards();
+	void player_close();
+	void delete_all_card_bottons();
+	void compulsory_select(CardButton* btn);
+
 };
 #endif

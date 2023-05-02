@@ -1,25 +1,32 @@
-#ifndef SF_BUTTON_H_
+ï»¿#ifndef SF_BUTTON_H_
 #define SF_BUTTON_H_
 #include "button.h"
+#include "player_widget.h"
 
 class SfButton :
 	public Button
 {
 public:
 	//@para
-	//img:Í¼Æ¬Â·¾¶
-	//suite:»¨É«±àºÅ
-	//parent:¸¸´°¿Ú
-	SfButton(int x, int y, int suite, QWidget* parent);
+	//img:å›¾ç‰‡è·¯å¾„
+	//suite:èŠ±è‰²ç¼–å·
+	//parent:çˆ¶çª—å£
+SfButton(int x, int y, int suite, PlayerWidget* parent);
 
 public slots:
 	void on_clicked();
+	void reset_selected_order();
+
+signals:
+	
 
 private:
-	//¸Ã»¨É«Í¬»¨Ë³µÄÒÑÑ¡·½°¸ÏÂ±ê£¨-1ÎªÎ´Ñ¡Ôñ£©
+	//è¯¥èŠ±è‰²åŒèŠ±é¡ºçš„å·²é€‰æ–¹æ¡ˆä¸‹æ ‡ï¼ˆ-1ä¸ºæœªé€‰æ‹©ï¼‰
 	int selected_order_;
-	//»¨É«
+	//èŠ±è‰²
 	int suite_;
+	//çˆ¶çª—å£
+	PlayerWidget* parent_;
 };
 
 #endif // SF_BUTTON_H_
