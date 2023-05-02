@@ -1,4 +1,4 @@
-#include"card.h"
+ï»¿#include"card.h"
 bool operator==(const Card& card1, const Card& card2)
 {
 	if (card1.suit_ == card2.suit_ &&
@@ -8,7 +8,7 @@ bool operator==(const Card& card1, const Card& card2)
 }
 bool operator<(const Card& card1, const Card& card2)
 {
-	//½«AºÍ2×ª»»ÎªÏà¶ÔÖµ±È½Ï
+	//å°†Aå’Œ2è½¬æ¢ä¸ºç›¸å¯¹å€¼æ¯”è¾ƒ
 	double point1 = card1.point_;
 	if (point1 == 1)point1 = 13.1;
 	if (point1 == 2)point1 = 13.2;
@@ -30,4 +30,11 @@ bool operator>(const Card& card1, const Card& card2)
 	if (card1 == card2)
 		return false;
 	return true;
+}
+
+QDebug& operator<<(QDebug& os, const Card& c)
+{
+	char suit[4] = { 'â™ ','â™¥','â™£','â™¦' };
+	os << suit[c.get_suit()] << c.get_point();
+	return os;
 }

@@ -53,7 +53,7 @@ protected:
 	bool animation_disabled_;
 
 signals:
-	void click_emit();
+	void click_emit(int mode=0);
 
 };
 

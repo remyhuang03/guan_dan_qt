@@ -34,15 +34,27 @@ public:
 public slots:
 	void on_card_selected(CardButton* card_btn);
 	void on_card_unselected(CardButton* card_btn);
+	void on_arrange_clicked(int mode);
 
 
 protected:
 	void closeEvent(QCloseEvent* event);
 
 private:
+	/***** UI控件 *****/
 	//group等级的label
 	QLabel* lb_rank_self_;
 	QLabel* lb_rank_rival_;
+	//整理卡牌按钮
+	Button* btn_arrange_;
+	//四个同花顺按钮
+	SfButton* straight_flush_btns_[4];
+	//已选中的所有卡牌按钮
+	std::vector<CardButton*> selected_cards_;
+	//所有卡牌按钮
+	std::vector<std::vector<CardButton*>> card_btn_heaps_;
+
+	/***** ******/
 	//玩家头像位置坐标
 	const int SPR_PLAYER_X[4] = { 20,860,390,20 };
 	const int SPR_PLAYER_Y[4] = { 370,130,15,130 };
@@ -50,12 +62,7 @@ private:
 	Hand* hand_;
 	//该玩家排堆： vector<pair<是否为整理好的牌，该堆所有的牌>>
 	std::vector<std::pair<bool, std::vector<Card>>> card_heaps_;
-	//四个同花顺按钮
-	SfButton* straight_flush_btns_[4];
-	//已选中的所有卡牌按钮
-	std::vector<CardButton*> selected_cards_;
-	//所有卡牌按钮
-	std::vector<std::vector<CardButton*>> card_btn_heaps_;
+
 	//当前所有可能的同花顺组合
 	std::vector<std::vector<std::vector<Card>>> straight_flush_comb_;
 

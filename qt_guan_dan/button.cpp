@@ -27,7 +27,7 @@ void Button::click_animation()
 	animation->setEndValue(QRect(posx, posy, w_, h_));
 	animation->start();
 	//处理点击完以后的事件
-	emit click_emit();
+	emit click_emit(static_cast<int>(mode_));
 }
 void Button::disable() {
 	mode_ = Disabled;

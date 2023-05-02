@@ -420,8 +420,8 @@ std::vector<std::vector<std::vector<Card>>> Hand::all_straight_flush_combination
 	{
 		//判断cards_中是否有该花色的同花顺
 		std::vector<Card> straight_flush;
-		//从A开头遍历到2结束（15）
-		for (int j = 0; j < 15; j++)
+		//从A开头遍历到A结束（15）
+		for (int j = 0; j < 14; j++)
 		{
 			Card card(j % 13 + 1, i);
 			//不存在与上一牌点相连的牌
