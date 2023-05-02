@@ -122,6 +122,7 @@ void PlayerWidget::sort_card_heap()
 void PlayerWidget::update_card_heap_show()
 {
 	emit delete_all_card_bottons();
+	btn_arrange_->set_mode(Button::Mode2);
 
 	//清空所有已选卡牌
 	selected_cards_.clear();
@@ -131,21 +132,18 @@ void PlayerWidget::update_card_heap_show()
 	int x_count = card_heaps_.size();
 	int offset_x = min(100, ((480 - 115) * 2 - 100) / (x_count - 1));
 	int offset_y = 35;
-	card_btn_heaps_.clear();
 
 	//起始x位置，由左到右渲染
 	int x = 480 - (offset_x * (x_count - 1) + 100) / 2.0;
-	for (auto i : card_heaps_)
+	for (auto& i : card_heaps_)
 	{
-		card_btn_heaps_.push_back({});
 		//初始y坐标，由上到下渲染
 		int y = 360 - (i.second.size() - 1) * offset_y;
 		for (auto& j : i.second)
 		{
 			//创建卡牌按钮
 			auto card_btn = new CardButton(x, y, j, this);
-			//将卡牌加到数组中
-			card_btn_heaps_.back().push_back(card_btn);
+			j.set_card_btn(card_btn);
 			y += offset_y;
 		}
 		x += offset_x;
@@ -157,8 +155,8 @@ void PlayerWidget::update_card_heap_show()
 	for (int i = 0; i < 4; i++)
 	{
 		//该花色不存在同花顺
-		if (straight_flush_comb_[i].empty()) { straight_flush_btns_[i]->disable(); }
-		else { straight_flush_btns_[i]->enable(); }
+		if (straight_flush_comb_[i].empty()) { straight_flush_btns_[i]->set_mode(Button::Disabled); }
+		else { straight_flush_btns_[i]->set_mode(Button::Normal); }
 	}
 }
 
@@ -183,6 +181,8 @@ void PlayerWidget::update_all()
 
 void PlayerWidget::on_card_selected(CardButton* card_btn)
 {
+	//已选择牌，可以进行整理
+	btn_arrange_->set_mode(Button::Normal);
 	//加入已选牌的牌堆
 	selected_cards_.push_back(card_btn);
 	//将已选card_btns转换为cards
@@ -208,22 +208,27 @@ void PlayerWidget::on_card_selected(CardButton* card_btn)
 void PlayerWidget::on_card_unselected(CardButton* card_btn)
 {
 	//从已选牌堆中删除
-	selected_cards_.erase(std::find(selected_cards_.begin(), selected_cards_.end(),card_btn));
+	selected_cards_.erase(std::find(selected_cards_.begin(), selected_cards_.end(), card_btn));
+	//如果没有已选择的牌，将整理按钮改为恢复按钮(模式2)
+	if (selected_cards_.empty())
+	{
+		btn_arrange_->set_mode(Button::Mode2);
+	}
 }
 
 void PlayerWidget::emit_select(std::vector<Card> cards)
 {
 	//枚举每一张需要被选中的牌
-	for (auto i : cards)
+	for (Card card_to_be_selected : cards)
 	{
-		for (auto j : card_btn_heaps_)
+		for (auto i : card_heaps_)
 		{
 			//每一个UI按钮
-			for (auto k : j)
+			for (auto j : i.second)
 			{
-				if (k->get_card() == i)
+				if (j == card_to_be_selected)
 				{
-					emit compulsory_select(k);
+					emit compulsory_select(j.get_card_btn());
 					goto Next_card;
 				}
 			}
@@ -234,57 +239,61 @@ void PlayerWidget::emit_select(std::vector<Card> cards)
 
 void PlayerWidget::on_arrange_clicked(int mode)
 {
+	//恢复默认排序
+	if (mode == 1)
+	{
+		sort_card_heap();
+		return;
+	}
+
+	//mode == 0, 整理选中牌
 	//转换为已选Card类型
 	std::vector<Card>cards;
 	for (auto i : selected_cards_)
 	{
 		cards.push_back(i->get_card());
 	}
-	//理牌模式
-	if (mode == 0)
+	//卡牌排序
+	sort(cards.begin(), cards.end());
+	//检查所选牌型合法性
+	auto selected_info = hand_->check(cards);
+	//非合法牌型
+	if (selected_info.first == -1)
 	{
-		//检查所选牌型合法性
-		auto selected_info = hand_->check(cards);
-		//非合法牌型
-		if (selected_info.first == -1)
+		//弹出错误提示
+		QMessageBox::warning(this, "错误", "所选牌型不合法！");
+	}
+	//合法牌型
+	else
+	{
+		//遍历原有牌堆，删除待排序的卡牌
+		for (auto card_to_be_removed : selected_cards_)
 		{
-			//弹出错误提示
-			QMessageBox::warning(this, "错误", "所选牌型不合法！");
-		}
-		//合法牌型
-		else
-		{
-			/*to-do 这边写得不对*/
-			//遍历原有牌堆，删除待排序的卡牌
 			for (int i = 0; i < card_heaps_.size(); i++)
 			{
-				auto& j = card_heaps_[i].second;
-				for (Card k : cards)
+				auto& heap = card_heaps_[i].second;
+				for (int j = 0; j < heap.size(); j++)
 				{
-					//to-do 这里写得不对
-					remove(j.begin(), j.end(), k);
+					//当前位置找到卡牌，删除
+					if (heap[j].get_card_btn() == card_to_be_removed)
+					{
+						heap.erase(heap.begin() + j);
+					}
 				}
 				//如果刷空了牌堆，删除该牌堆
-				if (j.empty())
+				if (heap.empty())
 				{
 					card_heaps_.erase(card_heaps_.begin() + i);
 					i--;
 				}
 			}
-			//将所选牌加入牌堆
-			card_heaps_.push_back(std::make_pair<int, std::vector<Card>>(true, {}));
-			for (auto i : cards)
-			{
-				card_heaps_.back().second.push_back(i);
-			}
-			//card_heaps_.back().second.insert(card_heaps_.back().second.end(), cards.size(), cards);
-			//更新牌堆显示
-			update_card_heap_show();
 		}
-	}
-	//恢复默认牌序
-	else
-	{
-		sort_card_heap();
+		//将所选牌加入牌堆
+		card_heaps_.push_back(std::make_pair<int, std::vector<Card>>(true, {}));
+		for (auto i : cards)
+		{
+			card_heaps_.back().second.push_back(i);
+		}
+		update_card_heap_show();
 	}
 }

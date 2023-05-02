@@ -51,8 +51,6 @@ private:
 	SfButton* straight_flush_btns_[4];
 	//已选中的所有卡牌按钮
 	std::vector<CardButton*> selected_cards_;
-	//所有卡牌按钮
-	std::vector<std::vector<CardButton*>> card_btn_heaps_;
 
 	/***** ******/
 	//玩家头像位置坐标

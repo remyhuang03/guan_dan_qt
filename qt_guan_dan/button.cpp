@@ -4,7 +4,7 @@ Button::Button(int x, int y, QString img, QWidget* parent, SizeMode mode, double
 	:Sprite(x, y, img, parent, mode, size), mode_(Normal), animation_disabled_(false)
 {
 	connect(this, &Button::clicked, this, &Button::click_animation);
-	pm_normal_ = pm_disabled_ = pm_mode2_ = QPixmap(img);
+	icons[0] = icons[1] = icons[2] = QPixmap(img);
 }
 
 void Button::click_animation()
@@ -29,47 +29,30 @@ void Button::click_animation()
 	//处理点击完以后的事件
 	emit click_emit(static_cast<int>(mode_));
 }
-void Button::disable() {
-	mode_ = Disabled;
-	setIcon(pm_disabled_);
-}
-void Button::enable()
-{
-	mode_ = Normal;
-	setIcon(pm_normal_);
-}
+
 void Button::reverse_mode()
 {
 	if (mode_ == Mode2)
 	{
-		mode_ = Normal;
-		setIcon(pm_normal_);
+		set_mode(Normal);
 	}
 	else
 	{
-		mode_ = Mode2;
-		setIcon(pm_mode2_);
+		set_mode(Mode2);
 	}
 }
 
 void Button::set_pm(QString img, Mode mode) {
-	switch (mode)
-	{
-	case Button::Disabled:
-		pm_disabled_ = QPixmap(img);
-		break;
-	case Button::Normal:
-		pm_normal_ = QPixmap(img);
-		break;
-	case Button::Mode2:
-		pm_mode2_ = QPixmap(img);
-		break;
-	default:
-		break;
-	}
+	icons[int(mode + 1)] = QPixmap(img);
 }
 
 void Button::show_record()
 {
 	new Record_widget();
+}
+
+void Button::set_mode(Mode mode)
+{
+	mode_ = mode;
+	setIcon(icons[int(mode + 1)]);
 }

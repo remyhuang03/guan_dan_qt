@@ -17,15 +17,13 @@ public:
 	//size:图片大小，100为原始大小
 	Button(int x, int y, QString img, QWidget* parent, SizeMode mode, double size);
 
-	//@brief 将按钮设置为不可点击状态
-	void disable();
-	//@brief 将按钮设置为可点击状态
-	void enable();
 	//@brief 切换按钮模式
 	void reverse_mode();
 
 	//@brief 设置按钮模式图标
 	void set_pm(QString img, Mode mode);
+	//@brief 设置模式
+	void set_mode(Mode mode);
 
 	//@brief 禁用按钮动画
 	void disable_animation() { animation_disabled_ = true; }
@@ -39,12 +37,8 @@ public slots:
 	void show_record();
 
 protected:
-	//处于可点击状态时的默认图标
-	QPixmap pm_normal_;
-	//处于不可点击状态时的图标
-	QPixmap pm_disabled_;
-	//处于第二模式时的图标
-	QPixmap pm_mode2_;
+	//图标[mode+1]：不可点击状态、默认、第二模式
+	QPixmap icons[3];
 
 	//按钮模式（-1:disabled   0:normal   1:mode2）
 	Mode mode_;
