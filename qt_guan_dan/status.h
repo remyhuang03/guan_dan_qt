@@ -11,8 +11,11 @@ class Hand;
 
 /*****  状态管理函数 *****/
 
+//@brief 全局初始化游戏状态
+void init_game_data();
+
 //@brief 根据胜负更新
-	//       group_rank, round_rank_card, cards_round_rank
+//group_rank, round_rank_card, cards_round_rank
 void update_round_rank();
 
 //@brief 更新 cards_round_rank

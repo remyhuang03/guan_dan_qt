@@ -4,18 +4,22 @@
 #include "card.h"
 #include <algorithm>
 #include <random>
+#include <ctime>
 
+//游戏结束标志
 bool is_game_over = false;
 int round_cnt = 0;
 int group_rank[2] = { 2,2 };
 int group_fial_pass_a[2] = { 0,0 };
 int round_rank_card = 2;
 int turn = 0;
+// 当前出牌的牌型（-2:贡牌   -1:还贡   0:当前为领圈人   >0:正常牌型）
 int circle_type = 0;
 int circle_point = 0;
 int circle_leader = 0;
 int contribute_order[4];
 int contribute_count;
+//上一轮游戏中玩家 i 的排名(-1：该玩家正在游戏中  0 - 3：0为上游)
 int round_rank[4];
 int rank_list[4];
 std::map<int, int> cards_round_rank;
@@ -126,9 +130,32 @@ std::vector<Card> shuffled_all_cards()
 	ret.push_back(Card(14, -1));
 	ret.push_back(Card(15, -1));
 	ret.push_back(Card(15, -1));
+	//随机打乱牌序
 	std::random_device rd;
 	std::mt19937 g(rd());
 	std::shuffle(ret.begin(), ret.end(), g);
 
 	return ret;
+}
+
+void init_game_data()
+{
+	is_game_over = false;
+	round_cnt = 0;
+	group_rank[0] = group_rank[1] = 2;
+	group_fial_pass_a[0] = group_fial_pass_a[1] = 0;
+	round_rank_card = 2;
+
+	//第一次随机找个出牌人
+	std::srand(std::time(nullptr));
+	turn = std::rand() % 4;
+
+	circle_type = 0;
+	circle_point = 0;
+	circle_leader = turn;
+	//int contribute_order[4];
+	//int contribute_count;
+	//没有玩家完成比赛，玩家排名记为-1
+	std::for_each(std::begin(round_rank), std::end(contribute_order), [](int& a) {a = -1; });
+	update_cards_round_rank();
 }

@@ -57,6 +57,7 @@ public:
 	//@ret int: 相对大小
 	int get_real_rank(int point)const { return cards_round_rank.at(point); }
 
+	//@brief 绑定窗口实现
 	void set_widget(PlayerWidget* widget) { widget_ = widget; }
 
 private:

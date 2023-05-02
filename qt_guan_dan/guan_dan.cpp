@@ -20,6 +20,8 @@ guan_dan::guan_dan(QWidget* parent)
 
 void guan_dan::start_game()
 {
+	//初始化游戏数据
+	init_game_data();
 	//隐藏自身窗口
 	hide();
 	//获取打乱好的所有卡牌
@@ -40,6 +42,7 @@ void guan_dan::start_game()
 		auto end = shuffled_cards.begin() + (i + 1) * 27;
 		players[i]->set_cards(std::vector(begin, end));
 		connect(player_widgets[i], &PlayerWidget::player_close, this, &guan_dan::show);
+		
 	}
 
 	//子窗口其一关闭，所有窗口关闭的信号槽连接
