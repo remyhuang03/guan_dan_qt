@@ -60,6 +60,10 @@ public:
 	//@brief 绑定窗口实现
 	void set_widget(PlayerWidget* widget) { widget_ = widget; }
 
+	//@brief 返回所有同花顺的可行牌型
+	//@ret:std::vector<std::vector<std::vector<Card>>>，[i][j]第i种花色无重复的第j种同花顺组合
+	std::vector<std::vector<std::vector<Card>>> all_straight_flush_combinations()const;
+
 private:
 	//玩家编号：0-3(02为一方，13为另一方)
 	int id_;

@@ -15,14 +15,16 @@ public:
 	int get_suit() const { return card_.get_suit(); }
 	Card get_card() const { return card_; }
 
+private:
+	Card card_;
+
 public slots:
 	//删除自己
 	void delete_self();
 	//点击处理
 	void on_clicked();
-
-private:
-	Card card_;
+	//处理强制取消选择
+	void on_compulsory_unselected();
 
 signals:
 	void card_selected(CardButton* card_btn);

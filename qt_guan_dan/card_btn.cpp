@@ -11,9 +11,11 @@ CardButton::CardButton(int x, int y, const Card& card, PlayerWidget* parent) :
 	//设置选中图标
 	set_pm("img/card/" + QString::number(card.get_point()) + "_" + QString::number(card.get_suit()) + "c.png", Mode2);
 	//绑定自杀事件
-	connect(parent,&PlayerWidget::delete_all_card_bottons, this, &CardButton::delete_self);
+	connect(parent, &PlayerWidget::delete_all_card_bottons, this, &CardButton::delete_self);
 	//绑定点击事件
 	connect(this, &CardButton::clicked, this, &CardButton::on_clicked);
+	//绑定强制取消选择事件
+	connect(parent, &PlayerWidget::compulsory_unselect_all_cards, this, &CardButton::on_compulsory_unselected, Qt::DirectConnection);
 }
 
 void CardButton::delete_self()
@@ -34,4 +36,11 @@ void CardButton::on_clicked()
 	reverse_mode();
 }
 
-
+void CardButton::on_compulsory_unselected()
+{
+	//如果原先处于选中状态
+	if (mode_ == Mode2) {
+		emit card_unselected(this);
+	}
+	reverse_mode();
+}

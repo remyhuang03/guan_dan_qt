@@ -412,3 +412,31 @@ void Hand::set_cards(const std::vector<Card>& cards)
 	widget_->update_all();
 }
 
+std::vector<std::vector<std::vector<Card>>> Hand::all_straight_flush_combinations()const
+{
+	std::vector<std::vector<std::vector<Card>>>ret(4);
+	//遍历所有花色
+	for (int i = 0; i < 4; i++)
+	{
+		//判断cards_中是否有该花色的同花顺
+		std::vector<Card> straight_flush;
+		//从A开头遍历到2结束（15）
+		for (int j = 0; j < 15; j++)
+		{
+			Card card(j % 13 + 1, i);
+			//不存在与上一牌点相连的牌
+			if (std::find(cards_.begin(), cards_.end(), card) == cards_.end())
+			{
+				straight_flush.clear();
+			}
+			straight_flush.push_back(card);
+			//以当前牌结尾，可以构成同花顺
+			if (straight_flush.size() >= 5)
+			{
+				ret[i].push_back(std::vector<Card>(straight_flush.end() - 5, straight_flush.end()));
+			}
+		}
+	}
+	return ret;
+}
+

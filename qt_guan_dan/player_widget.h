@@ -46,8 +46,12 @@ private:
 	Button* straight_flush_btns_[4];
 	//已选中的所有卡牌按钮
 	std::vector<CardButton*> selected_cards_;
+	//当前所有可能的同花顺组合
+	std::vector<std::vector<std::vector<Card>>> straight_flush_comb_;
 signals:
 	void player_close();
 	void delete_all_card_bottons();
+	//强制取消选择所有卡牌
+	void compulsory_unselect_all_cards();
 };
 #endif

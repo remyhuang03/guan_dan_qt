@@ -7,7 +7,7 @@
 #include "button.h"
 #include "hand.h"
 #include <algorithm>
-
+#include "sf_btn.h"
 PlayerWidget::PlayerWidget(Hand* hand) :QWidget(), hand_(hand)
 {
 	int id = hand_->id_;
@@ -51,10 +51,10 @@ PlayerWidget::PlayerWidget(Hand* hand) :QWidget(), hand_(hand)
 	// 同花顺按钮
 	for (int i = 0; i < 4; i++)
 	{
-		auto path = "img/btn/straight_flush" + QString::number(i) + "0.png";
-		straight_flush_btns_[i] = new Button(220 + i * 40, 505, path, this, Button::Height, 40);
-		path = "img/btn/straight_flush" + QString::number(i) + "1.png";
-		straight_flush_btns_[i]->set_pm(path, Button::Disabled);
+		/*auto path = "img/btn/straight_flush" + QString::number(i) + "0.png";*/
+		straight_flush_btns_[i] = new SfButton(220 + i * 40, 505, i,this );
+		/*path = "img/btn/straight_flush" + QString::number(i) + "1.png";
+		straight_flush_btns_[i]->set_pm(path, Button::Disabled);*/
 	}
 	//理牌按钮
 	auto arrange_btn = new Button(700, 506, "img/btn/arrange0.png", this, Button::Height, 40);
@@ -133,7 +133,19 @@ void PlayerWidget::update_card_heap_show()
 		}
 		x += offset_x;
 	}
+
+	//检查同花顺情况
+	straight_flush_comb_ = hand_->all_straight_flush_combinations();
+	//枚举花色
+	for (int i = 0; i < 4; i++)
+	{
+		//该花色不存在同花顺
+		if (straight_flush_comb_[i].empty()) { straight_flush_btns_[i]->disable(); }
+		else { straight_flush_btns_[i]->enable(); }
+	}
 }
+
+
 
 void PlayerWidget::update_all()
 {
@@ -170,6 +182,6 @@ void PlayerWidget::on_card_selected(CardButton* card_btn)
 void PlayerWidget::on_card_unselected(CardButton* card_btn)
 {
 	//从已选牌堆中删除
-	remove(selected_cards_.begin(),selected_cards_.end(),card_btn);
+	remove(selected_cards_.begin(), selected_cards_.end(), card_btn);
 }
 
