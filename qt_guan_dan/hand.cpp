@@ -8,7 +8,7 @@
 Hand::Hand(int id) :id_(id), fail_at_a_cnt_(0)
 {}
 
-std::pair<int, int> Hand::check(const std::vector<Card>& cards)const
+std::pair<int, int> Hand::certain_comb_info(const std::vector<Card>& cards)const
 {
 	//空卡牌特判
 	if (cards.empty())return { -1,-1 };
@@ -208,38 +208,56 @@ std::pair<int, int> Hand::check(const std::vector<Card>& cards)const
 }
 
 
-std::vector<std::vector<Card>> Hand::play_cards(const std::vector<Card>& cards)
+std::vector<std::vector<Card>> Hand::all_valid_comb(const std::vector<Card>& cards)
 {
+	//判断所给牌型信息是否符合该玩家出牌条件
+	auto is_info_valid = [&](std::pair<int, int>info) {
+		//牌型不合法
+		if (info.first == -1) { return false; }
+		//当前玩家就是领圈人
+		if (id_ == circle_leader) { return true; }
+		//牌型一致并且较大（包括更大的炸牌）
+		if (info.first == circle_type && info.second > circle_point) { return true; }
+		//我是炸牌类，对手不是
+		if (info.first == 8 && circle_type != 8) { return true; }
+		//其余类型不合法
+		return false;
+	};
+
 	std::vector<std::vector<Card>>ret;
 	std::vector<Card> cards_tmp = cards;
 	//检查是否有逢人配
-	int free_card_cnt = 0;
-	for (auto i = cards.begin(); i != cards.end(); i++)
+	int wild_card_cnt = 0;
+	for (int i = 0; i < cards_tmp.size(); i++)
 	{
+		Card card = cards_tmp[i];
 		//为级牌并且为红桃
-		if (i->get_point() == group_rank[get_group()] && i->get_suit() == 1)
+		if (card.get_point() == group_rank[get_group()] && card.get_suit() == 1)
 		{
 			//删除级牌
-			cards_tmp.erase(i);
-			free_card_cnt++;
+			cards_tmp.erase(cards_tmp.begin() + i);
+			i--;
+			wild_card_cnt++;
 		}
 	}
-	if (free_card_cnt == 0)
+
+	//牌型不是逢人配
+	if (wild_card_cnt == 0)
 	{
-		//牌型不是逢人配且合法	
-		if (check(cards).first != -1)
+		//符合当前玩家出牌类型
+		if (is_info_valid(certain_comb_info(cards)))
 		{
 			ret.push_back(cards);
 		}
 	}
-	else if (free_card_cnt == 1)
+	else if (wild_card_cnt == 1)
 	{
 		//枚举所有可能的牌型
 		for (int i = 1; i <= 13; i++)
 			for (int j = 0; j <= 3; j++)
 			{
 				cards_tmp.push_back(Card(i, j));
-				if (check(cards_tmp).first)
+				if (is_info_valid(certain_comb_info(cards_tmp)))
 				{
 					ret.push_back(cards_tmp);
 				}
@@ -256,7 +274,7 @@ std::vector<std::vector<Card>> Hand::play_cards(const std::vector<Card>& cards)
 					{
 						cards_tmp.push_back(Card(i, j));
 						cards_tmp.push_back(Card(p, q));
-						if (check(cards_tmp).first)
+						if (certain_comb_info(cards_tmp).first)
 						{
 							ret.push_back(cards_tmp);
 						}
@@ -416,7 +434,7 @@ std::vector<std::vector<std::vector<Card>>> Hand::all_straight_flush_combination
 {
 	std::vector<std::vector<std::vector<Card>>>ret(4);
 	//遍历所有花色
-	for(int i = 0; i < 4; i++)
+	for (int i = 0; i < 4; i++)
 	{
 		//判断cards_中是否有该花色的同花顺
 		std::vector<Card> straight_flush;

@@ -21,6 +21,9 @@ void update_round_rank();
 //@brief 更新 cards_round_rank
 void update_cards_round_rank();
 
+//@brief 生成牌组Pixmap
+QPixmap get_combination_pixmap(std::vector<Card>cards);
+
 //@brief 开局发牌
 //@return vector<Card> 打乱顺序的两幅扑克牌
 std::vector<Card> shuffled_all_cards();

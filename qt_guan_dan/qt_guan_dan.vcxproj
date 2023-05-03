@@ -90,6 +90,7 @@
     <ClCompile Include="hand.cpp" />
     <ClCompile Include="record.cpp" />
     <ClCompile Include="record_widget.cpp" />
+    <ClCompile Include="WildCardDialog.cpp" />
     <ClCompile Include="sf_btn.cpp" />
     <ClCompile Include="sprite.cpp" />
     <ClCompile Include="button.cpp" />
@@ -113,6 +114,7 @@
     <QtMoc Include="sprite.h" />
     <QtMoc Include="button.h" />
     <QtMoc Include="record_widget.h" />
+    <ClInclude Include="WildCardDialog.h" />
     <ClInclude Include="sf_btn.h" />
     <ClInclude Include="status.h" />
     <QtMoc Include="player_widget.h" />

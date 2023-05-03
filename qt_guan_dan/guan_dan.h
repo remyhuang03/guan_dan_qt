@@ -20,12 +20,15 @@ private slots:
 
 signals:
 	void update_player_widget();
+	void signal_switch_turn();
 
 private:
 	Ui::guan_danClass ui;
 	// [i]: 玩家 i 的窗口
 	PlayerWidget* player_widgets[4];
-	// [i]: 玩家 i 对象指针
+	//@brief 轮转到下一轮
+	//@para is_next: 如为false，则按当前turn进行，否则轮转到下一个turn
+	void switch_turn(bool is_next = true);
 
 };
 

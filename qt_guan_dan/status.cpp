@@ -1,10 +1,12 @@
+#include <algorithm>
+#include <random>
+#include <ctime>
+#include <qpainter.h>
 #include "status.h"
 #include "hand.h"
 #include "record.h"
 #include "card.h"
-#include <algorithm>
-#include <random>
-#include <ctime>
+
 
 //游戏结束标志
 bool is_game_over = false;
@@ -13,9 +15,10 @@ int group_rank[2] = { 2,2 };
 int group_fial_pass_a[2] = { 0,0 };
 int round_rank_card = 2;
 int turn = 0;
-// 当前出牌的牌型（-2:贡牌   -1:还贡   0:当前为领圈人   >0:正常牌型）
+// 当前出牌的牌型（-2:贡牌   -1:还贡   >=0:正常牌型）
 int circle_type = 0;
 int circle_point = 0;
+// 本圈出牌的领圈人, 可以不受牌型限制出牌
 int circle_leader = 0;
 int contribute_order[4];
 int contribute_count;
@@ -156,6 +159,25 @@ void init_game_data()
 	//int contribute_order[4];
 	//int contribute_count;
 	//没有玩家完成比赛，玩家排名记为-1
-	std::for_each(std::begin(round_rank), std::end(contribute_order), [](int& a) {a = -1; });
+	std::for_each(std::begin(round_rank), std::end(round_rank), [](int& a) {a = -1; });
 	update_cards_round_rank();
+}
+
+QPixmap get_combination_pixmap(std::vector<Card>cards)
+{
+	//获取素材大小
+	auto size = QPixmap("img/card/1_0.png").size();
+	//卡牌个数
+	auto cnt = cards.size();
+	// 指定合成后 QPixmap 的大小
+	QPixmap ret(size.width() + (cnt - 1) * size.width() * 0.5, size.height());
+	QPainter painter(&ret);
+	// 依次叠加卡牌元素
+	for (int i = 0; i < cnt; i++)
+	{
+		auto card = cards[i];
+		auto card_pixmap = QPixmap(QString("img/card/%1_%2.png").arg(card.get_point()).arg(card.get_suit()));
+		painter.drawPixmap(i * size.width() * 0.5, 0, card_pixmap);
+	}
+	return ret;
 }

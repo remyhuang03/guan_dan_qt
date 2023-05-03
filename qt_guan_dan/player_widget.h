@@ -38,6 +38,7 @@ public slots:
 	void on_card_selected(CardButton* card_btn);
 	void on_card_unselected(CardButton* card_btn);
 	void on_arrange_clicked(int mode);
+	void on_turn_switched();
 
 
 protected:
@@ -54,6 +55,10 @@ private:
 	SfButton* straight_flush_btns_[4];
 	//已选中的所有卡牌按钮
 	std::vector<CardButton*> selected_cards_;
+	//出牌按钮
+	Button* btn_play_;
+	//不出牌按钮
+	Button* btn_pass_;
 
 	/***** ******/
 	//玩家头像位置坐标
@@ -66,6 +71,15 @@ private:
 
 	//当前所有可能的同花顺组合
 	std::vector<std::vector<std::vector<Card>>> straight_flush_comb_;
+
+	//更新出牌按钮状态
+	void update_play_btn();
+
+	//卡牌按钮转换为卡牌
+	std::vector<Card> btns_to_cards(const std::vector<CardButton*>& card_btns);
+
+	//所选牌对应的所有可能的出牌组合
+	std::vector<std::vector<Card>> all_combs_;
 
 signals:
 	//强制取消选择所有卡牌

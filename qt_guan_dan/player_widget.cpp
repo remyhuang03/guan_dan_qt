@@ -13,9 +13,9 @@
 
 PlayerWidget::PlayerWidget(Hand* hand) :QWidget(), hand_(hand)
 {
+	/***** 窗口基本设置 ****/
 	int id = hand_->id_;
 	show();
-	/*****窗口基本设置****/
 	//设置标题
 	setWindowTitle(QString("玩家") + QString::number(id + 1));
 	//背景色深灰色
@@ -24,7 +24,7 @@ PlayerWidget::PlayerWidget(Hand* hand) :QWidget(), hand_(hand)
 	setGeometry((id / 2) * 200, 30 + (id % 2) * 200, SCREEN_W, SCREEN_H);
 	setFixedSize(SCREEN_W, SCREEN_H);
 
-	/*****基本UI布局设置****/
+	/***** 基本UI布局设置 ****/
 	//显示级牌底边
 	QString rsc_t = QString("img/label/rank_bg_group") + QString::number(id % 2) + QString(".png");
 	new Sprite(15, 15, rsc_t, this, Sprite::Height, 65);
@@ -68,15 +68,26 @@ PlayerWidget::PlayerWidget(Hand* hand) :QWidget(), hand_(hand)
 			}
 		}
 	}
+
 	//理牌按钮
 	btn_arrange_ = new Button(700, 506, "img/btn/arrange0.png", this, Button::Height, 40);
 	btn_arrange_->set_pm("img/btn/arrange1.png", Button::Mode2);
 	connect(btn_arrange_, &Button::click_emit, this, &PlayerWidget::on_arrange_clicked);
+
 	//自动整理牌堆，并显示
 	sort_card_heap();
+
 	//显示记录按钮
 	auto btn_t = new Button(850, 10, "img/btn/record.png", this, Button::Height, 40);
 	connect(btn_t, &Button::click_emit, btn_t, &Button::show_record);
+
+	//出牌、不出按钮（默认隐藏）
+	btn_pass_ = new Button(340, 200, "img/btn/pass.png", this, Button::Height, 50);
+	btn_pass_->hide();
+	btn_play_ = new Button(490, 200, "img/btn/play_card0.png", this, Button::Height, 50);
+	btn_play_->set_pm("img/btn/play_card1.png", Button::Disabled);
+	btn_play_->hide();
+	btn_play_->set_mode(Button::Disabled);
 }
 
 void PlayerWidget::closeEvent(QCloseEvent* event)
@@ -188,26 +199,39 @@ void PlayerWidget::on_card_selected(CardButton* card_btn)
 	btn_arrange_->set_mode(Button::Normal);
 	//加入已选牌的牌堆
 	selected_cards_.push_back(card_btn);
-	//将已选card_btns转换为cards
+	update_play_btn();
+}
+
+void PlayerWidget::update_play_btn()
+{
+	//没轮到自己，不用判断
+	if (turn != hand_->id_) { return; }
+	auto selected_info = hand_->certain_comb_info(btns_to_cards(selected_cards_));
+
+	//所选牌可出牌的组合
+	all_combs_ = hand_->all_valid_comb(btns_to_cards(selected_cards_));
+	int combs_cnt = all_combs_.size();
+	//不能出牌
+	if (combs_cnt == 0)
+	{
+		btn_play_->set_mode(Button::Disabled);
+	}
+	else
+	{
+		btn_play_->set_mode(Button::Normal);
+	}
+}
+
+std::vector<Card> PlayerWidget::btns_to_cards(const std::vector<CardButton*>& card_btns)
+{
 	std::vector<Card>cards;
-	for (auto i : selected_cards_)
+	for (auto i : card_btns)
 	{
 		cards.push_back(i->get_card());
 	}
-	/*to-do*/
-	/*switch ()
-	{
-	default:
-		break;
-	}*/
-	//检查所选卡牌情况
-	auto selected_info = hand_->check(cards);
-	////非合法牌型
-	//if (selected_info.first == -1)
-	//{
-
-	//}
+	return cards;
 }
+
 void PlayerWidget::on_card_unselected(CardButton* card_btn)
 {
 	//从已选牌堆中删除
@@ -217,6 +241,7 @@ void PlayerWidget::on_card_unselected(CardButton* card_btn)
 	{
 		btn_arrange_->set_mode(Button::Mode2);
 	}
+	update_play_btn();
 }
 
 void PlayerWidget::emit_select(std::vector<Card> cards)
@@ -259,7 +284,7 @@ void PlayerWidget::on_arrange_clicked(int mode)
 	//卡牌排序
 	sort(cards.begin(), cards.end());
 	//检查所选牌型合法性
-	auto selected_info = hand_->check(cards);
+	auto selected_info = hand_->certain_comb_info(cards);
 	//非合法牌型
 	if (selected_info.first == -1)
 	{
@@ -304,5 +329,29 @@ void PlayerWidget::on_arrange_clicked(int mode)
 			card_heaps_.back().second.push_back(i);
 		}
 		update_card_heap_show();
+	}
+}
+
+void PlayerWidget::on_turn_switched()
+{
+	//正常打牌模式
+	if (circle_type >= 0)
+	{
+		//自己的回合
+		if (turn == hand_->id_)
+		{
+			//显示出牌、不出按钮
+			btn_play_->show();
+			btn_pass_->show();
+			//按钮移至最前（防止被cards覆盖）
+			btn_play_->raise();
+			btn_pass_->raise();
+		}
+		//不是自己的回合
+		else
+		{
+			btn_play_->hide();
+			btn_pass_->hide();
+		}
 	}
 }

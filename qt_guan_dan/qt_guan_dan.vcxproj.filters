@@ -67,6 +67,9 @@
     <ClCompile Include="sf_btn.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="WildCardDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="card.h">
@@ -82,6 +85,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="sf_btn.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WildCardDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

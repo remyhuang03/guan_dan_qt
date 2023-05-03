@@ -18,15 +18,15 @@ public:
 
 	void set_cards(const std::vector<Card>& cards);
 
-	//@brief 检查牌组合合法性，返回牌型和相对大小
+	//@brief 检查牌组合合法性，返回牌型和相对大小（不检查逢人配）
 	//@para cards: 待检查的牌组合
 	//@ret pair<int, int>: 牌类型（-1 为 invalid), 组合的相对大小
-	std::pair<int, int> check(const std::vector<Card>& cards)const;
+	std::pair<int, int> certain_comb_info(const std::vector<Card>& cards)const;
 
-	//@brief 对所选牌计算出所有有效的具体牌型（包含判别不合法和逢人配）
+	//@brief 返回当前游戏状态下已选牌的所有有效牌型（包含判别不合法和逢人配）
 	//@para cards: 用户所选择的牌
 	//@ret vector<vector<Card>>: 所有有效的具体牌型
-	std::vector<std::vector<Card>> play_cards(const std::vector<Card>& cards);
+	std::vector<std::vector<Card>> all_valid_comb(const std::vector<Card>& cards);
 
 	//@brief 执行贡牌和还贡
 	//@para player_list: 玩家列表 chosen_cards 待上贡/还贡献的牌

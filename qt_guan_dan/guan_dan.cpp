@@ -41,8 +41,10 @@ void guan_dan::start_game()
 		auto begin = shuffled_cards.begin() + i * 27;
 		auto end = shuffled_cards.begin() + (i + 1) * 27;
 		players[i]->set_cards(std::vector(begin, end));
+
+		//连接玩家窗口关闭信号槽
 		connect(player_widgets[i], &PlayerWidget::player_close, this, &guan_dan::show);
-		
+		connect(this, &guan_dan::signal_switch_turn, player_widgets[i], &PlayerWidget::on_turn_switched);
 	}
 
 	//子窗口其一关闭，所有窗口关闭的信号槽连接
@@ -51,6 +53,24 @@ void guan_dan::start_game()
 			if (i != j)
 				connect(player_widgets[i], &PlayerWidget::player_close, player_widgets[j], &PlayerWidget::close);
 
+	//游戏开始，轮转下一位
+	switch_turn(false);
+
+}
+
+void guan_dan::switch_turn(bool is_next)
+{
+	if (is_next)
+	{
+		//下一个turn溢出，重置为0
+		if (++turn == 4) { turn = 0; }
+		//找到就近可出牌的人
+		while (round_rank[turn] != -1)
+		{
+			turn++;
+		}
+	}
+	emit signal_switch_turn();
 }
 
 guan_dan::~guan_dan()
