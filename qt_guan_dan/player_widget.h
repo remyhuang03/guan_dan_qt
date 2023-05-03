@@ -15,8 +15,11 @@ class PlayerWidget :public QWidget
 	Q_OBJECT
 public:
 	PlayerWidget(Hand* hand);
+
 	//@brief 牌队恢复默认排序
-	void sort_card_heap();
+	//@para is_partial:是否只对未手工整理的牌堆部分进行排序
+	void sort_card_heap(bool is_partial=false);
+
 	//@brief 根据heap重新显示牌堆
 	void update_card_heap_show();
 

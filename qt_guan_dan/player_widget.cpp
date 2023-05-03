@@ -84,7 +84,7 @@ void PlayerWidget::closeEvent(QCloseEvent* event)
 	emit player_close();
 }
 
-void PlayerWidget::sort_card_heap()
+void PlayerWidget::sort_card_heap(bool is_partial)
 {
 	//无卡牌的情况
 	if (card_heaps_.empty()) { return; }
@@ -117,7 +117,10 @@ void PlayerWidget::sort_card_heap()
 		}
 	}
 	//更新牌堆显示
-	update_card_heap_show();
+	if (!is_partial)
+	{
+		update_card_heap_show();
+	}
 }
 void PlayerWidget::update_card_heap_show()
 {
@@ -263,6 +266,11 @@ void PlayerWidget::on_arrange_clicked(int mode)
 		//弹出错误提示
 		QMessageBox::warning(this, "错误", "所选牌型不合法！");
 	}
+	//单张牌无需理牌
+	else if (selected_info.first == 1)
+	{
+		QMessageBox::warning(this, "错误", "单张牌无需理牌哦！");
+	}
 	//合法牌型
 	else
 	{
@@ -288,6 +296,7 @@ void PlayerWidget::on_arrange_clicked(int mode)
 				}
 			}
 		}
+		sort_card_heap(true);
 		//将所选牌加入牌堆
 		card_heaps_.push_back(std::make_pair<int, std::vector<Card>>(true, {}));
 		for (auto i : cards)

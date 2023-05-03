@@ -46,6 +46,10 @@ protected:
 	//禁用按钮动画
 	bool animation_disabled_;
 
+private:
+	int x_;
+	int y_;
+
 signals:
 	void click_emit(int mode=0);
 
