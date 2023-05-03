@@ -37,7 +37,7 @@ void CardButton::on_clicked()
 	}
 	//如果未被选中，选中
 	else {
-		emit card_selected(this);
+		emit card_selected(this,false);
 	}
 	reverse_mode();
 }

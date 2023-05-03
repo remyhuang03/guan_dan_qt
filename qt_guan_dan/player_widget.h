@@ -35,7 +35,7 @@ public:
 	void emit_select(std::vector<Card> cards);
 
 public slots:
-	void on_card_selected(CardButton* card_btn);
+	void on_card_selected(CardButton* card_btn, bool is_compulsory = true);
 	void on_card_unselected(CardButton* card_btn);
 	void on_arrange_clicked(int mode);
 	void on_turn_switched();

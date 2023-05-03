@@ -14,6 +14,7 @@ public:
 	int get_point() const { return card_.get_point(); }
 	int get_suit() const { return card_.get_suit(); }
 	Card get_card() const { return card_; }
+	Mode get_mode() const { return mode_; }
 
 private:
 	Card card_;
@@ -29,7 +30,7 @@ public slots:
 	void on_compulsory_selected(CardButton*);
 
 signals:
-	void card_selected(CardButton* card_btn);
+	void card_selected(CardButton* card_btn,bool is_compulsory = true);
 	void card_unselected(CardButton* card_btn);
 };
 #endif // ! CARD_BTN_H

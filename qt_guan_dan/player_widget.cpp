@@ -193,13 +193,40 @@ void PlayerWidget::update_all()
 }
 
 
-void PlayerWidget::on_card_selected(CardButton* card_btn)
+void PlayerWidget::on_card_selected(CardButton* card_btn, bool is_compulsory)
 {
 	//已选择牌，可以进行整理
 	btn_arrange_->set_mode(Button::Normal);
 	//加入已选牌的牌堆
 	selected_cards_.push_back(card_btn);
 	update_play_btn();
+	if (is_compulsory) { return; }
+	//用户主动选中牌，检查当前所选牌是否处于组合牌堆中
+	for (auto i : card_heaps_)
+	{
+		auto cards = i.second;
+		for (Card card : cards)
+		{
+			//不是牌堆中当前所选牌
+			if (card.get_card_btn() != card_btn) { continue; }
+
+			//当前所选牌不处于组合牌
+			if (i.first == false) { return; }
+
+			//选中该组合牌堆中其它所有牌未选中
+			int selected_cnt = 0;
+			for_each(cards.begin(), cards.end(),
+				[&selected_cnt](Card& c) {if (c.get_card_btn()->get_mode() == Button::Mode2) { selected_cnt++; } });
+			if (selected_cnt != 0) { return; }
+
+			//强制选中该牌堆中的所有牌
+			for (Card card_to_be_selected : cards)
+			{
+				if (card_to_be_selected.get_card_btn() == card_btn) { continue; }
+				compulsory_select(card_to_be_selected.get_card_btn());
+			}
+		}
+	}
 }
 
 void PlayerWidget::update_play_btn()
