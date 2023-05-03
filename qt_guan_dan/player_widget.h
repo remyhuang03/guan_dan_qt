@@ -39,6 +39,7 @@ public slots:
 	void on_card_unselected(CardButton* card_btn);
 	void on_arrange_clicked(int mode);
 	void on_turn_switched();
+	void on_play_card();
 
 
 protected:

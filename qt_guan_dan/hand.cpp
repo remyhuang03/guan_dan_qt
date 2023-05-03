@@ -247,7 +247,8 @@ std::vector<std::vector<Card>> Hand::all_valid_comb(const std::vector<Card>& car
 		//符合当前玩家出牌类型
 		if (is_info_valid(certain_comb_info(cards)))
 		{
-			ret.push_back(cards);
+			sort(cards_tmp.begin(), cards_tmp.end());
+			ret.push_back(cards_tmp);
 		}
 	}
 	else if (wild_card_cnt == 1)
@@ -259,6 +260,7 @@ std::vector<std::vector<Card>> Hand::all_valid_comb(const std::vector<Card>& car
 				cards_tmp.push_back(Card(i, j));
 				if (is_info_valid(certain_comb_info(cards_tmp)))
 				{
+					sort(cards_tmp.begin(), cards_tmp.end());
 					ret.push_back(cards_tmp);
 				}
 				cards_tmp.pop_back();

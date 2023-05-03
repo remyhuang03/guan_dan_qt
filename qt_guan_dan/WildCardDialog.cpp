@@ -1,31 +1,44 @@
-#include <qbuttongroup.h>
+ï»¿#include <qbuttongroup.h>
 #include <qradiobutton.h>
 #include <qpushbutton.h>
+#include <QVBoxLayout>
 #include "WildCardDialog.h"
 #include "status.h"
 
 WildCardDialog::WildCardDialog(std::vector<std::vector<Card>> combinations, QWidget* parent) :
 	QDialog(parent)
 {
-	//´°¿Ú±êÌâ
-	setWindowTitle("Ñ¡Ôñ·êÈËÅä");
+	//çª—å£æ ‡é¢˜
+	setWindowTitle("é€‰æ‹©é€¢äººé…");
+	//è®¾ç½®æ¨¡æ€
+	setModal(true);
 
-	//´´½¨µ¥Ñ¡°´Å¥×é
+	//åˆ›å»ºå•é€‰æŒ‰é’®ç»„
 	button_group_ = new QButtonGroup(this);
-	//ÉèÖÃµ¥Ñ¡°´Å¥ÅÅËûÑ¡Ôñ
+	//åˆ›å»ºç«–ç›´å¸ƒå±€
+	QVBoxLayout* layout = new QVBoxLayout(this);
+
+	//è®¾ç½®å•é€‰æŒ‰é’®æŽ’ä»–é€‰æ‹©
 	button_group_->setExclusive(true);
 	for (auto i : combinations)
 	{
-		//´´½¨µ¥Ñ¡°´Å¥
+		//åˆ›å»ºå•é€‰æŒ‰é’®
 		QRadioButton* radio_button = new QRadioButton(this);
-		//ÉèÖÃµ¥Ñ¡°´Å¥Í¼Æ¬
-		radio_button->setIcon(get_combination_pixmap(i));
-		//ÉèÖÃµ¥Ñ¡°´Å¥´óÐ¡
-		radio_button->setFixedSize(radio_button->iconSize());
-		//½«µ¥Ñ¡°´Å¥Ìí¼Óµ½µ¥Ñ¡°´Å¥×é
+
+		auto icon = get_combination_pixmap(i);
+		//è®¾ç½®å•é€‰æŒ‰é’®å›¾ç‰‡
+		radio_button->setIcon(icon);
+		//è®¾ç½®å•é€‰æŒ‰é’®å¤§å°
+		radio_button->setIconSize(QSize(icon.size().width() * 0.3, icon.size().height() * 0.3));
+
+		//å°†å•é€‰æŒ‰é’®æ·»åŠ åˆ°å•é€‰æŒ‰é’®ç»„å’Œå¸ƒå±€
 		button_group_->addButton(radio_button);
+		layout->addWidget(radio_button);
 	}
 
-	//È·ÈÏ°´Å¥
-	QPushButton* confirm_button = new QPushButton("È·¶¨", this);
+	//ç¡®è®¤æŒ‰é’®
+	QPushButton* confirm_button = new QPushButton("ç¡®å®š", this);
+	layout->addWidget(confirm_button);
+
+	show();
 }

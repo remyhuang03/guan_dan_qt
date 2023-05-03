@@ -1,4 +1,6 @@
-﻿#include "player_widget.h"
+﻿#include <algorithm>
+#include <qmessagebox.h>
+#include "player_widget.h"
 #include "qstring.h"
 #include "status.h"
 #include "sprite.h"
@@ -6,10 +8,10 @@
 #include "qlabel.h"
 #include "button.h"
 #include "hand.h"
-#include <algorithm>
-#include"sf_btn.h"
+#include "sf_btn.h"
 #include "status.h"
-#include <qmessagebox.h>
+#include "WildCardDialog.h"
+
 
 PlayerWidget::PlayerWidget(Hand* hand) :QWidget(), hand_(hand)
 {
@@ -88,6 +90,9 @@ PlayerWidget::PlayerWidget(Hand* hand) :QWidget(), hand_(hand)
 	btn_play_->set_pm("img/btn/play_card1.png", Button::Disabled);
 	btn_play_->hide();
 	btn_play_->set_mode(Button::Disabled);
+
+	//连接按钮事件
+	connect(btn_play_, &Button::click_emit, this, &PlayerWidget::on_play_card);
 }
 
 void PlayerWidget::closeEvent(QCloseEvent* event)
@@ -380,5 +385,22 @@ void PlayerWidget::on_turn_switched()
 			btn_play_->hide();
 			btn_pass_->hide();
 		}
+	}
+}
+
+void PlayerWidget::on_play_card()
+{
+	//只有唯一一种牌型，直接出牌
+	if (all_combs_.size() == 1)
+	{
+		//to-do
+	}
+	//逢人配
+	else
+	{
+		auto dialog = new WildCardDialog(all_combs_,this);
+		
+		//得到返回的选择
+		int index = dialog->exec();
 	}
 }
