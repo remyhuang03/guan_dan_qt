@@ -241,8 +241,8 @@ std::vector<std::vector<Card>> Hand::all_valid_comb(const std::vector<Card>& car
 		}
 	}
 
-	//牌型不是逢人配
-	if (wild_card_cnt == 0)
+	//牌型不是逢人配（单牌特判）
+	if (wild_card_cnt == 0 || cards.size() == 1)
 	{
 		//符合当前玩家出牌类型
 		if (is_info_valid(certain_comb_info(cards)))
