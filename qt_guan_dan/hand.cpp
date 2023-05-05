@@ -5,7 +5,7 @@
 #include <vector>
 #include <string>
 
-Hand::Hand(int id) :id_(id),  widget_(nullptr) {}
+Hand::Hand(int id) :id_(id), widget_(nullptr) {}
 
 std::pair<int, int> Hand::certain_comb_info(const std::vector<Card>& cards)const
 {
@@ -241,13 +241,14 @@ std::vector<std::vector<Card>> Hand::all_valid_comb(const std::vector<Card>& car
 	}
 	// 检测是否无关花色重复出现
 	std::map <std::pair<int, int>, bool> is_vis;
-	//牌型不是逢人配（单牌特判）
-	if (wild_card_cnt == 0 || cards.size() == 1)
+	//牌型不是逢人配（仅含红心级牌特判）
+	if (wild_card_cnt == 0 ||
+		cards.size() == 1 ||
+		(cards.size() == 2) && (wild_card_cnt == 2))
 	{
 		//符合当前玩家出牌类型
 		if (is_info_valid(certain_comb_info(cards)))
 		{
-			sort(cards_tmp.begin(), cards_tmp.end());
 			ret.push_back(cards_tmp);
 		}
 	}
@@ -257,11 +258,10 @@ std::vector<std::vector<Card>> Hand::all_valid_comb(const std::vector<Card>& car
 		for (int i = 1; i <= 13; i++)
 			for (int j = 0; j <= 3; j++)
 			{
-				cards_tmp.push_back(Card(i, j));
+				cards_tmp.push_back(Card(i, j, true));
 				auto comb_tmp = certain_comb_info(cards_tmp);
 				if (is_info_valid(comb_tmp) && is_vis[comb_tmp] == false)
 				{
-					sort(cards_tmp.begin(), cards_tmp.end());
 					is_vis[comb_tmp] = true;
 					ret.push_back(cards_tmp);
 				}
@@ -276,8 +276,8 @@ std::vector<std::vector<Card>> Hand::all_valid_comb(const std::vector<Card>& car
 				for (int p = 1; p <= 13; p++)
 					for (int q = 0; q < 3; q++)
 					{
-						cards_tmp.push_back(Card(i, j));
-						cards_tmp.push_back(Card(p, q));
+						cards_tmp.push_back(Card(i, j, true));
+						cards_tmp.push_back(Card(p, q, true));
 						auto comb_tmp = certain_comb_info(cards_tmp);
 						if (is_info_valid(comb_tmp) && is_vis[comb_tmp] == false)
 						{
@@ -309,6 +309,10 @@ void Hand::pop_card(const Card& card)
 			return;
 		}
 	}
+}
+void Hand::pop_card(const std::vector<Card>& cards)
+{
+	for (const Card& card : cards) { pop_card(card); }
 }
 
 // 判断该牌是否满足上贡的要求

@@ -15,7 +15,7 @@ public:
 	//img: 图片路径
 	//parent:父 窗口
 	//size: 图片大小，100为原始大小
-	Sprite(int x, int y, QString img, QWidget* parent, SizeMode mode = Size, double size = 100);
+	Sprite(int x, int y, QPixmap img, QWidget* parent, SizeMode mode = Size, double size = 100);
 
 	int get_w() { return w_; }
 	int get_h() { return h_; }

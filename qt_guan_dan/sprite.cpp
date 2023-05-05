@@ -1,7 +1,7 @@
 ﻿#include "sprite.h"
 #include <qwidget.h>
 
-Sprite::Sprite(int x, int y, QString img, QWidget* parent, SizeMode mode, double size)
+Sprite::Sprite(int x, int y, QPixmap img, QWidget* parent, SizeMode mode, double size)
 	:QPushButton(parent)
 {
 	show();

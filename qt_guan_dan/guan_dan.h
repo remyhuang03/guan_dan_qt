@@ -3,7 +3,6 @@
 
 #include <QtWidgets/QWidget>
 #include "ui_guan_dan.h"
-#include "player_widget.h"
 #include "hand.h"
 
 class guan_dan : public QWidget
@@ -13,10 +12,11 @@ class guan_dan : public QWidget
 public:
 	guan_dan(QWidget* parent = nullptr);
 	~guan_dan();
-	friend PlayerWidget;
 
-private slots:
+public slots:
 	void start_game();
+	void on_card_played(const std::vector<Card>& cards, int player_id);
+	void on_passed();
 
 signals:
 	void update_player_widget();
@@ -29,7 +29,6 @@ private:
 	//@brief 轮转到下一轮
 	//@para is_next: 如为false，则按当前turn进行，否则轮转到下一个turn
 	void switch_turn(bool is_next = true);
-
 };
 
 #endif //GUANDAN_H_

@@ -10,6 +10,8 @@
 
 class CardButton;
 class SfButton;
+class guan_dan;
+
 class PlayerWidget :public QWidget
 {
 	Q_OBJECT
@@ -18,7 +20,7 @@ public:
 
 	//@brief 牌队恢复默认排序
 	//@para is_partial:是否只对未手工整理的牌堆部分进行排序
-	void sort_card_heap(bool is_partial=false);
+	void sort_card_heap(bool is_partial = false);
 
 	//@brief 根据heap重新显示牌堆
 	void update_card_heap_show();
@@ -40,7 +42,9 @@ public slots:
 	void on_arrange_clicked(int mode);
 	void on_turn_switched();
 	void on_play_card();
-
+	void on_card_played(const std::vector<Card>& cards, int player_id);
+	void on_passed(int player_id);
+	void on_pass_clicked();
 
 protected:
 	void closeEvent(QCloseEvent* event);
@@ -60,11 +64,16 @@ private:
 	Button* btn_play_;
 	//不出牌按钮
 	Button* btn_pass_;
+	//已出牌展示
+	Sprite* spr_played_cards_[4];
 
 	/***** ******/
 	//玩家头像位置坐标
 	const int SPR_PLAYER_X[4] = { 20,860,390,20 };
-	const int SPR_PLAYER_Y[4] = { 370,130,15,130 };
+	const int SPR_PLAYER_Y[4] = { 370,110,15,110 };
+	//玩家已出牌显示位置
+	const int PLAYED_CARD_X[4] = { 15,780,480,120 };
+	const int PLAYED_CARD_Y[4] = { 300,140,30,140 };
 	//对应玩家指针
 	Hand* hand_;
 	//该玩家排堆： vector<pair<是否为整理好的牌，该堆所有的牌>>
@@ -73,7 +82,7 @@ private:
 	//当前所有可能的同花顺组合
 	std::vector<std::vector<std::vector<Card>>> straight_flush_comb_;
 
-	//更新出牌按钮状态
+	//@brief 更新出牌按钮状态
 	void update_play_btn();
 
 	//卡牌按钮转换为卡牌
@@ -82,12 +91,26 @@ private:
 	//所选牌对应的所有可能的出牌组合
 	std::vector<std::vector<Card>> all_combs_;
 
+	//@brief 删除所有已出牌显示UI
+	//@para player_id: 对应玩家id
+	void delete_played_cards_ui(int player_id);
+
+	//@brief 更新已出牌显示UI
+	//@para  cards: 需要渲染的卡牌
+	//       player_id: 对应玩家id
+	void update_played_cards_ui(const std::vector<Card>& cards, int player_id);
+	//@brief 更新已出牌显示UI（显示为“不出”）
+	//       player_id: 对应玩家id
+	void update_played_cards_ui(int player_id);
+
 signals:
 	//强制取消选择所有卡牌
 	void compulsory_unselect_all_cards();
 	void player_close();
 	void delete_all_card_bottons();
 	void compulsory_select(CardButton* btn);
+	void card_played(std::vector<Card> cards, int player_id);
+	void sig_pass(int player_id);
 
 };
 #endif

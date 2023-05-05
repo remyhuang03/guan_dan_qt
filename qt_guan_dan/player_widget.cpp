@@ -11,9 +11,9 @@
 #include "sf_btn.h"
 #include "status.h"
 #include "WildCardDialog.h"
+#include "status.h"
 
-
-PlayerWidget::PlayerWidget(Hand* hand) :QWidget(), hand_(hand)
+PlayerWidget::PlayerWidget(Hand* hand) : QWidget(), hand_(hand)
 {
 	/***** 窗口基本设置 ****/
 	int id = hand_->id_;
@@ -25,6 +25,12 @@ PlayerWidget::PlayerWidget(Hand* hand) :QWidget(), hand_(hand)
 	//设置窗口大小
 	setGeometry((id / 2) * 200, 30 + (id % 2) * 200, SCREEN_W, SCREEN_H);
 	setFixedSize(SCREEN_W, SCREEN_H);
+
+	/***** 成员初始化 *****/
+	for (auto& i : spr_played_cards_)
+	{
+		i = nullptr;
+	}
 
 	/***** 基本UI布局设置 ****/
 	//显示级牌底边
@@ -52,7 +58,7 @@ PlayerWidget::PlayerWidget(Hand* hand) :QWidget(), hand_(hand)
 	}
 	//显示按钮控件
 	// 同花顺标签
-	new Sprite(150, 512, "img/label/straight_flush.png", this, Sprite::Height, 20);
+	new Sprite(150, 512, QString("img/label/straight_flush.png"), this, Sprite::Height, 20);
 	// 同花顺按钮
 	for (int i = 0; i < 4; i++)
 	{
@@ -83,10 +89,13 @@ PlayerWidget::PlayerWidget(Hand* hand) :QWidget(), hand_(hand)
 	auto btn_t = new Button(850, 10, "img/btn/record.png", this, Button::Height, 40);
 	connect(btn_t, &Button::click_emit, btn_t, &Button::show_record);
 
-	//出牌、不出按钮（默认隐藏）
-	btn_pass_ = new Button(340, 200, "img/btn/pass.png", this, Button::Height, 50);
+	//不出按钮（默认隐藏）
+	btn_pass_ = new Button(340, 180, "img/btn/pass0.png", this, Button::Height, 50);
+	btn_pass_->set_pm("img/btn/pass1.png", Button::Disabled);
 	btn_pass_->hide();
-	btn_play_ = new Button(490, 200, "img/btn/play_card0.png", this, Button::Height, 50);
+	connect(btn_pass_, &Button::click_emit, this, &PlayerWidget::on_pass_clicked);
+	//出牌按钮（默认隐藏）
+	btn_play_ = new Button(490, 180, "img/btn/play_card0.png", this, Button::Height, 50);
 	btn_play_->set_pm("img/btn/play_card1.png", Button::Disabled);
 	btn_play_->hide();
 	btn_play_->set_mode(Button::Disabled);
@@ -117,7 +126,7 @@ void PlayerWidget::sort_card_heap(bool is_partial)
 	card_heaps_.clear();
 	card_heaps_.push_back(std::make_pair<bool, std::vector<Card>>(false, {}));
 	int last_point = (cards.front()).get_point();
-	for (auto i : cards)
+	for (const auto& i : cards)
 	{
 		//获取卡牌点数
 		int point = i.get_point();
@@ -190,7 +199,7 @@ void PlayerWidget::update_all()
 	card_heaps_.clear();
 	card_heaps_.push_back(std::make_pair<int, std::vector<Card>>(false, {}));
 	//根据Hand中的数据重建UI
-	for (auto i : hand_->get_cards())
+	for (const Card& i : hand_->get_cards())
 	{
 		card_heaps_.back().second.push_back(i);
 	}
@@ -210,7 +219,7 @@ void PlayerWidget::on_card_selected(CardButton* card_btn, bool is_compulsory)
 	for (auto i : card_heaps_)
 	{
 		auto cards = i.second;
-		for (Card card : cards)
+		for (const Card& card : cards)
 		{
 			//不是牌堆中当前所选牌
 			if (card.get_card_btn() != card_btn) { continue; }
@@ -225,7 +234,7 @@ void PlayerWidget::on_card_selected(CardButton* card_btn, bool is_compulsory)
 			if (selected_cnt != 0) { return; }
 
 			//强制选中该牌堆中的所有牌
-			for (Card card_to_be_selected : cards)
+			for (const Card& card_to_be_selected : cards)
 			{
 				if (card_to_be_selected.get_card_btn() == card_btn) { continue; }
 				compulsory_select(card_to_be_selected.get_card_btn());
@@ -279,12 +288,12 @@ void PlayerWidget::on_card_unselected(CardButton* card_btn)
 void PlayerWidget::emit_select(std::vector<Card> cards)
 {
 	//枚举每一张需要被选中的牌
-	for (Card card_to_be_selected : cards)
+	for (const Card& card_to_be_selected : cards)
 	{
 		for (auto i : card_heaps_)
 		{
 			//每一个UI按钮
-			for (auto j : i.second)
+			for (auto& j : i.second)
 			{
 				if (j == card_to_be_selected)
 				{
@@ -356,7 +365,7 @@ void PlayerWidget::on_arrange_clicked(int mode)
 		sort_card_heap(true);
 		//将所选牌加入牌堆
 		card_heaps_.push_back(std::make_pair<int, std::vector<Card>>(true, {}));
-		for (auto i : cards)
+		for (const Card& i : cards)
 		{
 			card_heaps_.back().second.push_back(i);
 		}
@@ -366,15 +375,36 @@ void PlayerWidget::on_arrange_clicked(int mode)
 
 void PlayerWidget::on_turn_switched()
 {
+	qDebug() << circle_leader << " " << turn;
+	//轮到领圈人出牌，桌面已出牌清空显示
+	if (turn == circle_leader)
+	{
+		for (int i = 0; i < 4; i++)
+		{
+			delete_played_cards_ui(i);
+		}
+	}
 	//正常打牌模式
 	if (circle_type >= 0)
 	{
 		//自己的回合
 		if (turn == hand_->id_)
 		{
+			//删除自己已出牌的显示
+			delete_played_cards_ui(hand_->id_);
+			//顶置当前活动窗口
+			raise();
+			//更新出牌按钮模式
+			update_play_btn();
+
+			//如果自己是领圈人，则必须出牌
+			if (hand_->id_ == circle_leader) { btn_pass_->set_mode(Button::Disabled); }
+			else { btn_pass_->set_mode(Button::Normal); }
+
 			//显示出牌、不出按钮
 			btn_play_->show();
 			btn_pass_->show();
+
 			//按钮移至最前（防止被cards覆盖）
 			btn_play_->raise();
 			btn_pass_->raise();
@@ -390,17 +420,100 @@ void PlayerWidget::on_turn_switched()
 
 void PlayerWidget::on_play_card()
 {
+	int* selected_wild_card_id = new int;
 	//只有唯一一种牌型，直接出牌
 	if (all_combs_.size() == 1)
 	{
-		//to-do
+		*selected_wild_card_id = 0;
 	}
 	//逢人配
 	else
 	{
-		auto dialog = new WildCardDialog(all_combs_,this);
-		
+		auto dialog = new WildCardDialog(all_combs_, this, selected_wild_card_id);
 		//得到返回的选择
 		int index = dialog->exec();
 	}
+	//全局状态操作
+	circle_leader = hand_->id_;
+	auto pair_info = hand_->certain_comb_info(btns_to_cards(selected_cards_));
+	circle_type = pair_info.first;
+	circle_point = pair_info.second;
+
+	//从hand中删除已出的牌
+	hand_->pop_card(btns_to_cards(selected_cards_));
+
+
+	// 将牌堆中已出的牌全部删除
+	for (auto i : selected_cards_)
+	{
+		for (int j = 0; j < card_heaps_.size(); j++)
+		{
+			auto& heap = card_heaps_[j].second;
+			for (int k = 0; k < heap.size(); k++)
+			{
+				if (heap[k].get_card_btn() == i)
+				{
+					heap.erase(heap.begin() + k);
+					card_heaps_[j].first = false;
+				}
+			}
+			if (heap.empty())
+			{
+				card_heaps_.erase(card_heaps_.begin() + j);
+				j--;
+			}
+		}
+	}
+
+	sort_card_heap(false);
+	//发送卡牌已打出信号
+	emit card_played(all_combs_[*selected_wild_card_id], hand_->id_);
+}
+
+void PlayerWidget::delete_played_cards_ui(int player_id)
+{
+	if (spr_played_cards_[player_id] != nullptr)
+	{
+		delete spr_played_cards_[player_id];
+		spr_played_cards_[player_id] = nullptr;
+	}
+}
+
+void PlayerWidget::update_played_cards_ui(const std::vector<Card>& cards, int player_id)
+{
+	auto icon = get_combination_pixmap(cards, 0.17);
+	int x = PLAYED_CARD_X[(player_id - hand_->id_ + 4) % 4];
+	int y = PLAYED_CARD_Y[(player_id - hand_->id_ + 4) % 4];
+	//设置卡牌图标
+	spr_played_cards_[player_id] = new Sprite(x, y, icon, this, Sprite::Size, 20);
+	//置于图层底层，防止遮挡主牌显示
+	spr_played_cards_[player_id]->lower();
+	spr_played_cards_[player_id]->show();
+}
+
+void PlayerWidget::update_played_cards_ui(int player_id)
+{
+	int x = SPR_PLAYER_X[(player_id - hand_->id_ + 4) % 4] + 13;
+	int y = SPR_PLAYER_Y[(player_id - hand_->id_ + 4) % 4] + 105;
+	spr_played_cards_[player_id] = new Sprite(x, y, QPixmap("img/label/pass.png"), this, Sprite::Size, 30);
+	//置于图层底层，防止遮挡主牌显示
+	spr_played_cards_[player_id]->lower();
+	spr_played_cards_[player_id]->show();
+}
+
+void PlayerWidget::on_card_played(const std::vector<Card>& cards, int player_id)
+{
+	//更新桌面牌面显示
+	if (turn != circle_leader) { update_played_cards_ui(cards, player_id); }
+}
+
+void PlayerWidget::on_passed(int player_id)
+{
+	//更新桌面牌面显示"不出"
+	if (turn != circle_leader) { update_played_cards_ui(player_id); }
+}
+
+void PlayerWidget::on_pass_clicked()
+{
+	emit sig_pass(hand_->id_);
 }

@@ -47,6 +47,9 @@ public:
 	//@brief 为该用户删除一张牌
 	void pop_card(const Card& card);
 
+	//@brief 为该用户删除多张牌
+	void pop_card(const std::vector<Card>& cards);
+
 	int get_group()const { return id_ % 2; }
 
 

@@ -22,7 +22,10 @@ void update_round_rank();
 void update_cards_round_rank();
 
 //@brief 生成牌组Pixmap
-QPixmap get_combination_pixmap(std::vector<Card>cards);
+//@para
+//cards: 牌组
+//ratio: 牌组间隔(1.0为满间隔)
+QPixmap get_combination_pixmap(const std::vector<Card>&cards, double ratio = 0.5);
 
 //@brief 开局发牌
 //@return vector<Card> 打乱顺序的两幅扑克牌
@@ -69,7 +72,6 @@ extern int circle_type;
 extern int circle_point;
 // 本圈出牌的领圈人
 extern int circle_leader;
-
 
 #endif // STATUS_H_
 
