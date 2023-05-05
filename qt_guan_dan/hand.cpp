@@ -5,8 +5,7 @@
 #include <vector>
 #include <string>
 
-Hand::Hand(int id) :id_(id), fail_at_a_cnt_(0)
-{}
+Hand::Hand(int id) :id_(id),  widget_(nullptr) {}
 
 std::pair<int, int> Hand::certain_comb_info(const std::vector<Card>& cards)const
 {
@@ -241,7 +240,7 @@ std::vector<std::vector<Card>> Hand::all_valid_comb(const std::vector<Card>& car
 		}
 	}
 	// 检测是否无关花色重复出现
-    	std::map <std::pair<int,int>,bool> is_vis; 
+	std::map <std::pair<int, int>, bool> is_vis;
 	//牌型不是逢人配（单牌特判）
 	if (wild_card_cnt == 0 || cards.size() == 1)
 	{
@@ -259,11 +258,11 @@ std::vector<std::vector<Card>> Hand::all_valid_comb(const std::vector<Card>& car
 			for (int j = 0; j <= 3; j++)
 			{
 				cards_tmp.push_back(Card(i, j));
-                		auto comb_tmp = certain_comb_info(cards_tmp);
-				if (is_info_valid(comb_tmp) && is_vis[comb_tmp] == false )
+				auto comb_tmp = certain_comb_info(cards_tmp);
+				if (is_info_valid(comb_tmp) && is_vis[comb_tmp] == false)
 				{
 					sort(cards_tmp.begin(), cards_tmp.end());
-                    			is_vis[comb_tmp] = true;
+					is_vis[comb_tmp] = true;
 					ret.push_back(cards_tmp);
 				}
 				cards_tmp.pop_back();
@@ -279,11 +278,11 @@ std::vector<std::vector<Card>> Hand::all_valid_comb(const std::vector<Card>& car
 					{
 						cards_tmp.push_back(Card(i, j));
 						cards_tmp.push_back(Card(p, q));
-                        			auto comb_tmp = certain_comb_info(cards_tmp);
-						if (is_info_valid(comb_tmp) && is_vis[comb_tmp] == false )
+						auto comb_tmp = certain_comb_info(cards_tmp);
+						if (is_info_valid(comb_tmp) && is_vis[comb_tmp] == false)
 						{
 							ret.push_back(cards_tmp);
-                            				is_vis[comb_tmp] = true;
+							is_vis[comb_tmp] = true;
 						}
 						cards_tmp.pop_back();
 						cards_tmp.pop_back();

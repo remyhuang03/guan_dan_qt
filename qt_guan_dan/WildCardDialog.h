@@ -1,21 +1,21 @@
-#ifndef WILDCARDDIALOG_H_
+ï»¿#ifndef WILDCARDDIALOG_H_
 #define WILDCARDDIALOG_H_
 
 #include <qdialog.h>
 #include <vector>
 #include "card.h"
 
-//·êÈËÅäÑ¡Ôñ¶Ô»°¿ò
+//é€¢äººé…é€‰æ‹©å¯¹è¯æ¡†
 class WildCardDialog : public QDialog
 {
 public:
 	//@para
-	//combinations: ¸÷ÖÖÍ¬»¨Ë³×éºÏ
-	//parent: ¸¸´°¿Ú
+	//combinations: å„ç§åŒèŠ±é¡ºç»„åˆ
+	//parent: çˆ¶çª—å£
 	WildCardDialog(std::vector<std::vector<Card>> combinations, QWidget* parent);
 
 private:
-	//µ¥Ñ¡°´Å¥×é
+	//å•é€‰æŒ‰é’®ç»„
 	QButtonGroup* button_group_;
 };
 

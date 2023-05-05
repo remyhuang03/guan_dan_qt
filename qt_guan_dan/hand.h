@@ -47,8 +47,6 @@ public:
 	//@brief 为该用户删除一张牌
 	void pop_card(const Card& card);
 
-	int get_fail_at_a()const { return fail_at_a_cnt_; }
-
 	int get_group()const { return id_ % 2; }
 
 
@@ -69,8 +67,6 @@ private:
 	int id_;
 	//所持有卡牌
 	std::vector<Card> cards_;
-	//A级下没有打过的次数
-	int fail_at_a_cnt_;
 	//该用户的窗口实现
 	PlayerWidget* widget_;
 };

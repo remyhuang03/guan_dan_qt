@@ -32,9 +32,3 @@ bool operator>(const Card& card1, const Card& card2)
 	return true;
 }
 
-QDebug& operator<<(QDebug& os, const Card& c)
-{
-	char suit[4] = { '♠','♥','♣','♦' };
-	os << suit[c.get_suit()] << c.get_point();
-	return os;
-}
