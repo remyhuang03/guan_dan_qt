@@ -100,7 +100,7 @@ PlayerWidget::PlayerWidget(Hand* hand) : QWidget(), hand_(hand)
 	btn_play_->hide();
 	btn_play_->set_mode(Button::Disabled);
 	//四个状态标签
-	for (int i = 0; i < 4; i++) { lb_status_[i] = new StatusLabel(SPR_PLAYER_X[i] + 17, SPR_PLAYER_Y[i] + 70, this); }
+	for (int i = 0; i < 4; i++) { lb_status_[(i + id_) % 4] = new StatusLabel(SPR_PLAYER_X[i] + 18, SPR_PLAYER_Y[i] + 70, this); }
 
 	//连接按钮事件
 	connect(btn_play_, &Button::click_emit, this, &PlayerWidget::on_play_card);
@@ -321,7 +321,7 @@ void PlayerWidget::on_arrange_clicked(int mode)
 	}
 
 	//mode == 0, 整理选中牌
-	
+
 	//转换为已选Card类型
 	std::vector<Card>cards;
 	for (auto i : selected_cards_)

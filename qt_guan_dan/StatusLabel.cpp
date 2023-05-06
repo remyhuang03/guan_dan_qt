@@ -6,7 +6,6 @@ StatusLabel::StatusLabel(int x, int y, QWidget* parent) :x_(x), y_(y)
 	play_status_bg = new Sprite(x, y, QPixmap("img/label/blank.png"), parent, Sprite::Height, 60);
 	lb_remaning_card_cnt = new QLabel(parent);
 	lb_remaning_card_cnt->setStyleSheet("font-size: 14px; color: white; font-weight: bold;");
-
 	//置顶覆盖头像位置
 	play_status_bg->raise();
 	lb_remaning_card_cnt->raise();
@@ -20,8 +19,8 @@ void StatusLabel::set(Mode mode, int arg)
 	{
 	case Remain_cnt:
 		lb_remaning_card_cnt->setText(QString::number(arg));
-		if (arg == 10) { lb_remaning_card_cnt->setGeometry(x_ + 20, y_ + 8, 40, 40); }
-		else { lb_remaning_card_cnt->setGeometry(x_ + 24, x_ + 8, 40, 40); }
+		if (arg == 10) { lb_remaning_card_cnt->setGeometry(x_ + 23, y_ + 8, 40, 40); }
+		else { lb_remaning_card_cnt->setGeometry(x_ + 27, y_ + 8, 40, 40); }
 		play_status_bg->set_pm(QString("img/label/remaining_card.png").arg(arg));
 		play_status_bg->show();
 		lb_remaning_card_cnt->show();

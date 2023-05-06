@@ -39,7 +39,7 @@ void guan_dan::start_game()
 
 		//分发卡牌
 		//debug:少发点牌，方便调试
-        #define DEBUG_CARD_CNT_ 15 //27
+        #define DEBUG_CARD_CNT_ 10 //27
 		auto begin = shuffled_cards.begin() + i * DEBUG_CARD_CNT_;
 		auto end = shuffled_cards.begin() + (i + 1) * DEBUG_CARD_CNT_;
 		players[i]->set_cards(std::vector(begin, end));
