@@ -22,7 +22,7 @@ std::pair<int, int> Hand::certain_comb_info(const std::vector<Card>& cards)const
 	int max_rank = -1;
 	for (auto& card : cards)
 	{
-		max_rank = max(max_rank, get_real_rank(card.get_point()));
+		max_rank = std::max(max_rank, get_real_rank(card.get_point()));
 	}
 
 	//计算牌型特征, 检查牌点是否连续
@@ -36,7 +36,7 @@ std::pair<int, int> Hand::certain_comb_info(const std::vector<Card>& cards)const
 	}
 	sort(points.begin(), points.end());
 	//存在大小王，直接否定连续性
-	if (find(points.begin(), points.end(), 14) != points.end() &&
+	if (find(points.begin(), points.end(), 14) != points.end() ||
 		find(points.begin(), points.end(), 15) != points.end())
 	{
 		is_consecutive = false;
@@ -44,18 +44,18 @@ std::pair<int, int> Hand::certain_comb_info(const std::vector<Card>& cards)const
 	//判断A的地位
 	if (points.size() > 1 && points[0] == 1 && points[1] != 2)
 	{
-		//将A作为最大者重排
+		//将A作为最大值重排
 		points[0] = 14;
 		sort(points.begin(), points.end());
 	}
 	//牌点不连续
-	if (points.back() - points.front() != points.size() - 1)
+	if (points.back() - points.front() + 1 != points.size())
 	{
 		is_consecutive = false;
 	}
 
-	//连续牌点的大小（以连续牌点中最小者减1规范到从0开始算大小）
-	int consecutive_rank = max_rank - 1;
+	//连续牌点的大小（以连续牌点中最大者减1规范到从0开始算大小）
+	int consecutive_rank = points.back() - 1;
 
 	//需返回的牌型和相对大小
 	int ret_type = -1, ret_rank = -1;
@@ -173,13 +173,13 @@ std::pair<int, int> Hand::certain_comb_info(const std::vector<Card>& cards)const
 		if (is_consecutive && card_trait == "222")
 		{
 			ret_type = 6;
-			ret_rank = max_rank;
+			ret_rank = consecutive_rank;
 		}
 		//二连三-7
 		if (is_consecutive && card_trait == "33")
 		{
-			ret_type = 6;
-			ret_rank = max_rank;
+			ret_type = 7;
+			ret_rank = consecutive_rank;
 		}
 		break;
 	case 7:
@@ -231,7 +231,7 @@ std::vector<std::vector<Card>> Hand::all_valid_comb(const std::vector<Card>& car
 	{
 		Card card = cards_tmp[i];
 		//为级牌并且为红桃
-		if (card.get_point() == group_rank[get_group()] && card.get_suit() == 1)
+		if (card.get_point() == round_rank_card && card.get_suit() == 1)
 		{
 			//删除级牌
 			cards_tmp.erase(cards_tmp.begin() + i);
@@ -437,7 +437,7 @@ void Hand::set_cards(const std::vector<Card>& cards)
 	//设置当前手牌
 	cards_ = cards;
 	//更新界面上的手牌
-	widget_->update_all();
+	// widget_->update_all();
 }
 
 std::vector<std::vector<std::vector<Card>>> Hand::all_straight_flush_combinations()const
