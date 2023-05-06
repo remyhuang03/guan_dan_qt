@@ -31,14 +31,19 @@ Hand* players[4];
 
 Record game_record;
 
-void update_round_rank()
+void round_over()
 {
+	//轮数加一
+	round_cnt++;
 
 	//获取排名情况 	
 	for (int i = 0; i < 4; i++)
 	{
 		rank_list[round_rank[i]] = i;
 	}
+
+	//游戏增加到牌局记录中
+	game_record.push_record();
 
 	//上游的id
 	int first_id = rank_list[0];

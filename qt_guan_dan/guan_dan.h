@@ -11,7 +11,6 @@ class guan_dan : public QWidget
 
 public:
 	guan_dan(QWidget* parent = nullptr);
-	~guan_dan();
 
 public slots:
 	void start_game();
@@ -20,12 +19,15 @@ public slots:
 
 signals:
 	void update_player_widget();
-	void signal_switch_turn();
-
+	void sig_game_over();
+	void sig_new_round();
+	void sig_switch_turn();
+	
 private:
 	Ui::guan_danClass ui;
 	// [i]: 玩家 i 的窗口
 	PlayerWidget* player_widgets[4];
+
 	//@brief 轮转到下一轮
 	//@para is_next: 如为false，则按当前turn进行，否则轮转到下一个turn
 	void switch_turn(bool is_next = true);

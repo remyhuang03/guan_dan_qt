@@ -46,6 +46,7 @@ public slots:
 	void on_card_played(const std::vector<Card>& cards, int player_id);
 	void on_passed(int player_id);
 	void on_pass_clicked();
+	void on_new_round();
 
 protected:
 	void closeEvent(QCloseEvent* event);

@@ -99,12 +99,15 @@ PlayerWidget::PlayerWidget(Hand* hand) : QWidget(), hand_(hand)
 	btn_play_->set_pm("img/btn/play_card1.png", Button::Disabled);
 	btn_play_->hide();
 	btn_play_->set_mode(Button::Disabled);
+
 	//四个状态标签
 	for (int i = 0; i < 4; i++) { lb_status_[(i + id_) % 4] = new StatusLabel(SPR_PLAYER_X[i] + 18, SPR_PLAYER_Y[i] + 70, this); }
 
 	//连接按钮事件
 	connect(btn_play_, &Button::click_emit, this, &PlayerWidget::on_play_card);
 }
+
+void PlayerWidget::on_new_round() {/*to - do*/ }
 
 void PlayerWidget::closeEvent(QCloseEvent* event)
 {
@@ -474,11 +477,14 @@ void PlayerWidget::on_play_card()
 	}
 
 	sort_card_heap(false);
-	//如果牌已经出完，更新排名状态
+	//如果牌已经出完
 	if (hand_->cards_.empty())
 	{
+		//更新排名状态
 		auto max_rank = std::max_element(std::begin(round_rank), std::end(round_rank));
 		round_rank[id_] = *max_rank + 1;
+		//实现接风功能
+		circle_leader = (id_ + 2) % 4;
 	}
 
 	//发送卡牌已打出信号

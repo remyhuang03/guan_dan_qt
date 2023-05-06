@@ -22,7 +22,7 @@ std::pair<int, int> Hand::certain_comb_info(const std::vector<Card>& cards)const
 	int max_rank = -1;
 	for (auto& card : cards)
 	{
-		max_rank = std::max(max_rank, get_real_rank(card.get_point()));
+		max_rank = max(max_rank, get_real_rank(card.get_point()));
 	}
 
 	//计算牌型特征, 检查牌点是否连续

@@ -14,9 +14,9 @@ class Hand;
 //@brief 全局初始化游戏状态
 void init_game_data();
 
-//@brief 根据胜负更新
-//group_rank, round_rank_card, cards_round_rank
-void update_round_rank();
+//@brief 轮游戏结束，更新本轮数据
+//group_rank, round_rank_card, cards_round_rank, rank_list
+void round_over();
 
 //@brief 更新 cards_round_rank
 void update_cards_round_rank();
