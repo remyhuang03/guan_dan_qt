@@ -437,7 +437,7 @@ void Hand::set_cards(const std::vector<Card>& cards)
 	//设置当前手牌
 	cards_ = cards;
 	//更新界面上的手牌
-	// widget_->update_all();
+	widget_->update_all();
 }
 
 std::vector<std::vector<std::vector<Card>>> Hand::all_straight_flush_combinations()const
