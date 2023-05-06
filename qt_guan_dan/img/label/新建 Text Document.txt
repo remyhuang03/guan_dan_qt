@@ -1,2 +1,0 @@
-img/label/rank_bg_group1.png
-          rank_bg_group0

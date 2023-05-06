@@ -1,7 +1,7 @@
 ﻿#include "sprite.h"
 #include <qwidget.h>
 
-Sprite::Sprite(int x, int y, QPixmap img, QWidget* parent, SizeMode mode, double size)
+Sprite::Sprite(int x, int y,const QPixmap& img, QWidget* parent, SizeMode mode, double size)
 	:QPushButton(parent)
 {
 	show();
@@ -10,7 +10,7 @@ Sprite::Sprite(int x, int y, QPixmap img, QWidget* parent, SizeMode mode, double
 	setFlat(true);
 
 	//设置按钮图片
-	auto pixmap = QPixmap(img);
+	auto pixmap = img;
 	setIcon(pixmap);
 	//调整按钮图片大小
 	double ratio = 1.0 * pixmap.size().width() / pixmap.size().height();
@@ -35,10 +35,12 @@ Sprite::Sprite(int x, int y, QPixmap img, QWidget* parent, SizeMode mode, double
 	setGeometry(x, y, w_, h_);
 };
 
-//Sprite::set_pm(QString img)
-//{
-//	setIcon(QPixmap(img));
-//}
+void Sprite::set_pm(QPixmap img)
+{
+	setIcon(img);
+	setIconSize(QSize(w_, h_));
+	setGeometry(pos().x(), pos().y(), w_, h_);
+}
 
 
 

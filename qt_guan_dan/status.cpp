@@ -165,17 +165,20 @@ void init_game_data()
 
 QPixmap get_combination_pixmap(const std::vector<Card>&cards,double ratio)
 {
+	auto cards_cpy = cards;
+	sort(cards_cpy.begin(), cards_cpy.end());
+
 	//获取素材大小
 	auto size = QPixmap("img/card/1_0.png").size();
 	//卡牌个数
-	auto cnt = cards.size();
+	auto cnt = cards_cpy.size();
 	// 指定合成后 QPixmap 的大小
 	QPixmap ret(size.width() + (cnt - 1) * size.width() * ratio, size.height());
 	QPainter painter(&ret);
 	// 依次叠加卡牌元素
 	for (int i = 0; i < cnt; i++)
 	{
-		const Card& card = cards[i];
+		const Card& card = cards_cpy[i];
 		auto card_pixmap = QPixmap(QString("img/card/%1_%2.png").arg(card.get_point()).arg(card.get_suit()));
 		painter.drawPixmap(i * size.width() * ratio, 0, card_pixmap);
 	}

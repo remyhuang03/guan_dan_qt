@@ -7,6 +7,7 @@
 #include "hand.h"
 #include "card_btn.h"
 #include "button.h"
+#include "StatusLabel.h"
 
 class CardButton;
 class SfButton;
@@ -66,14 +67,22 @@ private:
 	Button* btn_pass_;
 	//已出牌展示
 	Sprite* spr_played_cards_[4];
+	//玩家游戏状态标签
+	StatusLabel* lb_status_[4];
+	
 
-	/***** ******/
+	/***** 常量坐标数据 ******/
 	//玩家头像位置坐标
 	const int SPR_PLAYER_X[4] = { 20,860,390,20 };
 	const int SPR_PLAYER_Y[4] = { 370,110,15,110 };
 	//玩家已出牌显示位置
 	const int PLAYED_CARD_X[4] = { 15,780,480,120 };
 	const int PLAYED_CARD_Y[4] = { 300,140,30,140 };
+
+
+	/***** 游戏数据 ******/
+	//对应玩家id
+	int id_;
 	//对应玩家指针
 	Hand* hand_;
 	//该玩家排堆： vector<pair<是否为整理好的牌，该堆所有的牌>>
@@ -82,14 +91,16 @@ private:
 	//当前所有可能的同花顺组合
 	std::vector<std::vector<std::vector<Card>>> straight_flush_comb_;
 
+	//所选牌对应的所有可能的出牌组合
+	std::vector<std::vector<Card>> all_combs_;
+
+
+	/***** 功能函数 ******/
 	//@brief 更新出牌按钮状态
 	void update_play_btn();
 
-	//卡牌按钮转换为卡牌
+	//@brief 卡牌按钮转换为卡牌
 	std::vector<Card> btns_to_cards(const std::vector<CardButton*>& card_btns);
-
-	//所选牌对应的所有可能的出牌组合
-	std::vector<std::vector<Card>> all_combs_;
 
 	//@brief 删除所有已出牌显示UI
 	//@para player_id: 对应玩家id
@@ -104,12 +115,20 @@ private:
 	void update_played_cards_ui(int player_id);
 
 signals:
-	//强制取消选择所有卡牌
+	//@brief 强制取消选择所有卡牌
 	void compulsory_unselect_all_cards();
+	//@brief 当前玩家窗口关闭
 	void player_close();
+	//@brief 需要删除所有卡牌显示
 	void delete_all_card_bottons();
+	//@brief 强制选中卡牌
 	void compulsory_select(CardButton* btn);
+	//@brief 打出卡牌
+	//@para 
+	// cards: 打出的卡牌
+	// player_id: 打出卡牌的玩家id
 	void card_played(std::vector<Card> cards, int player_id);
+	//@brief 跳过该玩家出牌
 	void sig_pass(int player_id);
 
 };

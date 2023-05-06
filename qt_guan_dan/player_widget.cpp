@@ -16,14 +16,15 @@
 PlayerWidget::PlayerWidget(Hand* hand) : QWidget(), hand_(hand)
 {
 	/***** 窗口基本设置 ****/
-	int id = hand_->id_;
+	id_ = hand_->id_;
 	show();
 	//设置标题
-	setWindowTitle(QString("玩家") + QString::number(id + 1));
+	setWindowTitle(QString("玩家") + QString::number(id_ + 1));
 	//背景色深灰色
 	setPalette(QColor(35, 35, 35));
 	//设置窗口大小
-	setGeometry((id / 2) * 200, 30 + (id % 2) * 200, SCREEN_W, SCREEN_H);
+	//setGeometry((id_ / 2) * 200, 30 + (id_ % 2) * 200, SCREEN_W, SCREEN_H);
+	setGeometry(100, 100, SCREEN_W, SCREEN_H);
 	setFixedSize(SCREEN_W, SCREEN_H);
 
 	/***** 成员初始化 *****/
@@ -34,7 +35,7 @@ PlayerWidget::PlayerWidget(Hand* hand) : QWidget(), hand_(hand)
 
 	/***** 基本UI布局设置 ****/
 	//显示级牌底边
-	QString rsc_t = QString("img/label/rank_bg_group") + QString::number(id % 2) + QString(".png");
+	QString rsc_t = QString("img/label/rank_bg_group") + QString::number(id_ % 2) + QString(".png");
 	new Sprite(15, 15, rsc_t, this, Sprite::Height, 65);
 
 	auto set_label = [](QLabel* lb, int y) {
@@ -48,10 +49,9 @@ PlayerWidget::PlayerWidget(Hand* hand) : QWidget(), hand_(hand)
 	set_label(lb_rank_self_, 15);
 	set_label(lb_rank_rival_, 47);
 	//显示玩家布局
-	int id_t = id;
+	int id_t = id_;
 	for (int i = 0; i < 4; i++)
 	{
-		int id_;
 		rsc_t = QString("img/label/player") + QString::number(id_t) + QString(".png");
 		new Sprite(SPR_PLAYER_X[i], SPR_PLAYER_Y[i], rsc_t, this, Sprite::Height, 120);
 		if (++id_t == 4) { id_t = 0; }
@@ -99,6 +99,8 @@ PlayerWidget::PlayerWidget(Hand* hand) : QWidget(), hand_(hand)
 	btn_play_->set_pm("img/btn/play_card1.png", Button::Disabled);
 	btn_play_->hide();
 	btn_play_->set_mode(Button::Disabled);
+	//四个状态标签
+	for (int i = 0; i < 4; i++) { lb_status_[i] = new StatusLabel(SPR_PLAYER_X[i] + 17, SPR_PLAYER_Y[i] + 70, this); }
 
 	//连接按钮事件
 	connect(btn_play_, &Button::click_emit, this, &PlayerWidget::on_play_card);
@@ -158,8 +160,11 @@ void PlayerWidget::update_card_heap_show()
 	//相邻两张牌的偏移量
 	//中心位置x:480,极限位置x:115
 	int x_count = card_heaps_.size();
-	int offset_x = min(100, ((480 - 115) * 2 - 100) / (x_count - 1));
-	int offset_y = 35;
+	int offset_x, offset_y;
+
+	if (x_count == 1) { offset_x = 100; }
+	else { offset_x = min(100, ((480 - 115) * 2 - 100) / (x_count - 1)); }
+	offset_y = 35;
 
 	//起始x位置，由左到右渲染
 	int x = 480 - (offset_x * (x_count - 1) + 100) / 2.0;
@@ -246,7 +251,7 @@ void PlayerWidget::on_card_selected(CardButton* card_btn, bool is_compulsory)
 void PlayerWidget::update_play_btn()
 {
 	//没轮到自己，不用判断
-	if (turn != hand_->id_) { return; }
+	if (turn != id_) { return; }
 	auto selected_info = hand_->certain_comb_info(btns_to_cards(selected_cards_));
 
 	//所选牌可出牌的组合
@@ -316,6 +321,7 @@ void PlayerWidget::on_arrange_clicked(int mode)
 	}
 
 	//mode == 0, 整理选中牌
+	
 	//转换为已选Card类型
 	std::vector<Card>cards;
 	for (auto i : selected_cards_)
@@ -369,6 +375,8 @@ void PlayerWidget::on_arrange_clicked(int mode)
 		{
 			card_heaps_.back().second.push_back(i);
 		}
+		//删除已选卡牌
+		selected_cards_.clear();
 		update_card_heap_show();
 	}
 }
@@ -388,17 +396,17 @@ void PlayerWidget::on_turn_switched()
 	if (circle_type >= 0)
 	{
 		//自己的回合
-		if (turn == hand_->id_)
+		if (turn == id_)
 		{
 			//删除自己已出牌的显示
-			delete_played_cards_ui(hand_->id_);
+			delete_played_cards_ui(id_);
 			//顶置当前活动窗口
 			raise();
 			//更新出牌按钮模式
 			update_play_btn();
 
 			//如果自己是领圈人，则必须出牌
-			if (hand_->id_ == circle_leader) { btn_pass_->set_mode(Button::Disabled); }
+			if (id_ == circle_leader) { btn_pass_->set_mode(Button::Disabled); }
 			else { btn_pass_->set_mode(Button::Normal); }
 
 			//显示出牌、不出按钮
@@ -434,7 +442,7 @@ void PlayerWidget::on_play_card()
 		int index = dialog->exec();
 	}
 	//全局状态操作
-	circle_leader = hand_->id_;
+	circle_leader = id_;
 	auto pair_info = hand_->certain_comb_info(btns_to_cards(selected_cards_));
 	circle_type = pair_info.first;
 	circle_point = pair_info.second;
@@ -466,8 +474,15 @@ void PlayerWidget::on_play_card()
 	}
 
 	sort_card_heap(false);
+	//如果牌已经出完，更新排名状态
+	if (hand_->cards_.empty())
+	{
+		auto max_rank = std::max_element(std::begin(round_rank), std::end(round_rank));
+		round_rank[id_] = *max_rank + 1;
+	}
+
 	//发送卡牌已打出信号
-	emit card_played(all_combs_[*selected_wild_card_id], hand_->id_);
+	emit card_played(all_combs_[*selected_wild_card_id], id_);
 }
 
 void PlayerWidget::delete_played_cards_ui(int player_id)
@@ -482,8 +497,8 @@ void PlayerWidget::delete_played_cards_ui(int player_id)
 void PlayerWidget::update_played_cards_ui(const std::vector<Card>& cards, int player_id)
 {
 	auto icon = get_combination_pixmap(cards, 0.17);
-	int x = PLAYED_CARD_X[(player_id - hand_->id_ + 4) % 4];
-	int y = PLAYED_CARD_Y[(player_id - hand_->id_ + 4) % 4];
+	int x = PLAYED_CARD_X[(player_id - id_ + 4) % 4];
+	int y = PLAYED_CARD_Y[(player_id - id_ + 4) % 4];
 	//设置卡牌图标
 	spr_played_cards_[player_id] = new Sprite(x, y, icon, this, Sprite::Size, 20);
 	//置于图层底层，防止遮挡主牌显示
@@ -493,8 +508,8 @@ void PlayerWidget::update_played_cards_ui(const std::vector<Card>& cards, int pl
 
 void PlayerWidget::update_played_cards_ui(int player_id)
 {
-	int x = SPR_PLAYER_X[(player_id - hand_->id_ + 4) % 4] + 13;
-	int y = SPR_PLAYER_Y[(player_id - hand_->id_ + 4) % 4] + 105;
+	int x = SPR_PLAYER_X[(player_id - id_ + 4) % 4] + 13;
+	int y = SPR_PLAYER_Y[(player_id - id_ + 4) % 4] + 105;
 	spr_played_cards_[player_id] = new Sprite(x, y, QPixmap("img/label/pass.png"), this, Sprite::Size, 30);
 	//置于图层底层，防止遮挡主牌显示
 	spr_played_cards_[player_id]->lower();
@@ -503,8 +518,15 @@ void PlayerWidget::update_played_cards_ui(int player_id)
 
 void PlayerWidget::on_card_played(const std::vector<Card>& cards, int player_id)
 {
+	//to-do
 	//更新桌面牌面显示
 	if (turn != circle_leader) { update_played_cards_ui(cards, player_id); }
+
+	int remain_cnt = players[player_id]->get_cards().size();
+	//更新玩家状态情况（剩余牌数<=10）
+	if (remain_cnt <= 10) { lb_status_[player_id]->set(StatusLabel::Remain_cnt, remain_cnt); }
+	//已经无牌，更新该玩家状态
+	if (remain_cnt == 0) { lb_status_[player_id]->set(StatusLabel::Rank, round_rank[player_id]); }
 }
 
 void PlayerWidget::on_passed(int player_id)
@@ -515,5 +537,5 @@ void PlayerWidget::on_passed(int player_id)
 
 void PlayerWidget::on_pass_clicked()
 {
-	emit sig_pass(hand_->id_);
+	emit sig_pass(id_);
 }

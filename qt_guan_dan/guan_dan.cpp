@@ -38,8 +38,10 @@ void guan_dan::start_game()
 		player_widgets[i]->set_hand(players[i]);
 
 		//分发卡牌
-		auto begin = shuffled_cards.begin() + i * 27;
-		auto end = shuffled_cards.begin() + (i + 1) * 27;
+		//debug:少发点牌，方便调试
+        #define DEBUG_CARD_CNT_ 15 //27
+		auto begin = shuffled_cards.begin() + i * DEBUG_CARD_CNT_;
+		auto end = shuffled_cards.begin() + (i + 1) * DEBUG_CARD_CNT_;
 		players[i]->set_cards(std::vector(begin, end));
 
 		//连接玩家窗口关闭信号槽
@@ -67,13 +69,10 @@ void guan_dan::switch_turn(bool is_next)
 {
 	if (is_next)
 	{
-		//下一个turn溢出，重置为0
-		if (++turn == 4) { turn = 0; }
-		//找到就近可出牌的人
-		while (round_rank[turn] != -1)
+		do
 		{
-			turn++;
-		}
+			turn = (turn + 1) % 4;
+		} while (round_rank[turn] != -1);
 	}
 	emit signal_switch_turn();
 }
@@ -81,8 +80,7 @@ void guan_dan::switch_turn(bool is_next)
 
 void guan_dan::on_card_played(const std::vector<Card>& cards, int player_id)
 {
-	//to-do
-	//to-do: 判断玩家是否已经获胜
+	//to-do：判断牌局结束
 
 	//轮转到下一个玩家
 	switch_turn();
