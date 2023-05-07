@@ -15,16 +15,17 @@ int group_rank[2] = { 2,2 };
 int group_fial_pass_a[2] = { 0,0 };
 int round_rank_card = 2;
 int turn = 0;
-// 当前出牌的牌型（-2:贡牌   -1:还贡   >=0:正常牌型）
+// 当前出牌的牌型（-4,-3,-2,-1：进贡1，进贡2，还贡1，还贡2   >=0:正常牌型）
 int circle_type = 0;
 int circle_point = 0;
 // 本圈出牌的领圈人, 可以不受牌型限制出牌
 int circle_leader = 0;
-int contribute_order[4];
+int contribute_order[2];
 int contribute_count;
 //上一轮游戏中玩家 i 的排名(-1：该玩家正在游戏中  0 - 3：0为上游)
 int round_rank[4];
 int rank_list[4];
+int card_played_process_count = 0;
 std::map<int, int> cards_round_rank;
 
 Hand* players[4];
@@ -157,18 +158,16 @@ void init_game_data()
 	//第一次随机找个出牌人
 	std::srand(std::time(nullptr));
 	turn = std::rand() % 4;
-
+	card_played_process_count = 0;
 	circle_type = 0;
 	circle_point = 0;
 	circle_leader = turn;
-	//int contribute_order[4];
-	//int contribute_count;
 	//没有玩家完成比赛，玩家排名记为-1
 	std::for_each(std::begin(round_rank), std::end(round_rank), [](int& a) {a = -1; });
 	update_cards_round_rank();
 }
 
-QPixmap get_combination_pixmap(const std::vector<Card>&cards,double ratio)
+QPixmap get_combination_pixmap(const std::vector<Card>& cards, double ratio)
 {
 	auto cards_cpy = cards;
 	sort(cards_cpy.begin(), cards_cpy.end());

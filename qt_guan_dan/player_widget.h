@@ -37,6 +37,10 @@ public:
 	void emit_unselect_all_cards();
 	void emit_select(std::vector<Card> cards);
 
+	//@brief 更新已出牌显示UI（显示为“不出”）
+	//       player_id: 对应玩家id
+	void update_played_cards_ui(int player_id);
+
 public slots:
 	void on_card_selected(CardButton* card_btn, bool is_compulsory = true);
 	void on_card_unselected(CardButton* card_btn);
@@ -70,7 +74,9 @@ private:
 	Sprite* spr_played_cards_[4];
 	//玩家游戏状态标签
 	StatusLabel* lb_status_[4];
-	
+	//当前级牌星标
+	Sprite* spr_star;
+
 
 	/***** 常量坐标数据 ******/
 	//玩家头像位置坐标
@@ -111,9 +117,7 @@ private:
 	//@para  cards: 需要渲染的卡牌
 	//       player_id: 对应玩家id
 	void update_played_cards_ui(const std::vector<Card>& cards, int player_id);
-	//@brief 更新已出牌显示UI（显示为“不出”）
-	//       player_id: 对应玩家id
-	void update_played_cards_ui(int player_id);
+	
 
 signals:
 	//@brief 强制取消选择所有卡牌
@@ -131,6 +135,8 @@ signals:
 	void card_played(std::vector<Card> cards, int player_id);
 	//@brief 跳过该玩家出牌
 	void sig_pass(int player_id);
+
+	void sig_global_card_played_process(const std::vector<Card>& cards, int player_id);
 
 };
 #endif

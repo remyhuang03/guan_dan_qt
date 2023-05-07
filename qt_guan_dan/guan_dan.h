@@ -28,9 +28,12 @@ private:
 	// [i]: 玩家 i 的窗口
 	PlayerWidget* player_widgets[4];
 
-	//@brief 轮转到下一轮
+	//@brief 轮转到下一circle
 	//@para is_next: 如为false，则按当前turn进行，否则轮转到下一个turn
 	void switch_turn(bool is_next = true);
+
+	//@brief 进入下一个round，处理进贡、还贡
+	void new_round();
 };
 
 #endif //GUANDAN_H_

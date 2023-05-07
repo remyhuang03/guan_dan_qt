@@ -58,7 +58,7 @@ extern int round_rank_card;
 //牌point映射到相对大小（0表示最小）
 extern std::map<int, int> cards_round_rank;
 // 玩家上贡顺序
-extern int contribute_order[4];
+extern int contribute_order[2];
 // 本轮上贡的人数
 extern int contribute_count;
 
@@ -72,6 +72,8 @@ extern int circle_type;
 extern int circle_point;
 // 本圈出牌的领圈人
 extern int circle_leader;
+// 本圈处理情况计数
+extern int card_played_process_count;
 
 #endif // STATUS_H_
 

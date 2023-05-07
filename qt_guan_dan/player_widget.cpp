@@ -103,11 +103,41 @@ PlayerWidget::PlayerWidget(Hand* hand) : QWidget(), hand_(hand)
 	//四个状态标签
 	for (int i = 0; i < 4; i++) { lb_status_[(i + id_) % 4] = new StatusLabel(SPR_PLAYER_X[i] + 18, SPR_PLAYER_Y[i] + 70, this); }
 
+	//级牌按钮（第一个round指定为第一项）
+	spr_star = new Sprite(100, 20, QPixmap("img/label/star.png"), this, Sprite::Height, 20);
+	spr_star->show();
+
 	//连接按钮事件
 	connect(btn_play_, &Button::click_emit, this, &PlayerWidget::on_play_card);
 }
 
-void PlayerWidget::on_new_round() {/*to - do*/ }
+void PlayerWidget::on_new_round()
+{
+	qDebug() << "new round";
+	//删除所有已出牌显示
+	for (int i = 0; i < 4; i++) { delete_played_cards_ui(i); }
+
+	//更新等级显示
+	lb_rank_self_->setText(QString::number(group_rank[hand_->get_group()]));
+	lb_rank_rival_->setText(QString::number(group_rank[!hand_->get_group()]));
+
+	//自动整理牌堆，并显示
+	update_all();
+
+	//不出按钮隐藏
+	btn_pass_->hide();
+	//出牌按钮隐藏
+	btn_play_->hide();
+	btn_play_->set_mode(Button::Disabled);
+
+	//四个状态标签标记为上一轮的游戏排名
+	for (int i = 0; i < 4; i++) { lb_status_[(i + id_) % 4]->set(StatusLabel::Rank, round_rank[i]); }
+
+	//级牌标识
+	int w_t = spr_star->size().width();
+	int h_t = spr_star->size().height();
+	spr_star->setGeometry(100, 20 + 30 * !((rank_list[0] % 2) == (id_ % 2)), w_t, h_t);
+}
 
 void PlayerWidget::closeEvent(QCloseEvent* event)
 {
@@ -156,6 +186,7 @@ void PlayerWidget::update_card_heap_show()
 {
 	emit delete_all_card_bottons();
 	btn_arrange_->set_mode(Button::Mode2);
+	btn_play_->set_mode(Button::Disabled);
 
 	//清空所有已选卡牌
 	selected_cards_.clear();
@@ -487,14 +518,16 @@ void PlayerWidget::on_play_card()
 		circle_leader = (id_ + 2) % 4;
 	}
 
-	//发送卡牌已打出信号
+	//debug: 发送卡牌已打出信号
 	emit card_played(all_combs_[*selected_wild_card_id], id_);
 }
 
 void PlayerWidget::delete_played_cards_ui(int player_id)
 {
+	qDebug() << "envoked";
 	if (spr_played_cards_[player_id] != nullptr)
 	{
+		qDebug() << "delete";
 		delete spr_played_cards_[player_id];
 		spr_played_cards_[player_id] = nullptr;
 	}
@@ -505,6 +538,7 @@ void PlayerWidget::update_played_cards_ui(const std::vector<Card>& cards, int pl
 	auto icon = get_combination_pixmap(cards, 0.17);
 	int x = PLAYED_CARD_X[(player_id - id_ + 4) % 4];
 	int y = PLAYED_CARD_Y[(player_id - id_ + 4) % 4];
+	delete_played_cards_ui(player_id);
 	//设置卡牌图标
 	spr_played_cards_[player_id] = new Sprite(x, y, icon, this, Sprite::Size, 20);
 	//置于图层底层，防止遮挡主牌显示
@@ -516,6 +550,7 @@ void PlayerWidget::update_played_cards_ui(int player_id)
 {
 	int x = SPR_PLAYER_X[(player_id - id_ + 4) % 4] + 13;
 	int y = SPR_PLAYER_Y[(player_id - id_ + 4) % 4] + 105;
+	delete_played_cards_ui(player_id);
 	spr_played_cards_[player_id] = new Sprite(x, y, QPixmap("img/label/pass.png"), this, Sprite::Size, 30);
 	//置于图层底层，防止遮挡主牌显示
 	spr_played_cards_[player_id]->lower();
@@ -524,15 +559,26 @@ void PlayerWidget::update_played_cards_ui(int player_id)
 
 void PlayerWidget::on_card_played(const std::vector<Card>& cards, int player_id)
 {
-	//to-do
 	//更新桌面牌面显示
-	if (turn != circle_leader) { update_played_cards_ui(cards, player_id); }
+	qDebug() << "on_card_played:" << cards.size() << player_id;
+	int turn_next = turn;
+	do
+	{
+		turn_next = (turn_next + 1) % 4;
+	} while (round_rank[turn_next] != -1);
+
+	if (turn_next != circle_leader) { update_played_cards_ui(cards, player_id); }
 
 	int remain_cnt = players[player_id]->get_cards().size();
 	//更新玩家状态情况（剩余牌数<=10）
 	if (remain_cnt <= 10) { lb_status_[player_id]->set(StatusLabel::Remain_cnt, remain_cnt); }
 	//已经无牌，更新该玩家状态
 	if (remain_cnt == 0) { lb_status_[player_id]->set(StatusLabel::Rank, round_rank[player_id]); }
+	card_played_process_count++;
+	if (card_played_process_count == 4)
+	{
+		emit sig_global_card_played_process(cards, player_id);
+	}
 }
 
 void PlayerWidget::on_passed(int player_id)
@@ -545,3 +591,5 @@ void PlayerWidget::on_pass_clicked()
 {
 	emit sig_pass(id_);
 }
+
+

@@ -310,6 +310,7 @@ void Hand::pop_card(const Card& card)
 		}
 	}
 }
+
 void Hand::pop_card(const std::vector<Card>& cards)
 {
 	for (const Card& card : cards) { pop_card(card); }

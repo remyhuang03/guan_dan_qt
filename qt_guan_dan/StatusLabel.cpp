@@ -26,7 +26,8 @@ void StatusLabel::set(Mode mode, int arg)
 		lb_remaning_card_cnt->show();
 		break;
 	case Rank:
-		play_status_bg->set_pm(QString("img/label/round_rank_%1.png").arg(arg));
+		play_status_bg->set_pm(QString("img/label/round_rank%1.png").arg(arg));
+		qDebug() << "arg:" << arg;
 		play_status_bg->show();
 		lb_remaning_card_cnt->hide();
 		break;
