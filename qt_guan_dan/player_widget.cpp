@@ -72,7 +72,7 @@ PlayerWidget::PlayerWidget(Hand* hand) : QWidget(), hand_(hand)
 			if (i != j)
 			{
 				//绑定同花顺按钮点击与重置其它按钮
-				connect(straight_flush_btns_[i], &SfButton::click_emit, straight_flush_btns_[j], &SfButton::reset_selected_order);
+				connect(straight_flush_btns_[i], &SfButton::sig_click_emit, straight_flush_btns_[j], &SfButton::on_reset_selected_order);
 			}
 		}
 	}
@@ -80,20 +80,20 @@ PlayerWidget::PlayerWidget(Hand* hand) : QWidget(), hand_(hand)
 	//理牌按钮
 	btn_arrange_ = new Button(700, 506, "img/btn/arrange0.png", this, Button::Height, 40);
 	btn_arrange_->set_pm("img/btn/arrange1.png", Button::Mode2);
-	connect(btn_arrange_, &Button::click_emit, this, &PlayerWidget::on_arrange_clicked);
+	connect(btn_arrange_, &Button::sig_click_emit, this, &PlayerWidget::on_arrange_clicked);
 
 	//自动整理牌堆，并显示
 	sort_card_heap();
 
 	//显示记录按钮
 	auto btn_t = new Button(850, 10, "img/btn/record.png", this, Button::Height, 40);
-	connect(btn_t, &Button::click_emit, btn_t, &Button::show_record);
+	connect(btn_t, &Button::sig_click_emit, btn_t, &Button::on_show_record);
 
 	//不出按钮（默认隐藏）
 	btn_pass_ = new Button(340, 180, "img/btn/pass0.png", this, Button::Height, 50);
 	btn_pass_->set_pm("img/btn/pass1.png", Button::Disabled);
 	btn_pass_->hide();
-	connect(btn_pass_, &Button::click_emit, this, &PlayerWidget::on_pass_clicked);
+	connect(btn_pass_, &Button::sig_click_emit, this, &PlayerWidget::on_pass_clicked);
 	//出牌按钮（默认隐藏）
 	btn_play_ = new Button(490, 180, "img/btn/play_card0.png", this, Button::Height, 50);
 	btn_play_->set_pm("img/btn/play_card1.png", Button::Disabled);
@@ -108,7 +108,7 @@ PlayerWidget::PlayerWidget(Hand* hand) : QWidget(), hand_(hand)
 	spr_star->show();
 
 	//连接按钮事件
-	connect(btn_play_, &Button::click_emit, this, &PlayerWidget::on_play_card);
+	connect(btn_play_, &Button::sig_click_emit, this, &PlayerWidget::on_play_card);
 }
 
 void PlayerWidget::on_new_round()
@@ -141,7 +141,7 @@ void PlayerWidget::on_new_round()
 
 void PlayerWidget::closeEvent(QCloseEvent* event)
 {
-	emit player_close();
+	emit sig_player_close();
 }
 
 void PlayerWidget::sort_card_heap(bool is_partial)
@@ -184,7 +184,7 @@ void PlayerWidget::sort_card_heap(bool is_partial)
 }
 void PlayerWidget::update_card_heap_show()
 {
-	emit delete_all_card_bottons();
+	emit sig_delete_all_card_bottons();
 	btn_arrange_->set_mode(Button::Mode2);
 	btn_play_->set_mode(Button::Disabled);
 
@@ -229,7 +229,7 @@ void PlayerWidget::update_card_heap_show()
 
 void PlayerWidget::emit_unselect_all_cards()
 {
-	emit compulsory_unselect_all_cards();
+	emit sig_compulsory_unselect_all_cards();
 }
 
 void PlayerWidget::update_all()
@@ -276,7 +276,7 @@ void PlayerWidget::on_card_selected(CardButton* card_btn, bool is_compulsory)
 			for (const Card& card_to_be_selected : cards)
 			{
 				if (card_to_be_selected.get_card_btn() == card_btn) { continue; }
-				compulsory_select(card_to_be_selected.get_card_btn());
+				sig_compulsory_select(card_to_be_selected.get_card_btn());
 			}
 		}
 	}
@@ -336,7 +336,7 @@ void PlayerWidget::emit_select(std::vector<Card> cards)
 			{
 				if (j == card_to_be_selected)
 				{
-					emit compulsory_select(j.get_card_btn());
+					emit sig_compulsory_select(j.get_card_btn());
 					goto Next_card;
 				}
 			}
@@ -519,7 +519,7 @@ void PlayerWidget::on_play_card()
 	}
 
 	//debug: 发送卡牌已打出信号
-	emit card_played(all_combs_[*selected_wild_card_id], id_);
+	emit sig_card_played(all_combs_[*selected_wild_card_id], id_);
 }
 
 void PlayerWidget::delete_played_cards_ui(int player_id)

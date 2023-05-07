@@ -31,10 +31,10 @@ public:
 
 public slots:
 	//@brief 点击动画
-    void click_animation();
+    void on_click_animation();
 
 	//@brief 显示牌局记录
-	void show_record();
+	void on_show_record();
 
 protected:
 	//图标[mode+1]：不可点击状态、默认、第二模式
@@ -51,7 +51,7 @@ private:
 	int y_;
 
 signals:
-	void click_emit(int mode=0);
+	void sig_click_emit(int mode=0);
 
 };
 

@@ -7,7 +7,7 @@ SfButton::SfButton(int x, int y, int suite, PlayerWidget* parent) :
 	//设置禁用图标
 	set_pm("img/btn/straight_flush" + QString::number(suite) + "1" + ".png", Disabled);
 	//绑定点击事件
-	connect(this, &SfButton::click_emit, this, &SfButton::on_clicked);
+	connect(this, &SfButton::sig_click_emit, this, &SfButton::on_clicked);
 }
 
 void SfButton::on_clicked()
@@ -21,7 +21,7 @@ void SfButton::on_clicked()
 	parent_->emit_select(comb[selected_order_]);
 }
 
-void SfButton::reset_selected_order()
+void SfButton::on_reset_selected_order()
 {
 	selected_order_ = -1;
 }

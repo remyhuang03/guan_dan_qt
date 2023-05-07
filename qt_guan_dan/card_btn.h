@@ -21,7 +21,7 @@ private:
 
 public slots:
 	//删除自己
-	void delete_self();
+	void on_delete_self();
 	//点击处理
 	void on_clicked();
 	//处理强制取消选择
@@ -30,7 +30,7 @@ public slots:
 	void on_compulsory_selected(CardButton*);
 
 signals:
-	void card_selected(CardButton* card_btn,bool is_compulsory = true);
-	void card_unselected(CardButton* card_btn);
+	void sig_card_selected(CardButton* card_btn,bool is_compulsory = true);
+	void sig_card_unselected(CardButton* card_btn);
 };
 #endif // ! CARD_BTN_H

@@ -15,7 +15,7 @@ SfButton(int x, int y, int suite, PlayerWidget* parent);
 
 public slots:
 	void on_clicked();
-	void reset_selected_order();
+	void on_reset_selected_order();
 
 signals:
 	

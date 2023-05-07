@@ -4,11 +4,11 @@ Button::Button(int x, int y, QString img, QWidget* parent, SizeMode mode, double
 	:Sprite(x, y, img, parent, mode, size), mode_(Normal), animation_disabled_(false),
 	x_(x), y_(y)
 {
-	connect(this, &Button::clicked, this, &Button::click_animation);
+	connect(this, &Button::clicked, this, &Button::on_click_animation);
 	icons[0] = icons[1] = icons[2] = QPixmap(img);
 }
 
-void Button::click_animation()
+void Button::on_click_animation()
 {
 	//前提：当前按钮可用
 	if (mode_ == -1 || animation_disabled_)
@@ -26,7 +26,7 @@ void Button::click_animation()
 	animation->setEndValue(QRect(x_, y_, w_, h_));
 	animation->start();
 	//处理点击完以后的事件
-	emit click_emit(static_cast<int>(mode_));
+	emit sig_click_emit(static_cast<int>(mode_));
 }
 
 void Button::reverse_mode()
@@ -38,7 +38,7 @@ void Button::set_pm(QString img, Mode mode) {
 	icons[int(mode + 1)] = QPixmap(img);
 }
 
-void Button::show_record()
+void Button::on_show_record()
 {
 	new Record_widget();
 }

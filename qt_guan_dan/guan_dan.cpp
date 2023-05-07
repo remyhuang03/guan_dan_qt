@@ -18,10 +18,10 @@ guan_dan::guan_dan(QWidget* parent)
 	setPalette(QColor(35, 35, 35));
 	Sprite* btn_background = new Sprite(0, 0, QString("img/bg/home.png"), this, Sprite::Width, SCREEN_W);
 	Button* btn_start_game = new Button(360, 380, "img/btn/start_game.png", this, Button::Height, 80);
-	connect(btn_start_game, &Button::click_emit, this, &guan_dan::start_game);
+	connect(btn_start_game, &Button::sig_click_emit, this, &guan_dan::on_start_game);
 }
 
-void guan_dan::start_game()
+void guan_dan::on_start_game()
 {
 	//初始化游戏数据
 	init_game_data();
@@ -46,7 +46,7 @@ void guan_dan::start_game()
 		players[i]->set_cards(std::vector(begin, end));
 
 		//连接玩家窗口关闭信号槽
-		connect(player_widgets[i], &PlayerWidget::player_close, this, &guan_dan::show);
+		connect(player_widgets[i], &PlayerWidget::sig_player_close, this, &guan_dan::show);
 		//玩家窗口下一轮信号槽
 		connect(this, &guan_dan::sig_switch_turn, player_widgets[i], &PlayerWidget::on_turn_switched);
 		connect(this, &guan_dan::sig_new_round, player_widgets[i], &PlayerWidget::on_new_round);
@@ -58,8 +58,8 @@ void guan_dan::start_game()
 	for (int i = 0; i < 4; i++)
 		for (int j = 0; j < 4; j++)
 		{
-			if (i != j) { connect(player_widgets[i], &PlayerWidget::player_close, player_widgets[j], &PlayerWidget::close); }
-			connect(player_widgets[i], &PlayerWidget::card_played, player_widgets[j], &PlayerWidget::on_card_played);
+			if (i != j) { connect(player_widgets[i], &PlayerWidget::sig_player_close, player_widgets[j], &PlayerWidget::close); }
+			connect(player_widgets[i], &PlayerWidget::sig_card_played, player_widgets[j], &PlayerWidget::on_card_played);
 			connect(player_widgets[i], &PlayerWidget::sig_pass, player_widgets[j], &PlayerWidget::on_passed);
 		}
 	//游戏开始，轮转下一位

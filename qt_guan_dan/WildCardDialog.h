@@ -17,9 +17,6 @@ public:
 public slots:
 	//@brief 确认按钮槽函数
 	void on_confirm();
-	//@brief 获取用户选择的逢人配
-	//@ret vector<Card>: 用户选择的逢人配
-	std::vector<Card> get_chosen_comb()const;
 
 private:
 	//单选按钮组

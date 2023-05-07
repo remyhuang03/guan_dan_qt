@@ -13,12 +13,12 @@ public:
 	guan_dan(QWidget* parent = nullptr);
 
 public slots:
-	void start_game();
+	void on_start_game();
 	void on_card_played(const std::vector<Card>& cards, int player_id);
 	void on_passed();
 
 signals:
-	void update_player_widget();
+	void sig_update_player_widget();
 	void sig_game_over();
 	void sig_new_round();
 	void sig_switch_turn();

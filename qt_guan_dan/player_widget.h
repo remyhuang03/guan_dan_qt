@@ -121,18 +121,18 @@ private:
 
 signals:
 	//@brief 强制取消选择所有卡牌
-	void compulsory_unselect_all_cards();
+	void sig_compulsory_unselect_all_cards();
 	//@brief 当前玩家窗口关闭
-	void player_close();
+	void sig_player_close();
 	//@brief 需要删除所有卡牌显示
-	void delete_all_card_bottons();
+	void sig_delete_all_card_bottons();
 	//@brief 强制选中卡牌
-	void compulsory_select(CardButton* btn);
+	void sig_compulsory_select(CardButton* btn);
 	//@brief 打出卡牌
 	//@para 
-	// cards: 打出的卡牌
-	// player_id: 打出卡牌的玩家id
-	void card_played(std::vector<Card> cards, int player_id);
+	//cards: 打出的卡牌
+	//player_id: 打出卡牌的玩家id
+	void sig_card_played(std::vector<Card> cards, int player_id);
 	//@brief 跳过该玩家出牌
 	void sig_pass(int player_id);
 
