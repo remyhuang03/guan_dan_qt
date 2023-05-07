@@ -1,7 +1,6 @@
 ﻿#ifndef SPRITE_H_
 #define SPRITE_H_
 #include <qpushbutton.h>
-#include <windows.h>
 #include<QPropertyAnimation.h>
 
 //自定义UI类
