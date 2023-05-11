@@ -16,17 +16,21 @@ public slots:
 	void on_start_game();
 	void on_card_played(const std::vector<Card>& cards, int player_id);
 	void on_passed();
+	void on_conretributed(int player_id, const Card& card);
 
 signals:
 	void sig_update_player_widget();
 	void sig_game_over();
 	void sig_new_round();
 	void sig_switch_turn();
-	
+
 private:
 	Ui::guan_danClass ui;
+
 	// [i]: 玩家 i 的窗口
 	PlayerWidget* player_widgets[4];
+	// 用于等待用户完成上贡操作
+	bool contribute_finished_flag;
 
 	//@brief 轮转到下一circle
 	//@para is_next: 如为false，则按当前turn进行，否则轮转到下一个turn

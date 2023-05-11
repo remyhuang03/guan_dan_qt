@@ -25,11 +25,14 @@ void update_cards_round_rank();
 //@para
 //cards: 牌组
 //ratio: 牌组间隔(1.0为满间隔)
-QPixmap get_combination_pixmap(const std::vector<Card>&cards, double ratio = 0.5);
+QPixmap get_combination_pixmap(const std::vector<Card>& cards, double ratio = 0.5);
 
 //@brief 开局发牌
 //@return vector<Card> 打乱顺序的两幅扑克牌
 std::vector<Card> shuffled_all_cards();
+
+//@brief 重置排名为-1
+void reset_round_rank();
 
 
 /***** 全局状态 *****/

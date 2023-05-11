@@ -49,6 +49,8 @@ public slots:
 	void on_play_card();
 	void on_card_played(const std::vector<Card>& cards, int player_id);
 	void on_passed(int player_id);
+	//@brief 当上贡/还贡按钮点击时
+	void on_conretribute();
 	void on_pass_clicked();
 	void on_new_round();
 
@@ -70,9 +72,13 @@ private:
 	Button* btn_play_;
 	//不出牌按钮
 	Button* btn_pass_;
+	//上贡按钮
+	Button* btn_contribute_;
+	//还贡按钮
+	Button* btn_retribute_;
 	//已出牌展示
 	Sprite* spr_played_cards_[4];
-	//玩家游戏状态标签
+	//[i]: 第i个玩家游戏状态标签
 	StatusLabel* lb_status_[4];
 	//当前级牌星标
 	Sprite* spr_star;
@@ -117,7 +123,7 @@ private:
 	//@para  cards: 需要渲染的卡牌
 	//       player_id: 对应玩家id
 	void update_played_cards_ui(const std::vector<Card>& cards, int player_id);
-	
+
 
 signals:
 	//@brief 强制取消选择所有卡牌
@@ -137,6 +143,8 @@ signals:
 	void sig_pass(int player_id);
 
 	void sig_global_card_played_process(const std::vector<Card>& cards, int player_id);
+	//@brief 进贡/还贡
+	void sig_conretributed(int player_id, const Card& card);
 
 };
 #endif

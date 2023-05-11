@@ -3,9 +3,11 @@
 StatusLabel::StatusLabel(int x, int y, QWidget* parent) :x_(x), y_(y)
 {
 	//背景图标（默认置空）
-	play_status_bg = new Sprite(x, y, QPixmap("img/label/blank.png"), parent, Sprite::Height, 60);
+	play_status_bg =
+		new Sprite(x, y, "img/label/blank.png", parent, Sprite::Height, 60);
 	lb_remaning_card_cnt = new QLabel(parent);
-	lb_remaning_card_cnt->setStyleSheet("font-size: 14px; color: white; font-weight: bold;");
+	lb_remaning_card_cnt->
+		setStyleSheet("font-size: 14px; color: white; font-weight: bold;");
 	//置顶覆盖头像位置
 	play_status_bg->raise();
 	lb_remaning_card_cnt->raise();
@@ -27,7 +29,6 @@ void StatusLabel::set(Mode mode, int arg)
 		break;
 	case Rank:
 		play_status_bg->set_pm(QString("img/label/round_rank%1.png").arg(arg));
-		qDebug() << "arg:" << arg;
 		play_status_bg->show();
 		lb_remaning_card_cnt->hide();
 		break;

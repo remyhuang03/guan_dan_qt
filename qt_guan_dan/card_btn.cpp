@@ -33,6 +33,7 @@ void CardButton::on_clicked()
 {
 	//取消选中
 	if (mode_ == Mode2) {
+		qDebug() << "unse" << this;
 		emit sig_card_unselected(this);
 	}
 	//如果未被选中，选中
@@ -46,6 +47,7 @@ void CardButton::on_compulsory_unselected()
 {
 	//如果原先处于选中状态
 	if (mode_ == Mode2) {
+		qDebug() <<"unse" << this;
 		emit sig_card_unselected(this);
 		reverse_mode();
 	}

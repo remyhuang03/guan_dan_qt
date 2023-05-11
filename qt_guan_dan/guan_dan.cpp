@@ -5,7 +5,7 @@
 #include "hand.h"
 
 //debug:少发点牌，方便调试
-#define DEBUG_CARD_CNT_ 27 //正常值：27
+#define DEBUG_CARD_CNT_ 1 //正常值：27
 
 guan_dan::guan_dan(QWidget* parent)
 	: QWidget(parent)
@@ -16,8 +16,10 @@ guan_dan::guan_dan(QWidget* parent)
 	setFixedSize(SCREEN_W, SCREEN_H);
 	//背景色灰色
 	setPalette(QColor(35, 35, 35));
-	Sprite* btn_background = new Sprite(0, 0, QString("img/bg/home.png"), this, Sprite::Width, SCREEN_W);
-	Button* btn_start_game = new Button(360, 380, "img/btn/start_game.png", this, Button::Height, 80);
+	Sprite* btn_background =
+		new Sprite(0, 0, "img/bg/home.png", this, Sprite::Width, SCREEN_W);
+	Button* btn_start_game =
+		new Button(360, 380, "img/btn/start_game.png", this, Button::Height, 80);
 	connect(btn_start_game, &Button::sig_click_emit, this, &guan_dan::on_start_game);
 }
 
@@ -52,6 +54,7 @@ void guan_dan::on_start_game()
 		connect(this, &guan_dan::sig_new_round, player_widgets[i], &PlayerWidget::on_new_round);
 		connect(player_widgets[i], &PlayerWidget::sig_pass, this, &guan_dan::on_passed);
 		connect(player_widgets[i], &PlayerWidget::sig_global_card_played_process, this, &guan_dan::on_card_played);
+		connect(player_widgets[i], &PlayerWidget::sig_conretributed, this, &guan_dan::on_conretributed);
 	}
 
 	//子窗口其一关闭，所有窗口关闭的信号槽连接
@@ -68,6 +71,7 @@ void guan_dan::on_start_game()
 
 void guan_dan::switch_turn(bool is_next)
 {
+	//找到下一个还未获胜的可出牌玩家
 	if (is_next)
 	{
 		do
@@ -75,6 +79,7 @@ void guan_dan::switch_turn(bool is_next)
 			turn = (turn + 1) % 4;
 		} while (round_rank[turn] != -1);
 	}
+	qDebug() << "turn" << turn << "circle type" << circle_type;
 	emit sig_switch_turn();
 }
 
@@ -172,13 +177,28 @@ void guan_dan::on_card_played(const std::vector<Card>& cards, int player_id)
 			contribute_order[0] = rank_list[3];
 		}
 	}
+	//开启新round
 	emit sig_new_round();
-	/*circle_type = -4;
-	while (contribute_count--)
-	{
 
-	}*/
-	//to-do new_round();
+	//不需要上贡，直接进入出牌环节
+	if (contribute_count == 0)
+	{
+		reset_round_rank();
+		circle_type = 0;
+		turn = rank_list[0];
+		switch_turn(false);
+	}
+	//处理上贡
+	else
+	{
+		//上贡状态
+		circle_type = -2;
+		qDebug() << contribute_count << contribute_order[0];
+		//上贡玩家
+		turn = contribute_order[0];
+		//contribute_finished_flag = false;
+		switch_turn(false);
+	}
 }
 
 void guan_dan::on_passed()
@@ -187,4 +207,7 @@ void guan_dan::on_passed()
 	switch_turn(true);
 }
 
-
+void guan_dan::on_conretributed(int player_id, const Card& card)
+{
+	//to-do
+}

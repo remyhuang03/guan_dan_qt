@@ -31,7 +31,6 @@ public:
 	//@brief 执行贡牌和还贡
 	//@para player_list: 玩家列表 chosen_cards 待上贡/还贡献的牌
 	//@ret vector<vector<Card>>: 所有有效的具体牌型
-	friend void contribute(std::vector <Hand>& player_list, const std::vector <Card>& chosen_cards);
 	friend void return_card(std::vector <Hand>& player_list, const std::vector <Card>& chosen_cards);
 
 	//@brief 判断是否满足上贡条件

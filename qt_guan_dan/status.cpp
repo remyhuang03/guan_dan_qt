@@ -188,3 +188,9 @@ QPixmap get_combination_pixmap(const std::vector<Card>& cards, double ratio)
 	}
 	return ret;
 }
+
+void reset_round_rank()
+{
+	//rank_list复位
+	for (int i = 0; i < 4; i++) { round_rank[i] = -1; }
+}

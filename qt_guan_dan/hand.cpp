@@ -22,7 +22,7 @@ std::pair<int, int> Hand::certain_comb_info(const std::vector<Card>& cards)const
 	int max_rank = -1;
 	for (auto& card : cards)
 	{
-		max_rank = max(max_rank, get_real_rank(card.get_point()));
+		max_rank = std::max(max_rank, get_real_rank(card.get_point()));
 	}
 
 	//计算牌型特征, 检查牌点是否连续
@@ -342,87 +342,6 @@ bool Hand::could_contribute(const Card& chosen_card)
 	return false;
 }
 
-// 贡牌
-void contribute(std::vector <Hand>& player_list, const std::vector <Card> chosen_cards)
-{
-	// 需要上贡的人数
-	contribute_count = 1;
-	// 如果头游和二游是同一组的，那么双下游上贡
-	if ((rank_list[0] & 1) == (rank_list[1] & 1))
-	{
-		contribute_count = 2;
-	}
-	// 如果是双下游的情况
-	if (contribute_count == 2)
-	{
-		// 检查是否可以进行抗贡
-		auto temp_cards = player_list[rank_list[2]].get_cards();
-		int JOKER_count = std::count(temp_cards.begin(), temp_cards.end(), Card(15, -1));
-		temp_cards = player_list[rank_list[3]].get_cards();
-		JOKER_count += std::count(temp_cards.begin(), temp_cards.end(), Card(15, -1));
-		// 抗贡
-		if (JOKER_count == 2)
-		{
-			turn = rank_list[0];
-			contribute_count = 0;
-			return;
-		}
-		else //认命
-		{
-			// 准上贡的卡片
-			std::vector <Card> contribute_cards;
-			for (int i = 2; i < 4; i++)
-			{
-				// 如果满足上贡条件，那么加入可上贡卡片列表
-				if (player_list[rank_list[i]].could_contribute(chosen_cards[i - 2]))
-					contribute_cards.push_back(chosen_cards[i - 2]);
-			}
-			// 确定卡片上贡顺序
-			int value_first = player_list[0].get_real_rank(contribute_cards[0].get_point());
-			int value_second = player_list[0].get_real_rank(contribute_cards[1].get_point());
-			if (value_first < value_second)
-			{
-				std::swap(contribute_cards[0], contribute_cards[1]);
-				contribute_order[rank_list[0]] = rank_list[3];
-				contribute_order[rank_list[1]] = rank_list[2];
-			}
-			else
-			{
-				contribute_order[rank_list[0]] = rank_list[2];
-				contribute_order[rank_list[1]] = rank_list[3];
-			}
-			// 将卡片放入
-			for (int i = 0; i < 2; i++)
-			{
-				player_list[rank_list[i]].push_card(contribute_cards[i]);
-			}
-		}
-	}
-	else
-	{
-		// 检查是否可以进行抗贡
-		auto temp_cards = player_list[rank_list[3]].get_cards();
-		int JOKER_count = std::count(temp_cards.begin(), temp_cards.end(), Card(15, -1));
-		// 抗贡
-		if (JOKER_count == 2)
-		{
-			turn = rank_list[0];
-			contribute_count = 0;
-			return;
-		}
-		else //认命
-		{
-			// 如果可以上供
-			if (player_list[rank_list[3]].could_contribute(chosen_cards[0]))
-			{
-				player_list[rank_list[0]].push_card(chosen_cards[0]);
-				contribute_count = 1;
-				contribute_order[rank_list[0]] = rank_list[3];
-			}
-		}
-	}
-}
-
 // 还贡
 void return_card(std::vector <Hand>& player_list, std::vector <Card>& chosen_cards)
 {
@@ -464,7 +383,6 @@ std::vector<std::vector<std::vector<Card>>> Hand::all_straight_flush_combination
 			if (straight_flush.size() >= 6)
 			{
 				ret[i].push_back(std::vector<Card>(straight_flush.end() - 5, straight_flush.end()));
-				qDebug() << ret[i].back()[0].get_point();
 			}
 		}
 	}

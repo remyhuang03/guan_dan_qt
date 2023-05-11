@@ -1,7 +1,7 @@
 ﻿#include "sprite.h"
 #include <qwidget.h>
 
-Sprite::Sprite(int x, int y,const QPixmap& img, QWidget* parent, SizeMode mode, double size)
+Sprite::Sprite(int x, int y, const QPixmap& img, QWidget* parent, SizeMode mode, double size)
 	:QPushButton(parent)
 {
 	show();
@@ -34,6 +34,10 @@ Sprite::Sprite(int x, int y,const QPixmap& img, QWidget* parent, SizeMode mode, 
 	setIconSize(QSize(w_, h_));
 	setGeometry(x, y, w_, h_);
 };
+
+
+Sprite::Sprite(int x, int y, const QString& img, QWidget* parent, SizeMode mode, double size) :
+	Sprite(x, y, QPixmap(img), parent, mode, size) {}
 
 void Sprite::set_pm(QPixmap img)
 {
