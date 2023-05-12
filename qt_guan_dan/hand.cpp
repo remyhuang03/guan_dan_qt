@@ -207,7 +207,7 @@ std::pair<int, int> Hand::certain_comb_info(const std::vector<Card>& cards)const
 }
 
 
-std::vector<std::vector<Card>> Hand::all_valid_comb(const std::vector<Card>& cards)
+std::vector<std::vector<Card>> Hand::all_valid_comb(const std::vector<Card>& cards)const
 {
 	//判断所给牌型信息是否符合该玩家出牌条件
 	auto is_info_valid = [&](std::pair<int, int>info) {
@@ -314,32 +314,6 @@ void Hand::pop_card(const Card& card)
 void Hand::pop_card(const std::vector<Card>& cards)
 {
 	for (const Card& card : cards) { pop_card(card); }
-}
-
-// 判断该牌是否满足上贡的要求
-bool Hand::could_contribute(const Card& chosen_card)
-{
-	auto MAX_card = [&](const Card& card1, const Card& card2)->Card
-	{
-		if (get_real_rank(card1.get_point()) > get_real_rank(card2.get_point()))
-			return card1;
-		return card2;
-	};
-	// 设定出红桃级牌 和 能取的最小牌
-	Card rank_card{ round_rank_card,2 }, max_card(-1, -1);
-	for (const auto& card : cards_)
-	{
-		// 红桃级牌可以选择不取
-		if (card == rank_card) continue;
-		max_card = MAX_card(max_card, card);
-	}
-	// 如果选择的牌的点数比能取的最小点数大
-	if (get_real_rank(chosen_card.get_point()) >= get_real_rank(max_card.get_point()))
-	{
-		pop_card(chosen_card);
-		return true;
-	}
-	return false;
 }
 
 // 还贡

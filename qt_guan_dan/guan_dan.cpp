@@ -192,11 +192,9 @@ void guan_dan::on_card_played(const std::vector<Card>& cards, int player_id)
 	else
 	{
 		//上贡状态
-		circle_type = -2;
-		qDebug() << contribute_count << contribute_order[0];
+		circle_type = (contribute_count == 2 ? -4 : -3);
 		//上贡玩家
 		turn = contribute_order[0];
-		//contribute_finished_flag = false;
 		switch_turn(false);
 	}
 }
@@ -209,5 +207,81 @@ void guan_dan::on_passed()
 
 void guan_dan::on_conretributed(int player_id, const Card& card)
 {
-	//to-do
+	static int point1 = -1, point2 = -1;
+	switch (circle_type)
+	{
+	case -4:
+		//进贡1 -> 进贡2
+		circle_type = -3;
+		contributed_card[0] = card;
+		turn = contribute_order[1];
+		break;
+	case -3:
+		if (contribute_count == 2)
+		{
+			//进贡2 -> 还贡1
+			circle_type = -2;
+			turn = rank_list[0];
+			contributed_card[1] = card;
+			point1 = contributed_card[0].get_point();
+			point2 = contributed_card[1].get_point();
+			if (point1 >= point2)
+			{
+				players[rank_list[0]]->push_card(contributed_card[0]);
+				players[rank_list[1]]->push_card(contributed_card[1]);
+			}
+			else
+			{
+				players[rank_list[0]]->push_card(contributed_card[1]);
+				players[rank_list[1]]->push_card(contributed_card[0]);
+			}
+		}
+		else
+		{
+			//单贡 -> 还贡
+			circle_type = -1;
+			players[rank_list[0]]->push_card(card);
+			turn = rank_list[0];
+		}
+		break;
+	case -2:
+		//还贡1 -> 还贡2
+		circle_type = -1;
+		if (point1 >= point2)
+		{
+			players[rank_list[3]]->push_card(card);
+		}
+		else
+		{
+			players[rank_list[2]]->push_card(card);
+		}
+		turn = rank_list[1];
+		break;
+	case -1:
+		circle_type = 0;
+		//还贡2 -> 进贡完成
+		if (contribute_count == 2)
+		{
+			if (point1 >= point2)
+			{
+				players[rank_list[2]]->push_card(card);
+				turn = (point1 == point2 ? (rank_list[0] + 1) % 4 : rank_list[3]);
+			}
+			else
+			{
+				players[rank_list[3]]->push_card(card);
+				turn = rank_list[2];
+			}
+		}
+		//单还贡 -> 进贡完成
+		else
+		{
+			//单贡，由下家出牌
+			players[rank_list[3]]->push_card(card);
+			turn = rank_list[3];
+		}
+		break;
+	default:
+		break;
+	}
 }

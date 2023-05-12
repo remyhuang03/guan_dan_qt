@@ -64,6 +64,8 @@ extern std::map<int, int> cards_round_rank;
 extern int contribute_order[2];
 // 本轮上贡的人数
 extern int contribute_count;
+// 进贡的牌([0]:最后一名出的牌，[1]:第三名出的牌)
+extern Card contributed_card[2];
 
 /***** 当前一圈的状态 *****/
 

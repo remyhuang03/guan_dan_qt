@@ -31,7 +31,7 @@ public:
 
 public slots:
 	//@brief 点击动画
-    void on_click_animation();
+	void on_click_animation();
 
 	//@brief 显示牌局记录
 	void on_show_record();
@@ -51,7 +51,7 @@ private:
 	int y_;
 
 signals:
-	void sig_click_emit(int mode=0);
+	void sig_click_emit(int mode = 0);
 
 };
 

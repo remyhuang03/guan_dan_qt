@@ -27,6 +27,8 @@ int round_rank[4];
 int rank_list[4];
 int card_played_process_count = 0;
 std::map<int, int> cards_round_rank;
+Card contributed_card[2];
+Card retributed_card[2];
 
 Hand* players[4];
 

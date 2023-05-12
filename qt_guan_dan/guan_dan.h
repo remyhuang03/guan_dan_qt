@@ -29,8 +29,6 @@ private:
 
 	// [i]: 玩家 i 的窗口
 	PlayerWidget* player_widgets[4];
-	// 用于等待用户完成上贡操作
-	bool contribute_finished_flag;
 
 	//@brief 轮转到下一circle
 	//@para is_next: 如为false，则按当前turn进行，否则轮转到下一个turn

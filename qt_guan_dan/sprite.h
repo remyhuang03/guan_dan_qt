@@ -20,8 +20,8 @@ public:
 	Sprite(int x, int y, const QPixmap& img, QWidget* parent, SizeMode mode = Size, double size = 100);
 	Sprite(int x, int y, const QString& img, QWidget* parent, SizeMode mode, double size = 100);
 
-	int get_w() { return w_; }
-	int get_h() { return h_; }
+	int get_w()const { return w_; }
+	int get_h()const { return h_; }
 
 	//设置图片
 	void set_pm(QPixmap img);

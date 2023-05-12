@@ -32,7 +32,7 @@ public:
 	void update_all();
 
 	//@brief 获取指定花色的全部同花顺组合
-	std::vector<std::vector<Card>> get_sf_combination(int suite) { return straight_flush_comb_[suite]; }
+	std::vector<std::vector<Card>> get_sf_combination(int suite) const{ return straight_flush_comb_[suite]; }
 
 	void emit_unselect_all_cards();
 	void emit_select(std::vector<Card> cards);
