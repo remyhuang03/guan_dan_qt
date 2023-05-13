@@ -98,7 +98,6 @@ void guan_dan::switch_turn(bool is_next)
 
 void guan_dan::on_card_played(const std::vector<Card>& cards, int player_id)
 {
-
 	card_played_process_count = 0;
 	//该组为胜利，轮转到下一个玩家
 	if (round_rank[player_id] == -1 || round_rank[(player_id + 2) % 4] == -1)

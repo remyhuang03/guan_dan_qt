@@ -153,7 +153,7 @@ void PlayerWidget::on_new_round()
 	//级牌标识
 	int w_t = spr_star->size().width();
 	int h_t = spr_star->size().height();
-	spr_star->setGeometry(100, 20 + 30 * !((rank_list[0] % 2) == (id_ % 2)), w_t, h_t);
+	spr_star->setGeometry(100, 20 + 30 * ((rank_list[0] % 2) == (id_ % 2)), w_t, h_t);
 }
 
 void PlayerWidget::closeEvent(QCloseEvent* event)
