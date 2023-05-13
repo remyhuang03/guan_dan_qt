@@ -316,16 +316,6 @@ void Hand::pop_card(const std::vector<Card>& cards)
 	for (const Card& card : cards) { pop_card(card); }
 }
 
-// 还贡
-void return_card(std::vector <Hand>& player_list, std::vector <Card>& chosen_cards)
-{
-	for (int i = 0; i < contribute_count; i++)
-	{
-		player_list[contribute_order[rank_list[i]]].push_card(chosen_cards[i]);
-		player_list[rank_list[i]].pop_card(chosen_cards[i]);
-	}
-}
-
 void Hand::set_cards(const std::vector<Card>& cards)
 {
 	//设置当前手牌
@@ -362,4 +352,3 @@ std::vector<std::vector<std::vector<Card>>> Hand::all_straight_flush_combination
 	}
 	return ret;
 }
-

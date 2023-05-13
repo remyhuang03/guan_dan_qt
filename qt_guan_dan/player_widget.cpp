@@ -161,23 +161,37 @@ void PlayerWidget::closeEvent(QCloseEvent* event)
 	emit sig_player_close();
 }
 
-void PlayerWidget::sort_card_heap(bool is_partial)
+void PlayerWidget::sort_card_heap(bool is_internal, bool is_partial)
 {
 	//无卡牌的情况
 	if (card_heaps_.empty()) { return; }
 
-	//获取全部卡牌并重排
+	//获取卡牌并重排
+	std::vector<std::pair<bool, std::vector<Card>>> remaining_heaps;
 	std::vector<Card>cards;
-	for (auto i : card_heaps_)
+	for (auto heap : card_heaps_)
 	{
-		cards.insert(cards.end(), i.second.begin(), i.second.end());
+		//是理过的牌
+		if (is_partial && heap.first)
+		{
+			remaining_heaps.push_back(heap);
+		}
+		else
+		{
+			cards.insert(cards.end(), heap.second.begin(), heap.second.end());
+		}
 	}
 	sort(cards.begin(), cards.end(), [](Card& c1, Card& c2) {return c2 > c1; });
 
 	//由大到小分点数将卡牌加入到牌堆中
 	card_heaps_.clear();
 	card_heaps_.push_back(std::make_pair<bool, std::vector<Card>>(false, {}));
-	int last_point = (cards.front()).get_point();
+	int last_point;
+	if (!cards.empty())
+	{
+		last_point = (cards.front()).get_point();
+	}
+
 	for (const auto& i : cards)
 	{
 		//获取卡牌点数
@@ -193,8 +207,11 @@ void PlayerWidget::sort_card_heap(bool is_partial)
 			last_point = point;
 		}
 	}
+	//加入剩余卡牌
+	card_heaps_.insert(card_heaps_.end(), remaining_heaps.begin(), remaining_heaps.end());
+
 	//更新牌堆显示
-	if (!is_partial)
+	if (!is_internal)
 	{
 		update_card_heap_show();
 	}
@@ -305,7 +322,7 @@ void PlayerWidget::update_play_btn()
 	if (turn != id_) { return; }
 
 	//判断所选牌能否上贡
-	if (circle_type == -2)
+	if (circle_type == -4 || circle_type == -3)
 	{
 		bool could_contribute = true;
 		if (selected_cards_.size() != 1)
@@ -330,7 +347,7 @@ void PlayerWidget::update_play_btn()
 		btn_contribute_->set_mode(could_contribute ? Button::Normal : Button::Disabled);
 	}
 	//判断所选牌能否还贡
-	else if (circle_type == -1)
+	else if (circle_type == -2 || circle_type == -1)
 	{
 		//还贡条件：不能大于10
 		if (selected_cards_.size() == 1 &&
@@ -472,8 +489,10 @@ void PlayerWidget::on_arrange_clicked(int mode)
 
 void PlayerWidget::on_turn_switched()
 {
+	qDebug() <<"switch:" << turn << id_;
 	//上贡
-	if (circle_type == -2 && turn == id_)
+	if ((circle_type == -4 || circle_type == -3) &&
+		turn == id_)
 	{
 		//显示上贡按钮
 		btn_contribute_->show();
@@ -482,7 +501,8 @@ void PlayerWidget::on_turn_switched()
 		raise();
 	}
 	//还贡
-	else if (circle_type == -1 && turn == id_)
+	else if ((circle_type == -2 || circle_type == -1) &&
+		turn == id_)
 	{
 		//显示还贡按钮
 		btn_retribute_->show();
@@ -506,7 +526,6 @@ void PlayerWidget::on_turn_switched()
 		{
 			for (int i = 0; i < 4; i++) { delete_played_cards_ui(i); }
 		}
-		//自己的回合
 		if (turn == id_)
 		{
 			//删除自己已出牌的显示
@@ -673,5 +692,48 @@ void PlayerWidget::on_conretribute()
 	emit sig_conretributed(id_, selected_cards_[0]->get_card());
 }
 
+Hand* PlayerWidget::get_hand()const
+{
+	return hand_;
+}
 
+void PlayerWidget::on_card_transfered(int sender, int receiver, const Card& card)
+{
+	qDebug() << circle_type << "card transfered" << sender << receiver;
+	//显示 sender 给出的牌
+	update_played_cards_ui(std::vector<Card>({ card }), sender);
+	if (id_ == receiver)
+	{
+		//增加卡牌
+		hand_->cards_.push_back(card);
+		card_heaps_.push_back(std::make_pair(false, std::vector<Card>{card}));
+		//重新排序显示
+		sort_card_heap(false, true);
+	}
+	else if (id_ = sender)
+	{
+		//删除卡牌
+		hand_->pop_card(card);
+		//debug:有风险
+		for (auto& heap : card_heaps_)
+		{
+			auto target_t = std::find(heap.second.begin(), heap.second.end(), card);
+			if (target_t != heap.second.end())
+			{
+				heap.second.erase(target_t);
+				heap.first = false;
+				break;
+			}
+		}
+		//重新排序显示
+		sort_card_heap(false, true);
+	}
 
+	//处理计数加1
+	card_played_process_count++;
+	if (card_played_process_count == 4)
+	{
+		//处理计数完成，发送完成信号
+		emit sig_conretribution_processed();
+	}
+}

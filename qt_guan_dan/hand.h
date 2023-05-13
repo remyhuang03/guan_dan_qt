@@ -28,16 +28,8 @@ public:
 	//@ret vector<vector<Card>>: 所有有效的具体牌型
 	std::vector<std::vector<Card>> all_valid_comb(const std::vector<Card>& cards)const;
 
-	//@brief 执行贡牌和还贡
-	//@para player_list: 玩家列表 chosen_cards 待上贡/还贡献的牌
-	//@ret vector<vector<Card>>: 所有有效的具体牌型
-	friend void return_card(std::vector <Hand>& player_list, const std::vector <Card>& chosen_cards);
-
 	//@brief  返回玩家手牌
 	std::vector<Card> get_cards() const;
-
-	//@brief 为该用户增加一张牌
-	void push_card(const Card& card) { cards_.push_back(card); }
 
 	//@brief 为该用户删除一张牌
 	void pop_card(const Card& card);

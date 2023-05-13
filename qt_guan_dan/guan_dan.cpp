@@ -4,6 +4,7 @@
 #include "player_widget.h"
 #include "hand.h"
 
+
 //debug:少发点牌，方便调试
 #define DEBUG_CARD_CNT_ 1 //正常值：27
 
@@ -36,11 +37,11 @@ void guan_dan::on_start_game()
 		//创建玩家
 		players[i] = new Hand(i);
 		//创建玩家窗口
-		player_widgets[i] = new PlayerWidget(players[i]);
+		auto widget = player_widgets[i] = new PlayerWidget(players[i]);
 		//窗口UI绑定到Hand对象
 		players[i]->set_widget(player_widgets[i]);
 		//Hand绑定到窗口UI
-		player_widgets[i]->set_hand(players[i]);
+		widget->set_hand(players[i]);
 
 		//分发卡牌
 		auto begin = shuffled_cards.begin() + i * DEBUG_CARD_CNT_;
@@ -48,22 +49,33 @@ void guan_dan::on_start_game()
 		players[i]->set_cards(std::vector(begin, end));
 
 		//连接玩家窗口关闭信号槽
-		connect(player_widgets[i], &PlayerWidget::sig_player_close, this, &guan_dan::show);
+		connect(widget, &PlayerWidget::sig_player_close, this, &guan_dan::show);
 		//玩家窗口下一轮信号槽
-		connect(this, &guan_dan::sig_switch_turn, player_widgets[i], &PlayerWidget::on_turn_switched);
-		connect(this, &guan_dan::sig_new_round, player_widgets[i], &PlayerWidget::on_new_round);
-		connect(player_widgets[i], &PlayerWidget::sig_pass, this, &guan_dan::on_passed);
-		connect(player_widgets[i], &PlayerWidget::sig_global_card_played_process, this, &guan_dan::on_card_played);
-		connect(player_widgets[i], &PlayerWidget::sig_conretributed, this, &guan_dan::on_conretributed);
+		connect(this, &guan_dan::sig_switch_turn,
+			widget, &PlayerWidget::on_turn_switched);
+		connect(this, &guan_dan::sig_transfer_card,
+			widget, &PlayerWidget::on_card_transfered);
+		connect(this, &guan_dan::sig_new_round,
+			widget, &PlayerWidget::on_new_round);
+		connect(widget, &PlayerWidget::sig_pass,
+			this, &guan_dan::on_passed);
+		connect(widget, &PlayerWidget::sig_global_card_played_process,
+			this, &guan_dan::on_card_played);
+		connect(widget, &PlayerWidget::sig_conretributed,
+			this, &guan_dan::on_conretributed);
+		connect(widget, &PlayerWidget::sig_conretribution_processed,
+			this, &guan_dan::switch_turn);
 	}
 
 	//子窗口其一关闭，所有窗口关闭的信号槽连接
 	for (int i = 0; i < 4; i++)
 		for (int j = 0; j < 4; j++)
 		{
-			if (i != j) { connect(player_widgets[i], &PlayerWidget::sig_player_close, player_widgets[j], &PlayerWidget::close); }
-			connect(player_widgets[i], &PlayerWidget::sig_card_played, player_widgets[j], &PlayerWidget::on_card_played);
-			connect(player_widgets[i], &PlayerWidget::sig_pass, player_widgets[j], &PlayerWidget::on_passed);
+			auto widget1 = player_widgets[i];
+			auto widget2 = player_widgets[j];
+			if (i != j) { connect(widget1, &PlayerWidget::sig_player_close, widget2, &PlayerWidget::close); }
+			connect(widget1, &PlayerWidget::sig_card_played, widget2, &PlayerWidget::on_card_played);
+			connect(widget1, &PlayerWidget::sig_pass, widget2, &PlayerWidget::on_passed);
 		}
 	//游戏开始，轮转下一位
 	switch_turn(false);
@@ -185,7 +197,7 @@ void guan_dan::on_card_played(const std::vector<Card>& cards, int player_id)
 	{
 		reset_round_rank();
 		circle_type = 0;
-		turn = rank_list[0];
+		circle_leader = turn = rank_list[0];
 		switch_turn(false);
 	}
 	//处理上贡
@@ -195,6 +207,7 @@ void guan_dan::on_card_played(const std::vector<Card>& cards, int player_id)
 		circle_type = (contribute_count == 2 ? -4 : -3);
 		//上贡玩家
 		turn = contribute_order[0];
+		card_played_process_count = 0;
 		switch_turn(false);
 	}
 }
@@ -207,6 +220,7 @@ void guan_dan::on_passed()
 
 void guan_dan::on_conretributed(int player_id, const Card& card)
 {
+	card_played_process_count = 0;
 	static int point1 = -1, point2 = -1;
 	switch (circle_type)
 	{
@@ -227,20 +241,20 @@ void guan_dan::on_conretributed(int player_id, const Card& card)
 			point2 = contributed_card[1].get_point();
 			if (point1 >= point2)
 			{
-				players[rank_list[0]]->push_card(contributed_card[0]);
-				players[rank_list[1]]->push_card(contributed_card[1]);
+				emit sig_transfer_card(rank_list[3], rank_list[0], contributed_card[0]);
+				emit sig_transfer_card(rank_list[2], rank_list[1], contributed_card[1]);
 			}
 			else
 			{
-				players[rank_list[0]]->push_card(contributed_card[1]);
-				players[rank_list[1]]->push_card(contributed_card[0]);
+				emit sig_transfer_card(rank_list[2], rank_list[0], contributed_card[1]);
+				emit sig_transfer_card(rank_list[3], rank_list[1], contributed_card[0]);
 			}
 		}
 		else
 		{
 			//单贡 -> 还贡
 			circle_type = -1;
-			players[rank_list[0]]->push_card(card);
+			emit sig_transfer_card(player_id, rank_list[0], card);
 			turn = rank_list[0];
 		}
 		break;
@@ -249,11 +263,11 @@ void guan_dan::on_conretributed(int player_id, const Card& card)
 		circle_type = -1;
 		if (point1 >= point2)
 		{
-			players[rank_list[3]]->push_card(card);
+			emit sig_transfer_card(player_id, rank_list[3], card);
 		}
 		else
 		{
-			players[rank_list[2]]->push_card(card);
+			emit sig_transfer_card(player_id, rank_list[2], card);
 		}
 		turn = rank_list[1];
 		break;
@@ -264,21 +278,21 @@ void guan_dan::on_conretributed(int player_id, const Card& card)
 		{
 			if (point1 >= point2)
 			{
-				players[rank_list[2]]->push_card(card);
+				emit sig_transfer_card(player_id, rank_list[2], card);
 				turn = (point1 == point2 ? (rank_list[0] + 1) % 4 : rank_list[3]);
 			}
 			else
 			{
-				players[rank_list[3]]->push_card(card);
+				emit sig_transfer_card(player_id, rank_list[3], card);
 				turn = rank_list[2];
 			}
 		}
-		//单还贡 -> 进贡完成
+		//单还贡 -> 正常出牌
 		else
 		{
 			//单贡，由下家出牌
-			players[rank_list[3]]->push_card(card);
-			turn = rank_list[3];
+			emit sig_transfer_card(player_id, rank_list[3], card);
+			circle_leader = turn = rank_list[3];
 		}
 		break;
 	default:

@@ -13,9 +13,13 @@ public:
 	guan_dan(QWidget* parent = nullptr);
 
 public slots:
+	//@brief 游戏从头启动
 	void on_start_game();
+	//@brief 打出了牌
 	void on_card_played(const std::vector<Card>& cards, int player_id);
+	//@brief 点击了不出
 	void on_passed();
+	//@brief 点击了上贡/还贡
 	void on_conretributed(int player_id, const Card& card);
 
 signals:
@@ -23,6 +27,8 @@ signals:
 	void sig_game_over();
 	void sig_new_round();
 	void sig_switch_turn();
+	void sig_transfer_card(int sender, int receiver, const Card& card);
+	
 
 private:
 	Ui::guan_danClass ui;

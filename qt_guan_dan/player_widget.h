@@ -20,8 +20,10 @@ public:
 	PlayerWidget(Hand* hand);
 
 	//@brief 牌队恢复默认排序
-	//@para is_partial:是否只对未手工整理的牌堆部分进行排序
-	void sort_card_heap(bool is_partial = false);
+	//@para 
+	//is_internal: 是否只进行内部排序而不更新显示
+    //is_partial: 是否只对未手工整理的牌堆部分进行排序
+	void sort_card_heap(bool is_internal = false, bool is_partial = false);
 
 	//@brief 根据heap重新显示牌堆
 	void update_card_heap_show();
@@ -32,14 +34,12 @@ public:
 	void update_all();
 
 	//@brief 获取指定花色的全部同花顺组合
-	std::vector<std::vector<Card>> get_sf_combination(int suite) const{ return straight_flush_comb_[suite]; }
+	std::vector<std::vector<Card>> get_sf_combination(int suite) const { return straight_flush_comb_[suite]; }
 
 	void emit_unselect_all_cards();
 	void emit_select(std::vector<Card> cards);
 
-	//@brief 更新已出牌显示UI（显示为“不出”）
-	//       player_id: 对应玩家id
-	void update_played_cards_ui(int player_id);
+	Hand* get_hand()const;
 
 public slots:
 	void on_card_selected(CardButton* card_btn, bool is_compulsory = true);
@@ -53,6 +53,7 @@ public slots:
 	void on_conretribute();
 	void on_pass_clicked();
 	void on_new_round();
+	void on_card_transfered(int sender,int receiver, const Card&);
 
 protected:
 	void closeEvent(QCloseEvent* event);
@@ -124,6 +125,10 @@ private:
 	//       player_id: 对应玩家id
 	void update_played_cards_ui(const std::vector<Card>& cards, int player_id);
 
+	//@brief 更新已出牌显示UI为“不出”
+	//       player_id: 对应玩家id
+	void update_played_cards_ui(int player_id);
+
 
 signals:
 	//@brief 强制取消选择所有卡牌
@@ -145,6 +150,7 @@ signals:
 	void sig_global_card_played_process(const std::vector<Card>& cards, int player_id);
 	//@brief 进贡/还贡
 	void sig_conretributed(int player_id, const Card& card);
-
+	//@brief 4个窗口均完成进贡/还贡处理
+	void sig_conretribution_processed(bool flag = false);
 };
 #endif
