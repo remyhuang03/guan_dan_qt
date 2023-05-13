@@ -13,7 +13,7 @@
 #include "WildCardDialog.h"
 #include "status.h"
 
-const char rank_conversion[][3] = { "","A","2","3","4","5","6","7","8","9","10","J","Q","K" };
+const char level_conversion[][3] = { "","A","2","3","4","5","6","7","8","9","10","J","Q","K" };
 
 PlayerWidget::PlayerWidget(Hand* hand) : QWidget(), hand_(hand)
 {
@@ -46,10 +46,10 @@ PlayerWidget::PlayerWidget(Hand* hand) : QWidget(), hand_(hand)
 		lb->setGeometry(70, y, 30, 25);
 		lb->show();
 	};
-	lb_rank_self_ = new QLabel("2", this);
-	lb_rank_rival_ = new QLabel("2", this);
-	set_label(lb_rank_self_, 15);
-	set_label(lb_rank_rival_, 47);
+	lb_level_self_ = new QLabel("2", this);
+	lb_level_rival_ = new QLabel("2", this);
+	set_label(lb_level_self_, 15);
+	set_label(lb_level_rival_, 47);
 	//显示玩家布局
 	int id_t = id_;
 	for (int i = 0; i < 4; i++)
@@ -136,8 +136,8 @@ void PlayerWidget::on_new_round()
 	for (int i = 0; i < 4; i++) { delete_played_cards_ui(i); }
 
 	//更新等级显示
-	lb_rank_self_->setText(rank_conversion[group_rank[hand_->get_group()]]);
-	lb_rank_rival_->setText(rank_conversion[group_rank[!hand_->get_group()]]);
+	lb_level_self_->setText(level_conversion[group_level[hand_->get_group()]]);
+	lb_level_rival_->setText(level_conversion[group_level[!hand_->get_group()]]);
 
 	//自动整理牌堆，并显示
 	update_all();
@@ -193,23 +193,23 @@ void PlayerWidget::sort_card_heap(bool is_internal, bool is_partial)
 	if (!cards.empty())
 	{
 		last_point = (cards.front()).get_point();
+		for (const auto& i : cards)
+		{
+			//获取卡牌点数
+			int point = i.get_point();
+			//同种点数牌，加在统一堆
+			if (point == last_point) {
+				card_heaps_.back().second.push_back(i);
+			}
+			//不同点数牌，新建一堆
+			else {
+				card_heaps_.push_back(std::make_pair<bool, std::vector<Card>>(false, {}));
+				card_heaps_.back().second.push_back(i);
+				last_point = point;
+			}
+		}
 	}
 
-	for (const auto& i : cards)
-	{
-		//获取卡牌点数
-		int point = i.get_point();
-		//同种点数牌，加在统一堆
-		if (point == last_point) {
-			card_heaps_.back().second.push_back(i);
-		}
-		//不同点数牌，新建一堆
-		else {
-			card_heaps_.push_back(std::make_pair<bool, std::vector<Card>>(false, {}));
-			card_heaps_.back().second.push_back(i);
-			last_point = point;
-		}
-	}
 	//加入剩余卡牌
 	card_heaps_.insert(card_heaps_.end(), remaining_heaps.begin(), remaining_heaps.end());
 
@@ -340,7 +340,7 @@ void PlayerWidget::update_play_btn()
 			{
 				//发现了比当前牌牌点更大的牌且不是级牌
 				if (card.get_point() > selected_card.get_point() &&
-					card.get_point() != round_rank_card)
+					card.get_point() != round_level_card)
 				{
 					could_contribute = false;
 					break;
@@ -614,7 +614,7 @@ void PlayerWidget::on_play_card()
 		auto max_rank = std::max_element(std::begin(round_rank), std::end(round_rank));
 		round_rank[id_] = *max_rank + 1;
 		//实现接风功能
-		circle_leader = (id_ + 2) % 4;
+		leading_flag = (id_ + 2) % 4;
 	}
 
 	//发送卡牌已打出信号
@@ -747,8 +747,8 @@ void PlayerWidget::on_game_over()
 	for (int i = 0; i < 4; i++) { delete_played_cards_ui(i); }
 
 	//更新等级显示
-	lb_rank_self_->setText(rank_conversion[group_rank[hand_->get_group()]]);
-	lb_rank_rival_->setText(rank_conversion[group_rank[!hand_->get_group()]]);
+	lb_level_self_->setText(level_conversion[group_level[hand_->get_group()]]);
+	lb_level_rival_->setText(level_conversion[group_level[!hand_->get_group()]]);
 
 	//按钮隐藏
 	btn_pass_->hide();

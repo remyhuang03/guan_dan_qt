@@ -13,7 +13,6 @@ public:
 
 	//标签模式
 	enum Mode { Remain_cnt, Rank, Hidden };
-
 	//@brief 设置模式（剩余牌数/完成游戏/隐藏）
 	//@para mode: 模式   arg:该模式下的参数（剩余牌数/游戏排名/0）
 	void set(Mode mode, int arg = 0);

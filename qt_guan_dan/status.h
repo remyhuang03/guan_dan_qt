@@ -19,7 +19,7 @@ void init_game_data();
 void round_over();
 
 //@brief 更新 cards_round_rank
-void update_cards_round_rank();
+void update_cards_round_level();
 
 //@brief 生成牌组Pixmap
 //@para
@@ -48,7 +48,7 @@ extern int rank_list[4];
 //  总游戏轮数
 extern int round_cnt;
 // [i]: Group i 的等级(按牌点数计1-13)
-extern int group_rank[2];
+extern int group_level[2];
 // [i]: Group i 没有打过A的次数
 extern int group_fial_pass_a[2];
 // [i]: 玩家 i 对象指针
@@ -57,9 +57,9 @@ extern Hand* players[4];
 /***** 当前一轮的状态 *****/
 
 // 本轮级牌
-extern int round_rank_card;
+extern int round_level_card;
 //牌point映射到相对大小（0表示最小）
-extern std::map<int, int> cards_round_rank;
+extern std::map<int, int> cards_round_level;
 // 玩家上贡顺序
 extern int contribute_order[2];
 // 本轮上贡的人数
@@ -79,6 +79,8 @@ extern int circle_point;
 extern int circle_leader;
 // 本圈处理情况计数
 extern int card_played_process_count;
+// 是否处于接风状态标志
+extern int leading_flag;
 
 #endif // STATUS_H_
 

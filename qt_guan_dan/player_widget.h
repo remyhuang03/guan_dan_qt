@@ -74,8 +74,8 @@ protected:
 private:
 	/***** UI控件 *****/
 	//group等级的label
-	QLabel* lb_rank_self_;
-	QLabel* lb_rank_rival_;
+	QLabel* lb_level_self_;
+	QLabel* lb_level_rival_;
 	//整理卡牌按钮
 	Button* btn_arrange_;
 	//四个同花顺按钮

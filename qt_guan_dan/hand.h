@@ -43,7 +43,7 @@ public:
 	//@brief 获取牌点的真实大小
 	//@para point: 牌点编号
 	//@ret int: 相对大小
-	int get_real_rank(int point)const { return cards_round_rank.at(point); }
+	int get_level_order(int point)const { return cards_round_level.at(point); }
 
 	//@brief 绑定窗口实现
 	void set_widget(PlayerWidget* widget) { widget_ = widget; }

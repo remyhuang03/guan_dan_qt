@@ -19,10 +19,10 @@ std::pair<int, int> Hand::certain_comb_info(const std::vector<Card>& cards)const
 		point_cnt[card.get_point()]++;
 	}
 	//计算最大牌点值
-	int max_rank = -1;
+	int max_level = -1;
 	for (auto& card : cards)
 	{
-		max_rank = std::max(max_rank, get_real_rank(card.get_point()));
+		max_level = std::max(max_level, get_level_order(card.get_point()));
 	}
 
 	//计算牌型特征, 检查牌点是否连续
@@ -55,19 +55,19 @@ std::pair<int, int> Hand::certain_comb_info(const std::vector<Card>& cards)const
 	}
 
 	//连续牌点的大小（以连续牌点中最大者减1规范到从0开始算大小）
-	int consecutive_rank = points.back() - 1;
+	int consecutive_level = points.back() - 1;
 
 	//需返回的牌型和相对大小
-	int ret_type = -1, ret_rank = -1;
+	int ret_type = -1, ret_level = -1;
 	//待检查组合的牌总数
 	int cards_cnt = cards.size();
 
 	//@brief 判断炸弹类型并按倍率设置返回值
-	auto bomb = [&ret_type, &ret_rank, max_rank, point_cnt](int rate) {
+	auto bomb = [&ret_type, &ret_level, max_level, point_cnt](int rate) {
 		if (point_cnt.size() == 1)
 		{
 			ret_type = 8;
-			ret_rank = max_rank + 16 * rate;
+			ret_level = max_level + 16 * rate;
 			return true;
 		}
 		return false;
@@ -78,14 +78,14 @@ std::pair<int, int> Hand::certain_comb_info(const std::vector<Card>& cards)const
 	case 1:
 		// 单张-1
 		ret_type = 1;
-		ret_rank = max_rank;
+		ret_level = max_level;
 		break;
 	case 2:
 		// 对子-2
 		if (point_cnt.size() == 1)
 		{
 			ret_type = 2;
-			ret_rank = max_rank;
+			ret_level = max_level;
 		}
 		break;
 	case 3:
@@ -93,7 +93,7 @@ std::pair<int, int> Hand::certain_comb_info(const std::vector<Card>& cards)const
 		if (point_cnt.size() == 1)
 		{
 			ret_type = 3;
-			ret_rank = max_rank;
+			ret_level = max_level;
 		}
 		break;
 	case 4:
@@ -108,7 +108,7 @@ std::pair<int, int> Hand::certain_comb_info(const std::vector<Card>& cards)const
 				point_cnt.find(14) != point_cnt.end() && point_cnt[14] == 2)
 			{
 				ret_type = 8;
-				ret_rank = 16 * 6;
+				ret_level = 16 * 6;
 				break;
 			}
 		}
@@ -126,13 +126,13 @@ std::pair<int, int> Hand::certain_comb_info(const std::vector<Card>& cards)const
 			if (elem1->second == 3)
 			{
 				ret_type = 4;
-				ret_rank = get_real_rank(elem1->first);
+				ret_level = get_level_order(elem1->first);
 				break;
 			}
 			else if (elem2->second == 3)
 			{
 				ret_type = 4;
-				ret_rank = get_real_rank(elem2->first);
+				ret_level = get_level_order(elem2->first);
 				break;
 			}
 		}
@@ -154,13 +154,13 @@ std::pair<int, int> Hand::certain_comb_info(const std::vector<Card>& cards)const
 				if (is_same_suit)
 				{
 					ret_type = 8;
-					ret_rank = consecutive_rank + 16 * 2;
+					ret_level = consecutive_level + 16 * 2;
 					break;
 				}
 				else
 				{
 					ret_type = 5;
-					ret_rank = consecutive_rank;
+					ret_level = consecutive_level;
 					break;
 				}
 		}
@@ -173,13 +173,13 @@ std::pair<int, int> Hand::certain_comb_info(const std::vector<Card>& cards)const
 		if (is_consecutive && card_trait == "222")
 		{
 			ret_type = 6;
-			ret_rank = consecutive_rank;
+			ret_level = consecutive_level;
 		}
 		//二连三-7
 		if (is_consecutive && card_trait == "33")
 		{
 			ret_type = 7;
-			ret_rank = consecutive_rank;
+			ret_level = consecutive_level;
 		}
 		break;
 	case 7:
@@ -203,7 +203,7 @@ std::pair<int, int> Hand::certain_comb_info(const std::vector<Card>& cards)const
 		// 不符合出牌要求
 		break;
 	}
-	return std::pair<int, int>(ret_type, ret_rank);
+	return std::pair<int, int>(ret_type, ret_level);
 }
 
 
@@ -231,7 +231,7 @@ std::vector<std::vector<Card>> Hand::all_valid_comb(const std::vector<Card>& car
 	{
 		Card card = cards_tmp[i];
 		//为级牌并且为红桃
-		if (card.get_point() == round_rank_card && card.get_suit() == 1)
+		if (card.get_point() == round_level_card && card.get_suit() == 1)
 		{
 			//删除级牌
 			cards_tmp.erase(cards_tmp.begin() + i);

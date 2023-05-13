@@ -11,9 +11,9 @@
 //游戏结束标志
 bool is_game_over = false;
 int round_cnt = 0;
-int group_rank[2] = { 2,2 };//debug
+int group_level[2] = { 2,2 };//debug
 int group_fial_pass_a[2] = { 0,0 };
-int round_rank_card = 2;
+int round_level_card = 2;
 int turn = 0;
 // 当前出牌的牌型（-4,-3,-2,-1：进贡1，进贡2，还贡1，还贡2   >=0:正常牌型）
 int circle_type = 0;
@@ -26,13 +26,12 @@ int contribute_count;
 int round_rank[4];
 int rank_list[4];
 int card_played_process_count = 0;
-std::map<int, int> cards_round_rank;
+std::map<int, int> cards_round_level;
 Card contributed_card[2];
 Card retributed_card[2];
-
 Hand* players[4];
-
 Record game_record;
+int leading_flag = -1;
 
 void round_over()
 {
@@ -74,60 +73,60 @@ void round_over()
 	}
 
 	//可升级的级数
-	int rank_incre = 4 - partner_rank;
+	int level_incre = 4 - partner_rank;
 
 	//打过A，游戏结束
-	if (group_rank[winner_group] == 1)
+	if (group_level[winner_group] == 1)
 	{
 		is_game_over = true;
 	}
 
 	//对手方打A失败
-	if (group_rank[!winner_group] == 1)
+	if (group_level[!winner_group] == 1)
 	{
 		group_fial_pass_a[!winner_group]++;
 		//三次未过，回退至2
 		if (group_fial_pass_a[!winner_group] == 3)
 		{
-			group_rank[!winner_group] = 2;
+			group_level[!winner_group] = 2;
 			group_fial_pass_a[!winner_group] = 0;
 		}
 	}
-	int new_rank_t = group_rank[winner_group] + rank_incre;
-	if (group_rank[winner_group] == 1)
+	int new_level_t = group_level[winner_group] + level_incre;
+	if (group_level[winner_group] == 1)
 	{
-		new_rank_t = 1;
+		new_level_t = 1;
 	}
-	new_rank_t = new_rank_t > 13 ? 1 : new_rank_t;
-	group_rank[winner_group] = new_rank_t;
+	new_level_t = new_level_t > 13 ? 1 : new_level_t;
+	group_level[winner_group] = new_level_t;
 
 	//更新级牌
-	int round_rank_card = new_rank_t;
+	int round_level_card = new_level_t;
 
 	//更新牌点大小映射
-	update_cards_round_rank();
+	update_cards_round_level();
 
 	return;
 }
 
-void update_cards_round_rank()
+void update_cards_round_level()
 {
-	int rank_t = 0;
+	int level_t = 0;
 	//2-K
 	for (int i = 2; i <= 13; i++)
 	{
-		if (i != round_rank_card)
-			cards_round_rank[i] = rank_t++;
+		if (i != round_level_card)
+			cards_round_level[i] = level_t++;
 	}
 	//A(是不是级牌排名一样)
-	cards_round_rank[1] = rank_t++;
+	cards_round_level[1] = level_t++;
 	//级牌（前面A已经排过）
-	if (round_rank_card != 1)
-		cards_round_rank[round_rank_card] = rank_t++;
+	if (round_level_card != 1)
+		cards_round_level[round_level_card] = level_t++;
 	//小王
-	cards_round_rank[14] = rank_t++;
+	cards_round_level[14] = level_t++;
 	//大王
-	cards_round_rank[15] = rank_t++;
+	cards_round_level[15] = level_t++;
 }
 
 std::vector<Card> shuffled_all_cards()
@@ -157,9 +156,9 @@ void init_game_data()
 {
 	is_game_over = false;
 	round_cnt = 0;
-	group_rank[0] = group_rank[1] = 12;//debug
+	group_level[0] = group_level[1] = 12;//debug
 	group_fial_pass_a[0] = group_fial_pass_a[1] = 0;
-	round_rank_card = 2;
+	round_level_card = 2;
 
 	//第一次随机找个出牌人
 	std::srand(std::time(nullptr));
@@ -168,9 +167,10 @@ void init_game_data()
 	circle_type = 0;
 	circle_point = 0;
 	circle_leader = turn;
+	leading_flag = -1;
 	//没有玩家完成比赛，玩家排名记为-1
 	std::for_each(std::begin(round_rank), std::end(round_rank), [](int& a) {a = -1; });
-	update_cards_round_rank();
+	update_cards_round_level();
 }
 
 QPixmap get_combination_pixmap(const std::vector<Card>& cards, double ratio)

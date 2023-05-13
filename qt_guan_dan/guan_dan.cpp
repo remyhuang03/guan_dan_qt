@@ -93,7 +93,16 @@ void guan_dan::switch_turn(bool is_next)
 			turn = (turn + 1) % 4;
 		} while (round_rank[turn] != -1);
 	}
-	qDebug() << "turn" << turn << "circle type" << circle_type<<"leader:" << circle_leader;
+	qDebug() << "turn" << turn << "circle type" << circle_type << "leader:" << circle_leader;
+	if (turn == leading_flag)
+	{
+		leading_flag = -1;
+		//接风，之前的领圈人已完成游戏
+		if (round_rank[circle_leader] != -1)
+		{
+			circle_leader = turn;
+		}
+	}
 	emit sig_switch_turn();
 }
 
@@ -254,7 +263,7 @@ void guan_dan::on_conretributed(int player_id, const Card& card)
 			circle_type = -1;
 			turn = rank_list[0];
 			emit sig_transfer_card(player_id, rank_list[0], card);
-			
+
 		}
 		break;
 	case -2:
@@ -269,7 +278,7 @@ void guan_dan::on_conretributed(int player_id, const Card& card)
 		{
 			emit sig_transfer_card(player_id, rank_list[2], card);
 		}
-		
+
 		break;
 	case -1:
 		reset_round_rank();
@@ -278,12 +287,12 @@ void guan_dan::on_conretributed(int player_id, const Card& card)
 		if (contribute_count == 2)
 		{
 			if (point1 >= point2)
-			{	
+			{
 				circle_leader = turn = (point1 == point2 ? (rank_list[0] + 1) % 4 : rank_list[3]);
 				emit sig_transfer_card(player_id, rank_list[2], card);
 			}
 			else
-			{   
+			{
 				circle_leader = turn = rank_list[2];
 				emit sig_transfer_card(player_id, rank_list[3], card);
 			}
