@@ -171,6 +171,7 @@ void init_game_data()
 
 QPixmap get_combination_pixmap(const std::vector<Card>& cards, double ratio)
 {
+	bool is_wild_card = false;
 	auto cards_cpy = cards;
 	sort(cards_cpy.begin(), cards_cpy.end());
 
@@ -179,15 +180,26 @@ QPixmap get_combination_pixmap(const std::vector<Card>& cards, double ratio)
 	//卡牌个数
 	auto cnt = cards_cpy.size();
 	// 指定合成后 QPixmap 的大小
-	QPixmap ret(size.width() + (cnt - 1) * size.width() * ratio, size.height());
+	int pixmap_width = size.width() + (cnt - 1) * size.width() * ratio;
+	QPixmap ret(pixmap_width, size.height());
 	QPainter painter(&ret);
 	// 依次叠加卡牌元素
 	for (int i = 0; i < cnt; i++)
 	{
 		const Card& card = cards_cpy[i];
-		auto card_pixmap = QPixmap(QString("img/card/%1_%2.png").arg(card.get_point()).arg(card.get_suit()));
+		auto card_pixmap = QPixmap(
+			QString("img/card/%1_%2.png").arg(card.get_point()).arg(card.get_suit()));
 		painter.drawPixmap(i * size.width() * ratio, 0, card_pixmap);
+		if (card.is_wild_card())
+		{
+			is_wild_card = true;
+		}
 	}
+	if (is_wild_card)
+	{
+		painter.drawPixmap(pixmap_width - 60, 0, QPixmap("img/label/star.png"));
+	}
+
 	return ret;
 }
 

@@ -283,7 +283,6 @@ void PlayerWidget::update_all()
 
 void PlayerWidget::on_card_selected(CardButton* card_btn, bool is_compulsory)
 {
-	qDebug() << "on_card_selected" << selected_cards_.size();
 	//已选择牌，可以进行整理
 	btn_arrange_->set_mode(Button::Normal);
 	//加入已选牌的牌堆
@@ -386,8 +385,6 @@ std::vector<Card> PlayerWidget::btns_to_cards(const std::vector<CardButton*>& ca
 
 void PlayerWidget::on_card_unselected(CardButton* card_btn)
 {
-	qDebug() << "unselected" << card_btn;
-	qDebug() << selected_cards_[0];
 	//从已选牌堆中删除
 	selected_cards_.erase(std::find(selected_cards_.begin(), selected_cards_.end(), card_btn));
 	//如果没有已选择的牌，将整理按钮改为恢复按钮(模式2)
@@ -562,7 +559,6 @@ void PlayerWidget::on_turn_switched()
 
 void PlayerWidget::on_play_card()
 {
-	qDebug() << "play card clicked";
 	int* selected_wild_card_id = new int;
 	//只有唯一一种牌型，直接出牌
 	if (all_combs_.size() == 1)
@@ -578,7 +574,7 @@ void PlayerWidget::on_play_card()
 	}
 	//全局状态操作
 	circle_leader = id_;
-	auto pair_info = hand_->certain_comb_info(btns_to_cards(selected_cards_));
+	auto pair_info = hand_->certain_comb_info(all_combs_[*selected_wild_card_id]);
 	circle_type = pair_info.first;
 	circle_point = pair_info.second;
 
@@ -658,7 +654,6 @@ void PlayerWidget::update_played_cards_ui(int player_id)
 
 void PlayerWidget::on_card_played(const std::vector<Card>& cards, int player_id)
 {
-	qDebug() << "card played";
 	//更新桌面牌面显示
 	int turn_next = turn;
 	do
