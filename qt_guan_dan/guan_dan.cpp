@@ -6,7 +6,7 @@
 
 
 //debug:少发点牌，方便调试
-#define DEBUG_CARD_CNT_ 1 //正常值：27
+#define DEBUG_CARD_CNT_ 27 //正常值：27
 
 guan_dan::guan_dan(QWidget* parent)
 	: QWidget(parent)
@@ -57,6 +57,8 @@ void guan_dan::on_start_game()
 			widget, &PlayerWidget::on_card_transfered);
 		connect(this, &guan_dan::sig_new_round,
 			widget, &PlayerWidget::on_new_round);
+		connect(this, &guan_dan::sig_game_over,
+			widget, &PlayerWidget::on_game_over);
 		connect(widget, &PlayerWidget::sig_pass,
 			this, &guan_dan::on_passed);
 		connect(widget, &PlayerWidget::sig_global_card_played_process,
@@ -91,14 +93,13 @@ void guan_dan::switch_turn(bool is_next)
 			turn = (turn + 1) % 4;
 		} while (round_rank[turn] != -1);
 	}
-	qDebug() << "turn" << turn << "circle type" << circle_type;
+	qDebug() << "turn" << turn << "circle type" << circle_type<<"leader:" << circle_leader;
 	emit sig_switch_turn();
 }
 
 
 void guan_dan::on_card_played(const std::vector<Card>& cards, int player_id)
 {
-	card_played_process_count = 0;
 	//该组为胜利，轮转到下一个玩家
 	if (round_rank[player_id] == -1 || round_rank[(player_id + 2) % 4] == -1)
 	{
@@ -206,7 +207,6 @@ void guan_dan::on_card_played(const std::vector<Card>& cards, int player_id)
 		circle_type = (contribute_count == 2 ? -4 : -3);
 		//上贡玩家
 		turn = contribute_order[0];
-		card_played_process_count = 0;
 		switch_turn(false);
 	}
 }
@@ -219,7 +219,6 @@ void guan_dan::on_passed()
 
 void guan_dan::on_conretributed(int player_id, const Card& card)
 {
-	card_played_process_count = 0;
 	static int point1 = -1, point2 = -1;
 	switch (circle_type)
 	{
@@ -228,6 +227,7 @@ void guan_dan::on_conretributed(int player_id, const Card& card)
 		circle_type = -3;
 		contributed_card[0] = card;
 		turn = contribute_order[1];
+		switch_turn(false);
 		break;
 	case -3:
 		if (contribute_count == 2)
@@ -253,13 +253,15 @@ void guan_dan::on_conretributed(int player_id, const Card& card)
 		{
 			//单贡 -> 还贡
 			circle_type = -1;
-			emit sig_transfer_card(player_id, rank_list[0], card);
 			turn = rank_list[0];
+			emit sig_transfer_card(player_id, rank_list[0], card);
+			
 		}
 		break;
 	case -2:
 		//还贡1 -> 还贡2
 		circle_type = -1;
+		turn = rank_list[1];
 		if (point1 >= point2)
 		{
 			emit sig_transfer_card(player_id, rank_list[3], card);
@@ -268,30 +270,31 @@ void guan_dan::on_conretributed(int player_id, const Card& card)
 		{
 			emit sig_transfer_card(player_id, rank_list[2], card);
 		}
-		turn = rank_list[1];
+		
 		break;
 	case -1:
+		reset_round_rank();
 		circle_type = 0;
-		//还贡2 -> 进贡完成
+		//还贡2 -> 正常出牌
 		if (contribute_count == 2)
 		{
 			if (point1 >= point2)
-			{
+			{	
+				circle_leader = turn = (point1 == point2 ? (rank_list[0] + 1) % 4 : rank_list[3]);
 				emit sig_transfer_card(player_id, rank_list[2], card);
-				turn = (point1 == point2 ? (rank_list[0] + 1) % 4 : rank_list[3]);
 			}
 			else
-			{
+			{   
+				circle_leader = turn = rank_list[2];
 				emit sig_transfer_card(player_id, rank_list[3], card);
-				turn = rank_list[2];
 			}
 		}
 		//单还贡 -> 正常出牌
 		else
 		{
 			//单贡，由下家出牌
-			emit sig_transfer_card(player_id, rank_list[3], card);
 			circle_leader = turn = rank_list[3];
+			emit sig_transfer_card(player_id, rank_list[3], card);
 		}
 		break;
 	default:

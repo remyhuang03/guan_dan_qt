@@ -22,7 +22,7 @@ public:
 	//@brief 牌队恢复默认排序
 	//@para 
 	//is_internal: 是否只进行内部排序而不更新显示
-    //is_partial: 是否只对未手工整理的牌堆部分进行排序
+	//is_partial: 是否只对未手工整理的牌堆部分进行排序
 	void sort_card_heap(bool is_internal = false, bool is_partial = false);
 
 	//@brief 根据heap重新显示牌堆
@@ -42,18 +42,31 @@ public:
 	Hand* get_hand()const;
 
 public slots:
+	//@brief 当卡片被选中
 	void on_card_selected(CardButton* card_btn, bool is_compulsory = true);
+	//@brief 当卡片被取消选中
 	void on_card_unselected(CardButton* card_btn);
+	//@brief 当整理按钮点击时
 	void on_arrange_clicked(int mode);
+	//@brief 游戏活动玩家轮转
 	void on_turn_switched();
+	//@brief 当出牌按钮点击时
 	void on_play_card();
+	//@brief 当有玩家已出牌时
+	//@para cards: 已出牌		player_id:玩家
 	void on_card_played(const std::vector<Card>& cards, int player_id);
+	//@brief 当玩家不出牌时
 	void on_passed(int player_id);
 	//@brief 当上贡/还贡按钮点击时
 	void on_conretribute();
+	//@brief 当不出按钮被点击时
 	void on_pass_clicked();
+	//@brief 当新一局牌面出现时
 	void on_new_round();
-	void on_card_transfered(int sender,int receiver, const Card&);
+	//@brief 当玩家发生给牌行为时
+	void on_card_transfered(int sender, int receiver, const Card&);
+	//@brief 当全局游戏结束时
+	void on_game_over();
 
 protected:
 	void closeEvent(QCloseEvent* event);

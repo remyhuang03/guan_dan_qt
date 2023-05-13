@@ -130,7 +130,6 @@ PlayerWidget::PlayerWidget(Hand* hand) : QWidget(), hand_(hand)
 
 void PlayerWidget::on_new_round()
 {
-	qDebug() << "new round";
 	//删除所有已出牌显示
 	for (int i = 0; i < 4; i++) { delete_played_cards_ui(i); }
 
@@ -146,6 +145,8 @@ void PlayerWidget::on_new_round()
 	//出牌按钮隐藏
 	btn_play_->hide();
 	btn_play_->set_mode(Button::Disabled);
+	btn_contribute_->set_mode(Button::Disabled);
+	btn_retribute_->set_mode(Button::Disabled);
 
 	//四个状态标签标记为上一轮的游戏排名
 	for (int i = 0; i < 4; i++) { lb_status_[i]->set(StatusLabel::Rank, round_rank[i]); }
@@ -271,7 +272,7 @@ void PlayerWidget::update_all()
 {
 	//清空原有heap
 	card_heaps_.clear();
-	card_heaps_.push_back(std::make_pair<int, std::vector<Card>>(false, {}));
+	card_heaps_.push_back(std::make_pair<bool, std::vector<Card>>(false, {}));
 	//根据Hand中的数据重建UI
 	for (const Card& i : hand_->get_cards())
 	{
@@ -282,6 +283,7 @@ void PlayerWidget::update_all()
 
 void PlayerWidget::on_card_selected(CardButton* card_btn, bool is_compulsory)
 {
+	qDebug() << "on_card_selected" << selected_cards_.size();
 	//已选择牌，可以进行整理
 	btn_arrange_->set_mode(Button::Normal);
 	//加入已选牌的牌堆
@@ -489,7 +491,7 @@ void PlayerWidget::on_arrange_clicked(int mode)
 
 void PlayerWidget::on_turn_switched()
 {
-	qDebug() <<"switch:" << turn << id_;
+	qDebug() << "switch:" << turn << "id:" << id_;
 	//上贡
 	if ((circle_type == -4 || circle_type == -3) &&
 		turn == id_)
@@ -560,6 +562,7 @@ void PlayerWidget::on_turn_switched()
 
 void PlayerWidget::on_play_card()
 {
+	qDebug() << "play card clicked";
 	int* selected_wild_card_id = new int;
 	//只有唯一一种牌型，直接出牌
 	if (all_combs_.size() == 1)
@@ -655,6 +658,7 @@ void PlayerWidget::update_played_cards_ui(int player_id)
 
 void PlayerWidget::on_card_played(const std::vector<Card>& cards, int player_id)
 {
+	qDebug() << "card played";
 	//更新桌面牌面显示
 	int turn_next = turn;
 	do
@@ -672,6 +676,7 @@ void PlayerWidget::on_card_played(const std::vector<Card>& cards, int player_id)
 	card_played_process_count++;
 	if (card_played_process_count == 4)
 	{
+		card_played_process_count = 0;
 		emit sig_global_card_played_process(cards, player_id);
 	}
 }
@@ -710,7 +715,7 @@ void PlayerWidget::on_card_transfered(int sender, int receiver, const Card& card
 		//重新排序显示
 		sort_card_heap(false, true);
 	}
-	else if (id_ = sender)
+	else if (id_ == sender)
 	{
 		//删除卡牌
 		hand_->pop_card(card);
@@ -734,6 +739,37 @@ void PlayerWidget::on_card_transfered(int sender, int receiver, const Card& card
 	if (card_played_process_count == 4)
 	{
 		//处理计数完成，发送完成信号
-		emit sig_conretribution_processed();
+		card_played_process_count = 0;
+		emit sig_conretribution_processed(false);
 	}
+}
+
+void PlayerWidget::on_game_over()
+{
+	//删除所有已出牌显示
+	for (int i = 0; i < 4; i++) { delete_played_cards_ui(i); }
+
+	//更新等级显示
+	lb_rank_self_->setText(QString::number(group_rank[hand_->get_group()]));
+	lb_rank_rival_->setText(QString::number(group_rank[!hand_->get_group()]));
+
+	//不出按钮隐藏
+	btn_pass_->hide();
+	//出牌按钮隐藏
+	btn_play_->hide();
+
+	//级牌标识
+	int w_t = spr_star->size().width();
+	int h_t = spr_star->size().height();
+	spr_star->setGeometry(100, 20 + 30 * ((rank_list[0] % 2) == (id_ % 2)), w_t, h_t);
+
+	//删除所有卡牌堆
+	hand_->cards_.clear();
+	update_all();
+
+	//显示游戏结果
+	QString result = group_rank[id_ % 2] == 1 ? "win" : "lose";
+	QString game_over_img_path = "img/label/" + result + ".png";
+	auto game_over_img = new Sprite(0, 0, game_over_img_path, this, Sprite::Size, 60);
+	game_over_img->show();
 }
