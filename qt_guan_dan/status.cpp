@@ -11,7 +11,7 @@
 //游戏结束标志
 bool is_game_over = false;
 int round_cnt = 0;
-int group_rank[2] = { 2,2 };
+int group_rank[2] = { 2,2 };//debug
 int group_fial_pass_a[2] = { 0,0 };
 int round_rank_card = 2;
 int turn = 0;
@@ -94,7 +94,11 @@ void round_over()
 		}
 	}
 	int new_rank_t = group_rank[winner_group] + rank_incre;
-	new_rank_t = new_rank_t > 13 ? 13 : new_rank_t;
+	if (group_rank[winner_group] == 1)
+	{
+		new_rank_t = 1;
+	}
+	new_rank_t = new_rank_t > 13 ? 1 : new_rank_t;
 	group_rank[winner_group] = new_rank_t;
 
 	//更新级牌
@@ -153,7 +157,7 @@ void init_game_data()
 {
 	is_game_over = false;
 	round_cnt = 0;
-	group_rank[0] = group_rank[1] = 2;
+	group_rank[0] = group_rank[1] = 12;//debug
 	group_fial_pass_a[0] = group_fial_pass_a[1] = 0;
 	round_rank_card = 2;
 

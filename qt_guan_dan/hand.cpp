@@ -343,7 +343,7 @@ std::vector<std::vector<std::vector<Card>>> Hand::all_straight_flush_combination
 			}
 			straight_flush.push_back(card);
 			//以当前牌结尾，可以构成同花顺
-			//to-do: 感觉这边的底层逻辑有问题
+			//感觉这边的底层逻辑有问题
 			if (straight_flush.size() >= 6)
 			{
 				ret[i].push_back(std::vector<Card>(straight_flush.end() - 5, straight_flush.end()));

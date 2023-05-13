@@ -13,6 +13,8 @@
 #include "WildCardDialog.h"
 #include "status.h"
 
+const char rank_conversion[][3] = { "","A","2","3","4","5","6","7","8","9","10","J","Q","K" };
+
 PlayerWidget::PlayerWidget(Hand* hand) : QWidget(), hand_(hand)
 {
 	/***** 窗口基本设置 ****/
@@ -134,8 +136,8 @@ void PlayerWidget::on_new_round()
 	for (int i = 0; i < 4; i++) { delete_played_cards_ui(i); }
 
 	//更新等级显示
-	lb_rank_self_->setText(QString::number(group_rank[hand_->get_group()]));
-	lb_rank_rival_->setText(QString::number(group_rank[!hand_->get_group()]));
+	lb_rank_self_->setText(rank_conversion[group_rank[hand_->get_group()]]);
+	lb_rank_rival_->setText(rank_conversion[group_rank[!hand_->get_group()]]);
 
 	//自动整理牌堆，并显示
 	update_all();
@@ -615,7 +617,7 @@ void PlayerWidget::on_play_card()
 		circle_leader = (id_ + 2) % 4;
 	}
 
-	//debug: 发送卡牌已打出信号
+	//发送卡牌已打出信号
 	emit sig_card_played(all_combs_[*selected_wild_card_id], id_);
 }
 
@@ -745,26 +747,28 @@ void PlayerWidget::on_game_over()
 	for (int i = 0; i < 4; i++) { delete_played_cards_ui(i); }
 
 	//更新等级显示
-	lb_rank_self_->setText(QString::number(group_rank[hand_->get_group()]));
-	lb_rank_rival_->setText(QString::number(group_rank[!hand_->get_group()]));
+	lb_rank_self_->setText(rank_conversion[group_rank[hand_->get_group()]]);
+	lb_rank_rival_->setText(rank_conversion[group_rank[!hand_->get_group()]]);
 
-	//不出按钮隐藏
+	//按钮隐藏
 	btn_pass_->hide();
-	//出牌按钮隐藏
 	btn_play_->hide();
+	btn_arrange_->hide();
+	for (auto i : straight_flush_btns_)
+		i->hide();
 
 	//级牌标识
 	int w_t = spr_star->size().width();
 	int h_t = spr_star->size().height();
-	spr_star->setGeometry(100, 20 + 30 * ((rank_list[0] % 2) == (id_ % 2)), w_t, h_t);
+	spr_star->setGeometry(100, 20 + 30 * ((rank_list[0] % 2) != (id_ % 2)), w_t, h_t);
 
 	//删除所有卡牌堆
 	hand_->cards_.clear();
 	update_all();
 
 	//显示游戏结果
-	QString result = group_rank[id_ % 2] == 1 ? "win" : "lose";
+	QString result = (rank_list[0] % 2 == id_ % 2) ? "win" : "lose";
 	QString game_over_img_path = "img/label/" + result + ".png";
-	auto game_over_img = new Sprite(0, 0, game_over_img_path, this, Sprite::Size, 60);
+	auto game_over_img = new Sprite(290, 155, game_over_img_path, this, Sprite::Size, 60);
 	game_over_img->show();
 }
