@@ -1,4 +1,4 @@
-﻿#include "sf_btn.h"
+﻿#include "SfButton.h"
 
 SfButton::SfButton(int x, int y, int suite, PlayerWidget* parent) :
 	Button(x, y, "img/btn/straight_flush" + QString::number(suite) + "0" + ".png", parent, Button::Height, 40),

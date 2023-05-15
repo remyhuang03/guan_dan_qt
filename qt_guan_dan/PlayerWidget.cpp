@@ -1,6 +1,6 @@
 ﻿#include <algorithm>
 #include <qmessagebox.h>
-#include "player_widget.h"
+#include "PlayerWidget.h"
 #include "qstring.h"
 #include "status.h"
 #include "sprite.h"
@@ -8,7 +8,7 @@
 #include "qlabel.h"
 #include "button.h"
 #include "hand.h"
-#include "sf_btn.h"
+#include "SfButton.h"
 #include "status.h"
 #include "WildCardDialog.h"
 #include "status.h"
@@ -74,7 +74,8 @@ PlayerWidget::PlayerWidget(Hand* hand) : QWidget(), hand_(hand)
 			if (i != j)
 			{
 				//绑定同花顺按钮点击与重置其它按钮
-				connect(straight_flush_btns_[i], &SfButton::sig_click_emit, straight_flush_btns_[j], &SfButton::on_reset_selected_order);
+				connect(straight_flush_btns_[i], &SfButton::sig_click_emit,
+					straight_flush_btns_[j], &SfButton::on_reset_selected_order);
 			}
 		}
 	}
@@ -82,41 +83,49 @@ PlayerWidget::PlayerWidget(Hand* hand) : QWidget(), hand_(hand)
 	//理牌按钮
 	btn_arrange_ = new Button(700, 506, "img/btn/arrange0.png", this, Button::Height, 40);
 	btn_arrange_->set_pm("img/btn/arrange1.png", Button::Mode2);
-	connect(btn_arrange_, &Button::sig_click_emit, this, &PlayerWidget::on_arrange_clicked);
+	connect(btn_arrange_, &Button::sig_click_emit,
+		this, &PlayerWidget::on_arrange_clicked);
 
 	//自动整理牌堆，并显示
 	sort_card_heap();
 
 	//显示记录按钮
 	auto btn_t = new Button(850, 10, "img/btn/record.png", this, Button::Height, 40);
-	connect(btn_t, &Button::sig_click_emit, btn_t, &Button::on_show_record);
+	connect(btn_t, &Button::sig_click_emit,
+		btn_t, &Button::on_show_record);
 
 	//不出按钮（默认隐藏）
 	btn_pass_ = new Button(340, 180, "img/btn/pass0.png", this, Button::Height, 50);
 	btn_pass_->set_pm("img/btn/pass1.png", Button::Disabled);
 	btn_pass_->hide();
-	connect(btn_pass_, &Button::sig_click_emit, this, &PlayerWidget::on_pass_clicked);
+	connect(btn_pass_, &Button::sig_click_emit,
+		this, &PlayerWidget::on_pass_clicked);
 
 	//出牌按钮（默认隐藏）
 	btn_play_ = new Button(490, 180, "img/btn/play_card0.png", this, Button::Height, 50);
 	btn_play_->set_pm("img/btn/play_card1.png", Button::Disabled);
 	btn_play_->hide();
 	btn_play_->set_mode(Button::Disabled);
-	connect(btn_play_, &Button::sig_click_emit, this, &PlayerWidget::on_play_card);
+	connect(btn_play_, &Button::sig_click_emit,
+		this, &PlayerWidget::on_play_card);
 
 	//上贡按钮
-	btn_contribute_ = new Button(430, 180, "img/btn/contribute0.png", this, Button::Height, 50);
+	btn_contribute_ = new Button(430, 180, "img/btn/contribute0.png",
+		this, Button::Height, 50);
 	btn_contribute_->set_pm("img/btn/contribute1.png", Button::Disabled);
 	btn_contribute_->hide();
 	btn_contribute_->set_mode(Button::Disabled);
-	connect(btn_contribute_, &Button::sig_click_emit, this, &PlayerWidget::on_conretribute);
+	connect(btn_contribute_, &Button::sig_click_emit,
+		this, &PlayerWidget::on_conretribute);
 
 	//还贡按钮
-	btn_retribute_ = new Button(430, 180, "img/btn/retribute0.png", this, Button::Height, 50);
+	btn_retribute_ = new Button(430, 180, "img/btn/retribute0.png",
+		this, Button::Height, 50);
 	btn_retribute_->set_pm("img/btn/retribute1.png", Button::Disabled);
 	btn_retribute_->hide();
 	btn_retribute_->set_mode(Button::Disabled);
-	connect(btn_retribute_, &Button::sig_click_emit, this, &PlayerWidget::on_conretribute);
+	connect(btn_retribute_, &Button::sig_click_emit,
+		this, &PlayerWidget::on_conretribute);
 
 	//四个状态标签
 	for (int i = 0; i < 4; i++)
@@ -126,7 +135,8 @@ PlayerWidget::PlayerWidget(Hand* hand) : QWidget(), hand_(hand)
 	}
 
 	//级牌按钮（第一个round指定为第一项）
-	spr_star = new Sprite(100, 20, "img/label/star.png", this, Sprite::Height, 20);
+	spr_star = new Sprite(100, 20, "img/label/star.png",
+		this, Sprite::Height, 20);
 	spr_star->show();
 }
 
@@ -136,8 +146,10 @@ void PlayerWidget::on_new_round()
 	for (int i = 0; i < 4; i++) { delete_played_cards_ui(i); }
 
 	//更新等级显示
-	lb_level_self_->setText(level_conversion[group_level[hand_->get_group()]]);
-	lb_level_rival_->setText(level_conversion[group_level[!hand_->get_group()]]);
+	lb_level_self_->
+		setText(level_conversion[group_level[hand_->get_group()]]);
+	lb_level_rival_->
+		setText(level_conversion[group_level[!hand_->get_group()]]);
 
 	//自动整理牌堆，并显示
 	update_all();
@@ -151,12 +163,16 @@ void PlayerWidget::on_new_round()
 	btn_retribute_->set_mode(Button::Disabled);
 
 	//四个状态标签标记为上一轮的游戏排名
-	for (int i = 0; i < 4; i++) { lb_status_[i]->set(StatusLabel::Rank, round_rank[i]); }
+	for (int i = 0; i < 4; i++)
+	{
+		lb_status_[i]->set(StatusLabel::Rank, round_rank[i]);
+	}
 
 	//级牌标识
 	int w_t = spr_star->size().width();
 	int h_t = spr_star->size().height();
-	spr_star->setGeometry(100, 20 + 30 * ((rank_list[0] % 2) == (id_ % 2)), w_t, h_t);
+	spr_star->
+		setGeometry(100, 20 + 30 * ((rank_list[0] % 2) == (id_ % 2)), w_t, h_t);
 }
 
 void PlayerWidget::closeEvent(QCloseEvent* event)
@@ -211,7 +227,8 @@ void PlayerWidget::sort_card_heap(bool is_internal, bool is_partial)
 	}
 
 	//加入剩余卡牌
-	card_heaps_.insert(card_heaps_.end(), remaining_heaps.begin(), remaining_heaps.end());
+	card_heaps_.insert(card_heaps_.end(),
+		remaining_heaps.begin(), remaining_heaps.end());
 
 	//更新牌堆显示
 	if (!is_internal)
@@ -260,8 +277,14 @@ void PlayerWidget::update_card_heap_show()
 	for (int i = 0; i < 4; i++)
 	{
 		//该花色不存在同花顺
-		if (straight_flush_comb_[i].empty()) { straight_flush_btns_[i]->set_mode(Button::Disabled); }
-		else { straight_flush_btns_[i]->set_mode(Button::Normal); }
+		if (straight_flush_comb_[i].empty())
+		{
+			straight_flush_btns_[i]->set_mode(Button::Disabled);
+		}
+		else
+		{
+			straight_flush_btns_[i]->set_mode(Button::Normal);
+		}
 	}
 }
 
@@ -306,7 +329,8 @@ void PlayerWidget::on_card_selected(CardButton* card_btn, bool is_compulsory)
 			//选中该组合牌堆中其它所有牌未选中
 			int selected_cnt = 0;
 			for_each(cards.begin(), cards.end(),
-				[&selected_cnt](Card& c) {if (c.get_card_btn()->get_mode() == Button::Mode2) { selected_cnt++; } });
+				[&selected_cnt](Card& c)
+				{if (c.get_card_btn()->get_mode() == Button::Mode2) { selected_cnt++; } });
 			if (selected_cnt != 0) { return; }
 
 			//强制选中该牌堆中的所有牌
@@ -366,12 +390,14 @@ void PlayerWidget::update_play_btn()
 	}
 	else
 	{
-		auto selected_info = hand_->certain_comb_info(btns_to_cards(selected_cards_));
+		auto selected_info = 
+			hand_->certain_comb_info(btns_to_cards(selected_cards_));
 		//所选牌可出牌的组合
 		all_combs_ = hand_->all_valid_comb(btns_to_cards(selected_cards_));
 		int combs_cnt = all_combs_.size();
 
-		btn_play_->set_mode(combs_cnt == 0 ? Button::Disabled : Button::Normal);
+		btn_play_->
+			set_mode(combs_cnt == 0 ? Button::Disabled : Button::Normal);
 	}
 }
 
@@ -576,6 +602,7 @@ void PlayerWidget::on_play_card()
 	}
 	//全局状态操作
 	circle_leader = id_;
+	reset_leading();
 	auto pair_info = hand_->certain_comb_info(all_combs_[*selected_wild_card_id]);
 	circle_type = pair_info.first;
 	circle_point = pair_info.second;
@@ -614,7 +641,8 @@ void PlayerWidget::on_play_card()
 		auto max_rank = std::max_element(std::begin(round_rank), std::end(round_rank));
 		round_rank[id_] = *max_rank + 1;
 		//实现接风功能
-		leading_flag = (id_ + 2) % 4;
+		memset(leading_visited, 0, sizeof(leading_visited));
+		leading_flag = (id_ + 2) % 4 + 4;
 	}
 
 	//发送卡牌已打出信号

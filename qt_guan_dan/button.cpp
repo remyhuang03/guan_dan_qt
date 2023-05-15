@@ -1,5 +1,6 @@
 ﻿#include "button.h"
-#include "record_widget.h"
+#include "RecordWidget.h"
+
 Button::Button(int x, int y, QString img, QWidget* parent, SizeMode mode, double size)
 	:Sprite(x, y, img, parent, mode, size), mode_(Normal), animation_disabled_(false),
 	x_(x), y_(y)
@@ -15,6 +16,7 @@ void Button::on_click_animation()
 	{
 		return;
 	}
+
 	//播放点击动画
 	QPropertyAnimation* animation = new QPropertyAnimation(this, "geometry");
 	animation->setDuration(150);
@@ -25,6 +27,7 @@ void Button::on_click_animation()
 	animation->setStartValue(QRect(x_ + 2, y_ + 2, w_, h_));
 	animation->setEndValue(QRect(x_, y_, w_, h_));
 	animation->start();
+
 	//处理点击完以后的事件
 	emit sig_click_emit(static_cast<int>(mode_));
 }

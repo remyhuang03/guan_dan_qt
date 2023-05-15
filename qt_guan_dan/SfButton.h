@@ -1,7 +1,7 @@
 ﻿#ifndef SF_BUTTON_H_
 #define SF_BUTTON_H_
 #include "button.h"
-#include "player_widget.h"
+#include "PlayerWidget.h"
 
 class SfButton :
 	public Button

@@ -34,37 +34,37 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="sprite.cpp">
+    <ClCompile Include="Sprite.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="button.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="card.cpp">
+    <ClCompile Include="Card.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="hand.cpp">
+    <ClCompile Include="Hand.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="record.cpp">
+    <ClCompile Include="Record.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="status.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="player_widget.cpp">
+    <ClCompile Include="PlayerWidget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="guan_dan.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="card_btn.cpp">
+    <ClCompile Include="CardButton.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="record_widget.cpp">
+    <ClCompile Include="RecordWidget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="sf_btn.cpp">
+    <ClCompile Include="SfButton.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="WildCardDialog.cpp">
@@ -75,19 +75,19 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="card.h">
+    <ClInclude Include="Card.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="hand.h">
+    <ClInclude Include="Hand.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="record.h">
+    <ClInclude Include="Record.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="status.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="sf_btn.h">
+    <ClInclude Include="SfButton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="WildCardDialog.h">
@@ -108,19 +108,19 @@
     </QtRcc>
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="sprite.h">
+    <QtMoc Include="Sprite.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="button.h">
+    <QtMoc Include="Button.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="player_widget.h">
+    <QtMoc Include="PlayerWidget.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="record_widget.h">
+    <QtMoc Include="RecordWidget.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="card_btn.h">
+    <QtMoc Include="CardButton.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

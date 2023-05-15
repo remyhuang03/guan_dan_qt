@@ -1,8 +1,8 @@
 ﻿#include "guan_dan.h"
-#include "sprite.h"
-#include "button.h"
-#include "player_widget.h"
-#include "hand.h"
+#include "Sprite.h"
+#include "Button.h"
+#include "Hand.h"
+#include "PlayerWidget.h"
 
 
 //debug:少发点牌，方便调试
@@ -17,11 +17,14 @@ guan_dan::guan_dan(QWidget* parent)
 	setFixedSize(SCREEN_W, SCREEN_H);
 	//背景色灰色
 	setPalette(QColor(35, 35, 35));
-	Sprite* btn_background =
+	//背景图片
+	Sprite* spr_background =
 		new Sprite(0, 0, "img/bg/home.png", this, Sprite::Width, SCREEN_W);
-	Button* btn_start_game =
-		new Button(360, 380, "img/btn/start_game.png", this, Button::Height, 80);
-	connect(btn_start_game, &Button::sig_click_emit, this, &guan_dan::on_start_game);
+	//开始游戏按钮
+	Button* btn_start_game =new Button(360, 380, 
+		"img/btn/start_game.png", this, Button::Height, 80);
+	connect(btn_start_game, &Button::sig_click_emit, 
+		this, &guan_dan::on_start_game);
 }
 
 void guan_dan::on_start_game()
@@ -49,7 +52,8 @@ void guan_dan::on_start_game()
 		players[i]->set_cards(std::vector(begin, end));
 
 		//连接玩家窗口关闭信号槽
-		connect(widget, &PlayerWidget::sig_player_close, this, &guan_dan::show);
+		connect(widget, &PlayerWidget::sig_player_close, 
+			this, &guan_dan::show);
 		//玩家窗口下一轮信号槽
 		connect(this, &guan_dan::sig_switch_turn,
 			widget, &PlayerWidget::on_turn_switched);
@@ -75,10 +79,14 @@ void guan_dan::on_start_game()
 		{
 			auto widget1 = player_widgets[i];
 			auto widget2 = player_widgets[j];
-			if (i != j) { connect(widget1, &PlayerWidget::sig_player_close, widget2, &PlayerWidget::close); }
-			connect(widget1, &PlayerWidget::sig_card_played, widget2, &PlayerWidget::on_card_played);
-			connect(widget1, &PlayerWidget::sig_pass, widget2, &PlayerWidget::on_passed);
+			if (i != j) { connect(widget1, &PlayerWidget::sig_player_close, 
+				widget2, &PlayerWidget::close); }
+			connect(widget1, &PlayerWidget::sig_card_played,
+				widget2, &PlayerWidget::on_card_played);
+			connect(widget1, &PlayerWidget::sig_pass, 
+				widget2, &PlayerWidget::on_passed);
 		}
+
 	//游戏开始，轮转下一位
 	switch_turn(false);
 }
@@ -93,14 +101,27 @@ void guan_dan::switch_turn(bool is_next)
 			turn = (turn + 1) % 4;
 		} while (round_rank[turn] != -1);
 	}
+
 	qDebug() << "turn" << turn << "circle type" << circle_type << "leader:" << circle_leader;
-	if (turn == leading_flag)
+
+	//出现接风的情况
+	if (leading_flag != -1)
 	{
-		leading_flag = -1;
-		//接风，之前的领圈人已完成游戏
-		if (round_rank[circle_leader] != -1)
+		//该位置是真接风玩家
+		if (turn == leading_flag && leading_visited[turn])
 		{
+			reset_leading();
 			circle_leader = turn;
+		}
+		//处于接风阶段，该人已喊过，转至领圈人
+		else if (leading_visited[turn])
+		{
+			reset_leading();
+			circle_leader = turn = leading_flag;
+		}
+		else
+		{
+			leading_visited[turn] = true;
 		}
 	}
 	emit sig_switch_turn();
@@ -109,7 +130,7 @@ void guan_dan::switch_turn(bool is_next)
 
 void guan_dan::on_card_played(const std::vector<Card>& cards, int player_id)
 {
-	//该组为胜利，轮转到下一个玩家
+	//该组胜利，轮转到下一个玩家
 	if (round_rank[player_id] == -1 || round_rank[(player_id + 2) % 4] == -1)
 	{
 		switch_turn(true);
@@ -119,6 +140,7 @@ void guan_dan::on_card_played(const std::vector<Card>& cards, int player_id)
 	//该方两个玩家的牌均已出完，牌局结束
 	int& rival_rank_1 = round_rank[(player_id + 1) % 4];
 	int& rival_rank_2 = round_rank[(player_id + 3) % 4];
+
 	//对手组都未出完牌
 	if (rival_rank_1 == -1 && rival_rank_2 == -1)
 	{
@@ -164,10 +186,14 @@ void guan_dan::on_card_played(const std::vector<Card>& cards, int player_id)
 	if (contribute_count == 2)
 	{
 		// 检查是否可以进行抗贡
-		auto temp_cards = players[rank_list[2]]->get_cards();
-		int JOKER_count = std::count(temp_cards.begin(), temp_cards.end(), Card(15, -1));
-		temp_cards = players[rank_list[3]]->get_cards();
-		JOKER_count += std::count(temp_cards.begin(), temp_cards.end(), Card(15, -1));
+		auto temp_cards =
+			players[rank_list[2]]->get_cards();
+		int JOKER_count =
+			std::count(temp_cards.begin(), temp_cards.end(), Card(15, -1));
+		temp_cards =
+			players[rank_list[3]]->get_cards();
+		JOKER_count +=
+			std::count(temp_cards.begin(), temp_cards.end(), Card(15, -1));
 		// 抗贡
 		if (JOKER_count == 2)
 		{
@@ -184,7 +210,8 @@ void guan_dan::on_card_played(const std::vector<Card>& cards, int player_id)
 	{
 		// 检查是否可以进行抗贡
 		auto temp_cards = players[rank_list[3]]->get_cards();
-		int JOKER_count = std::count(temp_cards.begin(), temp_cards.end(), Card(15, -1));
+		int JOKER_count =
+			std::count(temp_cards.begin(), temp_cards.end(), Card(15, -1));
 		// 抗贡
 		if (JOKER_count == 2)
 		{
@@ -288,7 +315,8 @@ void guan_dan::on_conretributed(int player_id, const Card& card)
 		{
 			if (point1 >= point2)
 			{
-				circle_leader = turn = (point1 == point2 ? (rank_list[0] + 1) % 4 : rank_list[3]);
+				circle_leader = turn =
+					(point1 == point2 ? (rank_list[0] + 1) % 4 : rank_list[3]);
 				emit sig_transfer_card(player_id, rank_list[2], card);
 			}
 			else

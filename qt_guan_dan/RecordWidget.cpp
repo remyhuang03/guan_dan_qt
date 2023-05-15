@@ -1,4 +1,4 @@
-﻿#include "record_widget.h"
+﻿#include "RecordWidget.h"
 #include "record.h"
 #include "status.h"
 #include <qheaderview.h>
@@ -6,14 +6,15 @@
 
 Record_widget::Record_widget()
 {
-	show();
 	/*****窗口基本设置****/
+	show();
 	//设置标题
 	setWindowTitle("牌局记录");
 	//背景色深灰色
 	setPalette(QColor(35, 35, 35));
 	//设置窗口大小
 	setFixedSize(255, 300);
+
 	/*****基本UI布局设置****/
 	auto record = game_record.get_record();
 	auto table = new QTableWidget(record.size() + 1, 4, this);
@@ -32,9 +33,11 @@ Record_widget::Record_widget()
 			table->setItem(i, j, item);
 		}
 	}
+
 	//解决 win11 dark theme 下的显示颜色问题
 	table->horizontalHeader()->setStyleSheet("QHeaderView::section{font:black;}");
 	table->verticalHeader()->setStyleSheet("QHeaderView::section{font:black;}");
+
 	//大小自适应
 	table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 	

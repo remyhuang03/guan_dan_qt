@@ -5,7 +5,6 @@
 #include<map>
 #include"card.h"
 #include"status.h"
-//#include"player_widget.h"
 
 class PlayerWidget;
 // 单个用户类

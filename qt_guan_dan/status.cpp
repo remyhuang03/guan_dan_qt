@@ -7,31 +7,29 @@
 #include "record.h"
 #include "card.h"
 
+//全局数据初始定义
 
-//游戏结束标志
-bool is_game_over = false;
 int round_cnt = 0;
-int group_level[2] = { 2,2 };//debug
-int group_fial_pass_a[2] = { 0,0 };
 int round_level_card = 2;
 int turn = 0;
-// 当前出牌的牌型（-4,-3,-2,-1：进贡1，进贡2，还贡1，还贡2   >=0:正常牌型）
 int circle_type = 0;
 int circle_point = 0;
-// 本圈出牌的领圈人, 可以不受牌型限制出牌
 int circle_leader = 0;
-int contribute_order[2];
 int contribute_count;
-//上一轮游戏中玩家 i 的排名(-1：该玩家正在游戏中  0 - 3：0为上游)
+int card_played_process_count = 0;
+int leading_flag = -1;
 int round_rank[4];
 int rank_list[4];
-int card_played_process_count = 0;
-std::map<int, int> cards_round_level;
+int contribute_order[2];
+bool leading_visited[4];
+int group_level[2] = { 2,2 };
+int group_fial_pass_a[2] = { 0,0 };
+bool is_game_over = false;
 Card contributed_card[2];
 Card retributed_card[2];
 Hand* players[4];
 Record game_record;
-int leading_flag = -1;
+std::map<int, int> cards_round_level;
 
 void round_over()
 {
@@ -49,7 +47,7 @@ void round_over()
 
 	//上游的id
 	int first_id = rank_list[0];
-
+	//赢家组
 	int winner_group = first_id / 2;
 
 	//上游对家的排名
@@ -105,8 +103,6 @@ void round_over()
 
 	//更新牌点大小映射
 	update_cards_round_level();
-
-	return;
 }
 
 void update_cards_round_level()
@@ -132,6 +128,7 @@ void update_cards_round_level()
 std::vector<Card> shuffled_all_cards()
 {
 	std::vector<Card> ret;
+
 	//普通牌
 	for (int i = 1; i <= 13; i++)
 		for (int j = 0; j <= 3; j++)
@@ -144,6 +141,7 @@ std::vector<Card> shuffled_all_cards()
 	ret.push_back(Card(14, -1));
 	ret.push_back(Card(15, -1));
 	ret.push_back(Card(15, -1));
+
 	//随机打乱牌序
 	std::random_device rd;
 	std::mt19937 g(rd());
@@ -167,10 +165,11 @@ void init_game_data()
 	circle_type = 0;
 	circle_point = 0;
 	circle_leader = turn;
-	leading_flag = -1;
+
 	//没有玩家完成比赛，玩家排名记为-1
 	std::for_each(std::begin(round_rank), std::end(round_rank), [](int& a) {a = -1; });
 	update_cards_round_level();
+	reset_leading();
 }
 
 QPixmap get_combination_pixmap(const std::vector<Card>& cards, double ratio)
@@ -181,19 +180,23 @@ QPixmap get_combination_pixmap(const std::vector<Card>& cards, double ratio)
 
 	//获取素材大小
 	auto size = QPixmap("img/card/1_0.png").size();
+
 	//卡牌个数
 	auto cnt = cards_cpy.size();
-	// 指定合成后 QPixmap 的大小
+	//指定合成后 QPixmap 的大小
 	int pixmap_width = size.width() + (cnt - 1) * size.width() * ratio;
 	QPixmap ret(pixmap_width, size.height());
 	QPainter painter(&ret);
-	// 依次叠加卡牌元素
+
+	//依次叠加卡牌元素
 	for (int i = 0; i < cnt; i++)
 	{
 		const Card& card = cards_cpy[i];
+		//该卡牌素材叠加
 		auto card_pixmap = QPixmap(
 			QString("img/card/%1_%2.png").arg(card.get_point()).arg(card.get_suit()));
 		painter.drawPixmap(i * size.width() * ratio, 0, card_pixmap);
+		//发现逢人配
 		if (card.is_wild_card())
 		{
 			is_wild_card = true;
@@ -201,6 +204,7 @@ QPixmap get_combination_pixmap(const std::vector<Card>& cards, double ratio)
 	}
 	if (is_wild_card)
 	{
+		//逢人配加星显示
 		painter.drawPixmap(pixmap_width - 60, 0, QPixmap("img/label/star.png"));
 	}
 
@@ -211,4 +215,10 @@ void reset_round_rank()
 {
 	//rank_list复位
 	for (int i = 0; i < 4; i++) { round_rank[i] = -1; }
+}
+
+void reset_leading()
+{
+	leading_flag = -1;
+	memset(leading_visited, 0, sizeof(leading_visited));
 }

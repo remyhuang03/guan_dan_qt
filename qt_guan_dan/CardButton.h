@@ -2,7 +2,7 @@
 #define CARD_BTN_H
 #include "card.h"
 #include "button.h"
-#include "player_widget.h"
+#include "PlayerWidget.h"
 
 // UI界面中棋牌按钮
 class CardButton :public Button

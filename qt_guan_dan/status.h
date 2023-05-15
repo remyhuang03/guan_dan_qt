@@ -34,6 +34,9 @@ std::vector<Card> shuffled_all_cards();
 //@brief 重置排名为-1
 void reset_round_rank();
 
+//@brief 重置接风标记
+void reset_leading();
+
 
 /***** 全局状态 *****/
 
@@ -79,8 +82,10 @@ extern int circle_point;
 extern int circle_leader;
 // 本圈处理情况计数
 extern int card_played_process_count;
-// 是否处于接风状态标志
+// 接风人标志
 extern int leading_flag;
+// 接风是否已经访问过
+extern bool leading_visited[4];
 
 #endif // STATUS_H_
 

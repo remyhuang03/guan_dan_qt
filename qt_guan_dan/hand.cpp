@@ -1,9 +1,9 @@
-#include "hand.h"
-#include "status.h"
-#include "player_widget.h"
 #include <algorithm>
 #include <vector>
 #include <string>
+#include "hand.h"
+#include "status.h"
+#include "PlayerWidget.h"
 
 Hand::Hand(int id) :id_(id), widget_(nullptr) {}
 
@@ -25,8 +25,9 @@ std::pair<int, int> Hand::certain_comb_info(const std::vector<Card>& cards)const
 		max_level = std::max(max_level, get_level_order(card.get_point()));
 	}
 
-	//计算牌型特征, 检查牌点是否连续
+	//计算牌型特征
 	std::string card_trait;
+	//牌点是否连续
 	bool is_consecutive = true;
 	std::vector<int>points;
 	for (auto& point : point_cnt)
@@ -203,6 +204,7 @@ std::pair<int, int> Hand::certain_comb_info(const std::vector<Card>& cards)const
 		// 不符合出牌要求
 		break;
 	}
+
 	return std::pair<int, int>(ret_type, ret_level);
 }
 
@@ -239,6 +241,7 @@ std::vector<std::vector<Card>> Hand::all_valid_comb(const std::vector<Card>& car
 			wild_card_cnt++;
 		}
 	}
+
 	// 检测是否无关花色重复出现
 	std::map <std::pair<int, int>, bool> is_vis;
 	//牌型不是逢人配（仅含红心级牌特判）

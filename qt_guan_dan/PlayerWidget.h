@@ -5,7 +5,7 @@
 #include "sprite.h"
 #include "qlabel.h"
 #include "hand.h"
-#include "card_btn.h"
+#include "CardButton.h"
 #include "button.h"
 #include "StatusLabel.h"
 
