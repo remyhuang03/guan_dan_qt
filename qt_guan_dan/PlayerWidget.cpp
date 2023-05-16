@@ -172,7 +172,7 @@ void PlayerWidget::on_new_round()
 	int w_t = spr_star->size().width();
 	int h_t = spr_star->size().height();
 	spr_star->
-		setGeometry(100, 20 + 30 * ((rank_list[0] % 2) == (id_ % 2)), w_t, h_t);
+		setGeometry(100, 20 + 30 * ((rank_list[0] % 2) != (id_ % 2)), w_t, h_t);
 }
 
 void PlayerWidget::closeEvent(QCloseEvent* event)
@@ -642,7 +642,7 @@ void PlayerWidget::on_play_card()
 		round_rank[id_] = *max_rank + 1;
 		//实现接风功能
 		memset(leading_visited, 0, sizeof(leading_visited));
-		leading_flag = (id_ + 2) % 4 + 4;
+		leading_flag = (id_ + 2) % 4;
 	}
 
 	//发送卡牌已打出信号

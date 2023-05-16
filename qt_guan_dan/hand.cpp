@@ -310,6 +310,7 @@ void Hand::pop_card(const Card& card)
 			// 删除它
 			cards_.erase(it);
 			return;
+			qDebug()<< "删除手牌成功";
 		}
 	}
 }

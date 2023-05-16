@@ -6,7 +6,7 @@
 
 
 //debug:少发点牌，方便调试
-#define DEBUG_CARD_CNT_ 27//正常值：27
+#define DEBUG_CARD_CNT_ 2//正常值：27
 
 guan_dan::guan_dan(QWidget* parent)
 	: QWidget(parent)
@@ -110,14 +110,14 @@ void guan_dan::switch_turn(bool is_next)
 		//该位置是真接风玩家
 		if (turn == leading_flag && leading_visited[turn])
 		{
-			reset_leading();
 			circle_leader = turn;
+			reset_leading();
 		}
 		//处于接风阶段，该人已喊过，转至领圈人
 		else if (leading_visited[turn])
 		{
-			reset_leading();
 			circle_leader = turn = leading_flag;
+			reset_leading();
 		}
 		else
 		{
@@ -130,7 +130,7 @@ void guan_dan::switch_turn(bool is_next)
 
 void guan_dan::on_card_played(const std::vector<Card>& cards, int player_id)
 {
-	//该组胜利，轮转到下一个玩家
+	//该组未胜利，轮转到下一个玩家
 	if (round_rank[player_id] == -1 || round_rank[(player_id + 2) % 4] == -1)
 	{
 		switch_turn(true);
@@ -138,6 +138,7 @@ void guan_dan::on_card_played(const std::vector<Card>& cards, int player_id)
 	}
 
 	//该方两个玩家的牌均已出完，牌局结束
+	reset_leading();
 	int& rival_rank_1 = round_rank[(player_id + 1) % 4];
 	int& rival_rank_2 = round_rank[(player_id + 3) % 4];
 

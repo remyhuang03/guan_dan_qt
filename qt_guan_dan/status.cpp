@@ -48,7 +48,7 @@ void round_over()
 	//上游的id
 	int first_id = rank_list[0];
 	//赢家组
-	int winner_group = first_id / 2;
+	int winner_group = first_id % 2;
 
 	//上游对家的排名
 	int partner_rank;
@@ -154,7 +154,7 @@ void init_game_data()
 {
 	is_game_over = false;
 	round_cnt = 0;
-	group_level[0] = group_level[1] = 12;//debug
+	group_level[0] = group_level[1] = 2;//debug
 	group_fial_pass_a[0] = group_fial_pass_a[1] = 0;
 	round_level_card = 2;
 
