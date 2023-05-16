@@ -8,13 +8,11 @@ bool operator==(const Card& card1, const Card& card2)
 }
 bool operator<(const Card& card1, const Card& card2)
 {
-	//将A和2转换为相对值比较
+	//将A转换为相对值比较
 	double point1 = card1.point_;
 	if (point1 == 1)point1 = 13.1;
-	if (point1 == 2)point1 = 13.2;
 	double point2 = card2.point_;
 	if (point2 == 1)point2 = 13.1;
-	if (point2 == 2)point2 = 13.2;
 
 	if (point1 < point2)
 		return true;

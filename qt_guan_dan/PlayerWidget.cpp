@@ -501,7 +501,7 @@ void PlayerWidget::on_arrange_clicked(int mode)
 				}
 			}
 		}
-		sort_card_heap(true);
+		sort_card_heap(true,true);
 		//将所选牌加入牌堆
 		card_heaps_.push_back(std::make_pair<int, std::vector<Card>>(true, {}));
 		for (const Card& i : cards)

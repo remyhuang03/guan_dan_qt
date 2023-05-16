@@ -99,7 +99,7 @@ void round_over()
 	group_level[winner_group] = new_level_t;
 
 	//更新级牌
-	int round_level_card = new_level_t;
+	round_level_card = new_level_t;
 
 	//更新牌点大小映射
 	update_cards_round_level();
@@ -123,6 +123,8 @@ void update_cards_round_level()
 	cards_round_level[14] = level_t++;
 	//大王
 	cards_round_level[15] = level_t++;
+
+	qDebug() << cards_round_level[2];
 }
 
 std::vector<Card> shuffled_all_cards()

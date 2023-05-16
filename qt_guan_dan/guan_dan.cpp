@@ -6,7 +6,7 @@
 
 
 //debug:少发点牌，方便调试
-#define DEBUG_CARD_CNT_ 2//正常值：27
+#define DEBUG_CARD_CNT_ 27//正常值：27
 
 guan_dan::guan_dan(QWidget* parent)
 	: QWidget(parent)
